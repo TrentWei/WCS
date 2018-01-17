@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WCS", "WCS\WCS.csproj", "{3E6C2913-9BCF-4238-B158-A335EBF78D8D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InitSys", "InitSys\InitSys.csproj", "{1D7B5B7F-7B0E-47A4-8E5D-67B6BA3F4CFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonitorControl", "MonitorControl\MonitorControl.csproj", "{C439AF31-61F5-4B50-8390-F15B8AC3B4BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3E6C2913-9BCF-4238-B158-A335EBF78D8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E6C2913-9BCF-4238-B158-A335EBF78D8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E6C2913-9BCF-4238-B158-A335EBF78D8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E6C2913-9BCF-4238-B158-A335EBF78D8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D7B5B7F-7B0E-47A4-8E5D-67B6BA3F4CFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D7B5B7F-7B0E-47A4-8E5D-67B6BA3F4CFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D7B5B7F-7B0E-47A4-8E5D-67B6BA3F4CFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D7B5B7F-7B0E-47A4-8E5D-67B6BA3F4CFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C439AF31-61F5-4B50-8390-F15B8AC3B4BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C439AF31-61F5-4B50-8390-F15B8AC3B4BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C439AF31-61F5-4B50-8390-F15B8AC3B4BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C439AF31-61F5-4B50-8390-F15B8AC3B4BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F2B4318A-B3AB-47C9-940E-01FB405F235A}
+	EndGlobalSection
+EndGlobal

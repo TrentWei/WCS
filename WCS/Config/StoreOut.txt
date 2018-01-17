@@ -1,0 +1,6 @@
+﻿# BufferName, BufferIndex, StnName, StnIndex
+A03,2,ST04,4
+B04,16,ST06,6
+B07,19,ST07,7
+A01,0,ST01,1
+A02,1,ST02,2
