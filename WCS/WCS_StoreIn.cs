@@ -35,7 +35,7 @@ namespace Mirle.ASRS
                         bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On &&
                         bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On)
                     {
-                        if(bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrWhiteSpace(bCRData[intIndex]._ResultID))
+                        if(bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrWhiteSpace(bCRData[intIndex]._ResultID)) 
                         {
                             #region Pallet On Station && BCR Trigger On
                             strMsg = bufferData[intBufferIndex]._BufferName + "|";
