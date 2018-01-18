@@ -33,7 +33,8 @@
     <Reference Include="Ionic.Zip">
       <HintPath>..\DLL\Ionic.Zip.dll</HintPath>
     </Reference>
-    <Reference Include="S7.Net">
+    <Reference Include="S7.Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLL\S7.Net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -56,6 +57,7 @@
     <Compile Include="CommandState.cs" />
     <Compile Include="CommandInfo.cs" />
     <Compile Include="DB.cs" />
+    <Compile Include="DB2.cs" />
     <Compile Include="InitSys.cs" />
     <Compile Include="MPLC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

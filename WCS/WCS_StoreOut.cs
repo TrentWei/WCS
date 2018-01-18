@@ -153,7 +153,7 @@ namespace Mirle.ASRS
                         strSQL = "SELECT TOP 1 Loc, Prty FROM CMD_MST";
                         strSQL += " WHERE Cmd_Sts<'3'";
                         strSQL += " AND Cmd_Sno='" + strCommandID + "'";
-                        strSQL += " AND CMDMODE IN ('2', '3')";
+                        strSQL += " AND CMD_MODE IN ('2', '3')";
                         strSQL += " AND TRACE='" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "'";
                         strSQL += " ORDER BY LOC DESC";
                         if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
@@ -171,7 +171,7 @@ namespace Mirle.ASRS
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                                 if(funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreOut_CrateCraneCommand))
                                 {
-                                    if(funCrateCraneCommand("1", strCommandID, "2",
+                                    if(funCrateCraneCommand("1", commandInfo.CommandID, "2",
                                         commandInfo.Loaction, stnDef.StationIndex.ToString(), commandInfo.Priority))
                                     {
                                         #region Update Command & Create StoreOut Crane Command Success
@@ -263,7 +263,7 @@ namespace Mirle.ASRS
                         strSQL = "SELECT * FROM CMD_MST";
                         strSQL += " WHERE Cmd_Sts<'3'";
                         strSQL += " AND Cmd_Sno='" + strCommandID + "'";
-                        strSQL += " AND CMDMODE IN ('2', '3')";
+                        strSQL += " AND CMD_MODE IN ('2', '3')";
                         strSQL += " AND TRACE='" + Trace.StoreOut_CrateCraneCommand + "'";
                         strSQL += " ORDER BY LOC DESC";
                         if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))

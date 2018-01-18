@@ -52,6 +52,9 @@
     <Compile Include="WCS_funCrane.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WCS_LocationToLocation.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="WCS_StoreOut.cs">
       <SubType>Form</SubType>
     </Compile>

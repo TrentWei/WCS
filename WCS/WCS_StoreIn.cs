@@ -35,7 +35,7 @@ namespace Mirle.ASRS
                         bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On &&
                         bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On)
                     {
-                        if(bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrWhiteSpace(bCRData[intIndex]._ResultID)) 
+                        if(bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrWhiteSpace(bCRData[intIndex]._ResultID))
                         {
                             #region Pallet On Station && BCR Trigger On
                             strMsg = bufferData[intBufferIndex]._BufferName + "|";
@@ -58,11 +58,18 @@ namespace Mirle.ASRS
                         }
                         else if(bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID == "ERROR")
                         {
-                            #region BCR Read Fail && BCR Retrigger On
+                            #region BCR Read Fail && BCR Retrigger On && BCR Clear
                             strMsg = bufferData[intBufferIndex]._BufferName + "|";
                             strMsg += bCRData[intIndex]._ResultID + "|";
                             strMsg += "BCR Read Fail!";
                             funWriteSysTraceLog(strMsg);
+
+                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                            strMsg += bCRData[intIndex]._BCRSts + "|";
+                            strMsg += bCRData[intIndex]._ResultID + "|";
+                            strMsg += "BCR Clear!";
+                            funWriteSysTraceLog(strMsg);
+                            bCRData[intIndex].funClear();
 
                             if(bCRData[intIndex].funTriggerBCROn(ref strEM))
                             {
@@ -76,7 +83,7 @@ namespace Mirle.ASRS
                                 strMsg += "BCR Retrigger On Fail!";
                                 funWriteSysTraceLog(strMsg);
                             }
-                            #endregion BCR Read Fail && BCR Retrigger On
+                            #endregion BCR Read Fail && BCR Retrigger On && BCR Clear
                         }
                         else if(bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR")
                         {
@@ -84,9 +91,9 @@ namespace Mirle.ASRS
                             strSQL = "SELECT * FROM CMD_MST";
                             strSQL += " WHERE Plt_No='" + strBCR + "'";
                             strSQL += " AND ((Cmd_Sts='0'";
-                            strSQL += " AND CMDMODE='1'";
+                            strSQL += " AND CMD_MODE='1'";
                             strSQL += " AND TRACE='0')";
-                            strSQL += " OR (CMDMODE='3'";
+                            strSQL += " OR (CMD_MODE='3'";
                             strSQL += " AND TRACE='" + Trace.StoreOut_CraneCommandFinish + "'))";
                             strSQL += " ORDER BY LOC DESC";
                             if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
@@ -100,7 +107,7 @@ namespace Mirle.ASRS
                                 commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
 
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                                if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.StoreOut_GetStoreOutCommandAndWritePLC))
+                                if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.StoreIn_GetStoreInCommandAndWritePLC))
                                 {
                                     string[] strValues = new string[] { commandInfo.CommandID, "1", commandInfo.CommandMode.ToString() };
                                     if(InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
@@ -121,13 +128,14 @@ namespace Mirle.ASRS
                                         strMsg += string.Join(",", strValues) + "|";
                                         strMsg += "Write MPLC Success!";
                                         funWriteSysTraceLog(strMsg);
-
-                                        bCRData[intIndex].funClear();
+                                        
                                         strMsg = bufferData[intBufferIndex]._BufferName + "|";
                                         strMsg += bCRData[intIndex]._BCRSts + "|";
                                         strMsg += bCRData[intIndex]._ResultID + "|";
                                         strMsg += "BCR Clear!";
                                         funWriteSysTraceLog(strMsg);
+
+                                        bCRData[intIndex].funClear();
                                         #endregion Update Command & Write MPLC Success
                                     }
                                     else
@@ -162,6 +170,7 @@ namespace Mirle.ASRS
                                 string[] strValues = new string[] { "1" };
                                 if(InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
                                 {
+                                    #region Can't Find Command & Write MPLC Success & BCR Clear
                                     strMsg = bufferData[intBufferIndex]._BufferName + "|";
                                     strMsg += "Can't Find Command!";
                                     funWriteSysTraceLog(strMsg);
@@ -172,31 +181,26 @@ namespace Mirle.ASRS
                                     strMsg += "Write MPLC Success!";
                                     funWriteSysTraceLog(strMsg);
 
-                                    bCRData[intIndex].funClear();
                                     strMsg = bufferData[intBufferIndex]._BufferName + "|";
                                     strMsg += bCRData[intIndex]._BCRSts + "|";
                                     strMsg += bCRData[intIndex]._ResultID + "|";
                                     strMsg += "BCR Clear!";
                                     funWriteSysTraceLog(strMsg);
+
+                                    bCRData[intIndex].funClear();
+                                    #endregion Can't Find Command & Write MPLC Success & BCR Clear
                                 }
                                 else
                                 {
+                                    #region Can't Find Command But Write MPLC Fail
                                     strMsg = bufferData[intBufferIndex]._BufferName + "|";
                                     strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
                                     strMsg += string.Join(",", strValues) + "|";
                                     strMsg += "Write MPLC Fail!";
                                     funWriteSysTraceLog(strMsg);
+                                    #endregion Can't Find Command But Write MPLC Fail
                                 }
                             }
-                        }
-                        else
-                        {
-                            bCRData[intIndex].funClear();
-                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                            strMsg += bCRData[intIndex]._BCRSts + "|";
-                            strMsg += bCRData[intIndex]._ResultID + "|";
-                            strMsg += "BCR Clear!";
-                            funWriteSysTraceLog(strMsg);
                         }
                     }
                 }
@@ -225,11 +229,11 @@ namespace Mirle.ASRS
                         bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On &&
                         bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On)
                     {
-                        string strCommandID = bufferData[intBufferIndex]._CommandID;
-                        strSQL = "SELECT TOP 1 Loc, Prty FROM CMD_MST";
+                        string strCommandID = bufferData[intBufferIndex]._CommandID.PadLeft(5,'0');
+                        strSQL = "SELECT TOP 1 * FROM CMD_MST";
                         strSQL += " WHERE Cmd_Sts<'3'";
                         strSQL += " AND Cmd_Sno='" + strCommandID + "'";
-                        strSQL += " AND CMDMODE IN ('1', '3')";
+                        strSQL += " AND CMD_MODE IN ('1', '3')";
                         strSQL += " AND TRACE='" + Trace.StoreIn_GetStoreInCommandAndWritePLC + "'";
                         strSQL += " ORDER BY LOC DESC";
                         if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
@@ -247,8 +251,8 @@ namespace Mirle.ASRS
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                                 if(funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreIn_CrateCraneCommand))
                                 {
-                                    if(funCrateCraneCommand("1", strCommandID, "1",
-                                        commandInfo.Loaction, stnDef.StationIndex.ToString(), commandInfo.Priority))
+                                    if(funCrateCraneCommand("1", commandInfo.CommandID, "1",
+                                        stnDef.StationIndex.ToString(), commandInfo.Loaction,  commandInfo.Priority))
                                     {
                                         #region Update Command & Create StoreIn Crane Command Success
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
@@ -339,7 +343,7 @@ namespace Mirle.ASRS
                         strSQL = "SELECT * FROM CMD_MST";
                         strSQL += " WHERE Cmd_Sts<'3'";
                         strSQL += " AND Cmd_Sno='" + strCommandID + "'";
-                        strSQL += " AND CMDMODE IN ('1', '3')";
+                        strSQL += " AND CMD_MODE IN ('1', '3')";
                         strSQL += " AND TRACE='" + Trace.StoreIn_CrateCraneCommand + "'";
                         strSQL += " ORDER BY LOC DESC";
                         if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
@@ -367,7 +371,7 @@ namespace Mirle.ASRS
                                     strSQL = "UPDATE EQUCMD SET CMDSTS='0' WHERE CMDSNO='" + strCommandID + "'";
                                     if(InitSys._DB.funExecSql(strSQL, ref strEM))
                                     {
-                                        #region Retry Crane Command Success
+                                        #region Retry StoreIn Crane Command Success
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
@@ -377,11 +381,11 @@ namespace Mirle.ASRS
                                         strMsg += strCompleteCode + "|";
                                         strMsg += "Retry StoreIn Crane Command Success!";
                                         funWriteSysTraceLog(strMsg);
-                                        #endregion Retry Crane Command Success
+                                        #endregion Retry StoreIn Crane Command Success
                                     }
                                     else
                                     {
-                                        #region Retry Crane Command Fail
+                                        #region Retry StoreIn Crane Command Fail
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
@@ -391,7 +395,7 @@ namespace Mirle.ASRS
                                         strMsg += strCompleteCode + "|";
                                         strMsg += "Retry StoreIn Crane Command Fail!";
                                         funWriteSysTraceLog(strMsg);
-                                        #endregion Retry Crane Command Fail
+                                        #endregion Retry StoreIn Crane Command Fail
                                     }
                                 }
                                 else if(strCmdSts == CommandState.Completed && strCompleteCode == "EF")

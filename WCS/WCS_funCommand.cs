@@ -21,7 +21,7 @@ namespace Mirle.ASRS
                 strSQL += " Cmd_Sts='" + setCommandState + "',";
                 strSQL += " TRACE='" + setTrace + "'";
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
-                strSQL += " AND CMDSTS<='1'";
+                strSQL += " AND CMD_STS<='1'";
                 return InitSys._DB.funExecSql(strSQL, ref strEM);
             }
             catch(Exception ex)

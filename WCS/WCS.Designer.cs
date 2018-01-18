@@ -54,6 +54,8 @@
             this.tbcMain = new System.Windows.Forms.TabControl();
             this.tbpSysTrace = new System.Windows.Forms.TabPage();
             this.lsbSysTrace = new System.Windows.Forms.ListBox();
+            this.tbpUpdate = new System.Windows.Forms.TabPage();
+            this.lsbUpdate = new System.Windows.Forms.ListBox();
             this.tbpFlowControl = new System.Windows.Forms.TabPage();
             this.gpbMainState.SuspendLayout();
             this.tlpMainState.SuspendLayout();
@@ -66,6 +68,7 @@
             this.tlpButton.SuspendLayout();
             this.tbcMain.SuspendLayout();
             this.tbpSysTrace.SuspendLayout();
+            this.tbpUpdate.SuspendLayout();
             this.SuspendLayout();
             // 
             // gpbMainState
@@ -404,6 +407,7 @@
             // tbcMain
             // 
             this.tbcMain.Controls.Add(this.tbpSysTrace);
+            this.tbcMain.Controls.Add(this.tbpUpdate);
             this.tbcMain.Controls.Add(this.tbpFlowControl);
             this.tbcMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbcMain.Location = new System.Drawing.Point(0, 0);
@@ -432,6 +436,26 @@
             this.lsbSysTrace.Name = "lsbSysTrace";
             this.lsbSysTrace.Size = new System.Drawing.Size(881, 525);
             this.lsbSysTrace.TabIndex = 0;
+            // 
+            // tbpUpdate
+            // 
+            this.tbpUpdate.Controls.Add(this.lsbUpdate);
+            this.tbpUpdate.Location = new System.Drawing.Point(4, 22);
+            this.tbpUpdate.Name = "tbpUpdate";
+            this.tbpUpdate.Size = new System.Drawing.Size(887, 531);
+            this.tbpUpdate.TabIndex = 2;
+            this.tbpUpdate.Text = "Update";
+            this.tbpUpdate.UseVisualStyleBackColor = true;
+            // 
+            // lsbUpdate
+            // 
+            this.lsbUpdate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lsbUpdate.FormattingEnabled = true;
+            this.lsbUpdate.ItemHeight = 12;
+            this.lsbUpdate.Location = new System.Drawing.Point(0, 0);
+            this.lsbUpdate.Name = "lsbUpdate";
+            this.lsbUpdate.Size = new System.Drawing.Size(887, 531);
+            this.lsbUpdate.TabIndex = 1;
             // 
             // tbpFlowControl
             // 
@@ -475,6 +499,7 @@
             this.tlpButton.PerformLayout();
             this.tbcMain.ResumeLayout(false);
             this.tbpSysTrace.ResumeLayout(false);
+            this.tbpUpdate.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -507,6 +532,8 @@
         private System.Windows.Forms.TabPage tbpFlowControl;
         private System.Windows.Forms.ListBox lsbSysTrace;
         private System.Windows.Forms.Button btnReconnectSPLC;
+        private System.Windows.Forms.TabPage tbpUpdate;
+        private System.Windows.Forms.ListBox lsbUpdate;
     }
 }
 

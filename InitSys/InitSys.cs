@@ -94,8 +94,8 @@ namespace Mirle.ASRS
         public static bool funOpendSPLC()
         {
             string strEM = string.Empty;
-            sPLC = new SPLC(S7.Net.CpuType.S7200, "127.0.0.1", 0, 0, 1);
-            if(mPLC.funOpenMPLC(ref strEM))
+            sPLC = new SPLC(S7.Net.CpuType.S7300, "192.168.1.21", 0, 2, 6);
+            if(sPLC.funOpenSPLC(ref strEM))
                 return true;
             else
                 return false;

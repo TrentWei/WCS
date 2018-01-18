@@ -26,6 +26,7 @@ namespace Mirle.ASRS
         private Thread thdReconnection = null;
         private System.Windows.Forms.Timer timRefresh = new System.Windows.Forms.Timer();
         private System.Timers.Timer timProgram = new System.Timers.Timer();
+        private System.Timers.Timer timUpdate = new System.Timers.Timer();
         private Dictionary<int, Control> dicBufferMap = new Dictionary<int, Control>();
         private List<StationInfo> lstStoreIn = new List<StationInfo>();
         private List<StationInfo> lstStoreOut = new List<StationInfo>();
@@ -53,6 +54,17 @@ namespace Mirle.ASRS
             funInital();
         }
 
+        private void btnAutoPause_Click(object sender, EventArgs e)
+        {
+            funWriteSysTraceLog(bolAuto ? "WCS Set Pause!" : "WCS Set Auto!");
+            btnAutoPause.Text = bolAuto ? "自动模式" : "维护模式";
+            bolAuto = !bolAuto;
+            btnReconnectMPLC.Enabled = !bolAuto;
+            btnReconnectSPLC.Enabled = !bolAuto;
+            btnReconnectDB.Enabled = !bolAuto;
+            btnReconnectBCR.Enabled = !bolAuto;
+        }
+
         #region Close
         private void WCS_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -65,16 +77,6 @@ namespace Mirle.ASRS
             funClose();
         }
         #endregion Close
-
-        private void btnAutoPause_Click(object sender, EventArgs e)
-        {
-            funWriteSysTraceLog(bolAuto ? "WCS Set Pause!" : "WCS Set Auto!");
-            btnAutoPause.Text = bolAuto ? "自动模式" : "维护模式";
-            bolAuto = !bolAuto;
-            btnReconnectMPLC.Enabled = !bolAuto;
-            btnReconnectDB.Enabled = !bolAuto;
-            btnReconnectBCR.Enabled = !bolAuto;
-        }
 
         #region Reconnect
         private void btnReconnectDB_Click(object sender, EventArgs e)
@@ -103,8 +105,8 @@ namespace Mirle.ASRS
 
         private void btnReconnectSPLC_Click(object sender, EventArgs e)
         {
-            btnReconnectMPLC.Enabled = false;
-            thdReconnection = new Thread(funReconnectionMPLC);
+            btnReconnectSPLC.Enabled = false;
+            thdReconnection = new Thread(funReconnectionSPLC);
             thdReconnection.IsBackground = true;
             thdReconnection.Start();
         }
@@ -125,7 +127,7 @@ namespace Mirle.ASRS
                 funShowConnect(InitSys._DB._IsConnection, lblDBSts);
 
                 #region Auto Reconnect
-                if(chkAutoReconnect.Checked && bolAuto)
+                if(chkAutoReconnect.Checked && !bolAuto)
                 {
                     if(!InitSys._MPLC._IsConnection && !bolMPLC)
                     {
@@ -143,7 +145,7 @@ namespace Mirle.ASRS
                     }
                     for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
                     {
-                        if(bCRData[intIndex]._IsOpen && !bolBCR)
+                        if(!bCRData[intIndex]._IsOpen && !bolBCR)
                         {
                             bolBCR = true;
                             thdReconnection = new Thread(funReconnectionBCR);
@@ -184,10 +186,10 @@ namespace Mirle.ASRS
                     {
                         for(int intIndex = 0; intIndex < bufferData._BufferCount; intIndex++)
                         {
-                            bufferData[intIndex]._CommandID = intarResultData[(intIndex * 10)].ToString() == "0" ? 
-                                string.Empty : intarResultData[(intIndex * 10) + 1].ToString();
+                            bufferData[intIndex]._CommandID = intarResultData[(intIndex * 10)].ToString() == "0" ?
+                                string.Empty : intarResultData[(intIndex * 10)].ToString();
                             bufferData[intIndex]._Destination = intarResultData[(intIndex * 10) + 1].ToString() == "0" ?
-                                string.Empty : intarResultData[(intIndex * 10) + 2].ToString();
+                                string.Empty : intarResultData[(intIndex * 10) + 1].ToString();
                             bufferData[intIndex]._Mode = (Buffer.StnMode)intarResultData[(intIndex * 10) + 2];
                             bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 3] == 1;
 
@@ -225,16 +227,20 @@ namespace Mirle.ASRS
                     {
                         funStoreOut();
                         funStroreIn();
+                        funLocationToLocation();
                     }
                 }
 
                 if(InitSys._SPLC._IsConnection)
                 {
-                    if(InitSys._SPLC.funReadSPLC(null))
-                    {
+                    //if(InitSys._SPLC.funReadSPLC(Db2))
+                    //{
 
-                    }
-
+                    //}
+                    //SPLC.Tag tag = new SPLC.Tag("DB6.DBW50", "1");
+                    //InitSys._SPLC.funWriteSPLC(tag);
+                    //tag = new SPLC.Tag("DB6.DBW52", "2");
+                    //InitSys._SPLC.funWriteSPLC(tag);
                     if(bolAuto)
                     {
 
@@ -251,6 +257,11 @@ namespace Mirle.ASRS
                 timProgram.Start();
             }
         }
+        public DB2 Db2 = new DB2();
+
+        private void timUpdate_Elapsed(object sender, ElapsedEventArgs e)
+        {
+        }
         #endregion Time
 
         #endregion Event Function
@@ -259,6 +270,7 @@ namespace Mirle.ASRS
         private void funInital()
         {
             btnReconnectMPLC.Enabled = !bolAuto;
+            btnReconnectSPLC.Enabled = !bolAuto;
             btnReconnectDB.Enabled = !bolAuto;
             btnReconnectBCR.Enabled = !bolAuto;
 
@@ -416,9 +428,9 @@ namespace Mirle.ASRS
                 for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
                 {
                     if(bCRData[intIndex].funOpenBCR(ref strEM))
-                        funWriteSysTraceLog(bCRData[intIndex]._BCRName + "|" + "Connection BCR Success!");
+                        funWriteSysTraceLog("Connection BCR:" + bCRData[intIndex]._BCRName + " Success!");
                     else
-                        funWriteSysTraceLog(bCRData[intIndex]._BCRName + "|" + "Connection BCR Fail!");
+                        funWriteSysTraceLog("Connection BCR:" + bCRData[intIndex]._BCRName + " Fail!");
                 }
             }
             catch(Exception ex)
@@ -436,7 +448,11 @@ namespace Mirle.ASRS
 
             timProgram.Stop();
             timProgram.Elapsed += new ElapsedEventHandler(timProgram_Elapsed);
-            timProgram.Interval = 250;
+            timProgram.Interval = 200;
+
+            timUpdate.Stop();
+            timUpdate.Elapsed += new ElapsedEventHandler(timUpdate_Elapsed);
+            timUpdate.Interval = 2000;
         }
 
         private void funStart()
@@ -458,6 +474,7 @@ namespace Mirle.ASRS
 
             timRefresh.Start();
             timProgram.Start();
+            timUpdate.Start();
         }
         #endregion Inital Function
 
@@ -480,16 +497,16 @@ namespace Mirle.ASRS
 
         private void funReconnectionBCR()
         {
-            string strErrMsg = string.Empty;
+            string strEM = string.Empty;
             for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
             {
                 if(bCRData[intIndex] != null)
                 {
                     bCRData[intIndex].funClose();
-                    if(bCRData[intIndex].funOpenBCR(ref strErrMsg))
-                        funWriteSysTraceLog("TryReconnection BCR:" + bCRData[intIndex]._BCRName + "Success!");
+                    if(bCRData[intIndex].funOpenBCR(ref strEM))
+                        funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + " Success!");
                     else
-                        funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + "Fail!");
+                        funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + " Fail!");
                 }
             }
             bolBCR = false;
@@ -498,11 +515,11 @@ namespace Mirle.ASRS
 
         private void funReconnectionMPLC()
         {
-            string strErrMsg = string.Empty;
+            string strEM = string.Empty;
             if(InitSys._MPLC != null)
             {
                 InitSys._MPLC.funClose();
-                if(InitSys._MPLC.funOpenMPLC(ref strErrMsg))
+                if(InitSys._MPLC.funOpenMPLC(ref strEM))
                     funWriteSysTraceLog("Try Reconnection MPLC Success!");
                 else
                     funWriteSysTraceLog("Try Reconnection MPLC Fail!");
@@ -513,11 +530,11 @@ namespace Mirle.ASRS
 
         private void funReconnectionSPLC()
         {
-            string strErrMsg = string.Empty;
+            string strEM = string.Empty;
             if(InitSys._SPLC != null)
             {
                 InitSys._SPLC.funClose();
-                if(InitSys._SPLC.funOpenMPLC(ref strErrMsg))
+                if(InitSys._SPLC.funOpenSPLC(ref strEM))
                     funWriteSysTraceLog("Try Reconnection SPLC Success!");
                 else
                     funWriteSysTraceLog("Try Reconnection SPLC Fail!");
@@ -527,6 +544,63 @@ namespace Mirle.ASRS
         }
         #endregion Reconnection Function
 
+        #region Write Log Function
+        private void funWriteSysTraceLog(string message)
+        {
+            try
+            {
+                if(lsbSysTrace.InvokeRequired)
+                {
+                    ShowMessage_EventHandler ShowMessage = new ShowMessage_EventHandler(funWriteSysTraceLog);
+                    lsbSysTrace.Invoke(ShowMessage, message);
+                }
+                else
+                {
+                    if(lsbSysTrace.Items.Count >= 200)
+                        lsbSysTrace.Items.RemoveAt(0);
+
+                    lsbSysTrace.Items.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + message);
+                    lsbSysTrace.SelectedIndex = lsbSysTrace.Items.Count - 1;
+
+                    InitSys.funWriteLog("SysTrace", message);
+                }
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+
+        private void funWriteUpdateLog(string message)
+        {
+            try
+            {
+                if(lsbUpdate.InvokeRequired)
+                {
+                    ShowMessage_EventHandler ShowMessage = new ShowMessage_EventHandler(funWriteSysTraceLog);
+                    lsbUpdate.Invoke(ShowMessage, message);
+                }
+                else
+                {
+                    if(lsbUpdate.Items.Count >= 200)
+                        lsbUpdate.Items.RemoveAt(0);
+
+                    lsbUpdate.Items.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + message);
+                    lsbUpdate.SelectedIndex = lsbSysTrace.Items.Count - 1;
+
+                    InitSys.funWriteLog("Update", message);
+                }
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+        #endregion Write Log Function
+
+        #region Other Function
         private void funShowAutoPause(bool auto)
         {
             switch(auto)
@@ -559,36 +633,6 @@ namespace Mirle.ASRS
             }
         }
 
-        #region Write Log Function
-        private void funWriteSysTraceLog(string message)
-        {
-            try
-            {
-                if(lsbSysTrace.InvokeRequired)
-                {
-                    ShowMessage_EventHandler ShowMessage = new ShowMessage_EventHandler(funWriteSysTraceLog);
-                    lsbSysTrace.Invoke(ShowMessage, message);
-                }
-                else
-                {
-                    if(lsbSysTrace.Items.Count >= 200)
-                        lsbSysTrace.Items.RemoveAt(0);
-
-                    lsbSysTrace.Items.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + message);
-                    lsbSysTrace.SelectedIndex = lsbSysTrace.Items.Count - 1;
-
-                    InitSys.funWriteLog("SysTrace", message);
-                }
-            }
-            catch(Exception ex)
-            {
-                MethodBase methodBase = MethodBase.GetCurrentMethod();
-                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
-            }
-        }
-        #endregion Write Log Function
-
-        #region Other Function
         private void funEnableButton(Button button, bool enable)
         {
             try
@@ -613,9 +657,18 @@ namespace Mirle.ASRS
             bolAuto = false;
             timRefresh.Stop();
             timProgram.Stop();
+            timUpdate.Stop();
             InitSys._DB.funClose();
             InitSys._MPLC.funClose();
             InitSys._SPLC.funClose();
+            for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
+            {
+                if(bCRData[intIndex] != null)
+                {
+                    string strEM = string.Empty;
+                    bCRData[intIndex].funClose();
+                }
+            }
             bolClose = true;
             this.Close();
         }

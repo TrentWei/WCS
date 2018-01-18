@@ -24,6 +24,21 @@ namespace Mirle.ASRS
                         strSQL += " AND CmdSts IN ('0', '1')";
                         strSQL += " AND DESTINATION='" + stnIndex + "'";
                         break;
+                    case CraneMode.StoreIn:
+                        strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
+                        strSQL += " WHERE EQUNO='" + craneNo + "'";
+                        strSQL += " AND CmdSts IN ('0', '1')";
+                        strSQL += " AND SOURCE='" + stnIndex + "'";
+                        break;
+                    case CraneMode.StationToStation:
+                    case CraneMode.LoactionToLoaction:
+                        strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
+                        strSQL += " WHERE EQUNO='" + craneNo + "'";
+                        strSQL += " AND CMDMODE='" + craneMode + "'";
+                        strSQL += " AND CmdSts IN ('0', '1')";
+                        break;
+                    default:
+                        break;
                 }
                 if(InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
                     return int.Parse(dtEquCmd.Rows[0]["ICOUNT"].ToString()) > 0;
@@ -53,7 +68,17 @@ namespace Mirle.ASRS
             string strEM = string.Empty;
             try
             {
-                strSQL = "INSERT INTO EquCmd(CmdSno, EquNo, CmdMode, CmdSts, Source, Destination, LocSize, Priority, RCVDT, SpeedLevel) Values (";
+                if(source.Length == 6)
+                    source = source.Insert(2, "0");
+                else
+                    source = source.PadLeft(7, '0');
+
+                if(destination.Length == 6)
+                    destination = destination.Insert(2, "0");
+                else
+                    destination = destination.PadLeft(7, '0');
+
+                strSQL = "INSERT INTO EquCmd(CmdSno, EquNo, CmdMode, CmdSts, Source, Destination, LocSize, Priority, RCVDT) Values (";
                 strSQL += "'" + commandID + "', ";
                 strSQL += "'" + craneNo + "', ";
                 strSQL += "'" + craneMode + "', ";
@@ -62,8 +87,7 @@ namespace Mirle.ASRS
                 strSQL += "'" + destination + "', ";
                 strSQL += "'0', ";
                 strSQL += "'" + priority + "', ";
-                strSQL += "'" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "', ";
-                strSQL += "'0')";
+                strSQL += "'" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "')";
                 return InitSys._DB.funExecSql(strSQL, ref strEM);
             }
             catch(Exception ex)

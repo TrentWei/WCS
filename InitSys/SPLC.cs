@@ -80,7 +80,7 @@ namespace Mirle.ASRS
         #region Function
 
         #region Opend/Close
-        public bool funOpenMPLC(ref string errMsg)
+        public bool funOpenSPLC(ref string errMsg)
         {
             try
             {
