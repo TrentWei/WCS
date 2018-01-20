@@ -51,7 +51,7 @@ namespace Mirle.ASRS
                         InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                         if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.LoactionToLoaction_CrateCraneCommand))
                         {
-                            if(funCrateCraneCommand("1", commandInfo.CommandID, "2",
+                            if(funCrateCraneCommand("1", commandInfo.CommandID, "5",
                                 commandInfo.Loaction, commandInfo.NewLoaction, commandInfo.Priority))
                             {
                                 #region Update Command & Create Transfer Crane Command Success

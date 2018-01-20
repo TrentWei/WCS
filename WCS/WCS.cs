@@ -30,6 +30,7 @@ namespace Mirle.ASRS
         private Dictionary<int, Control> dicBufferMap = new Dictionary<int, Control>();
         private List<StationInfo> lstStoreIn = new List<StationInfo>();
         private List<StationInfo> lstStoreOut = new List<StationInfo>();
+        private DB2 Db2 = new DB2();
 
         private delegate void ShowMessage_EventHandler(string Message);
         private delegate void ButtonEnable_EventHandler(Button button, bool enable);
@@ -233,18 +234,18 @@ namespace Mirle.ASRS
 
                 if(InitSys._SPLC._IsConnection)
                 {
-                    //if(InitSys._SPLC.funReadSPLC(Db2))
-                    //{
+                    if(InitSys._SPLC.funReadSPLC(Db2))
+                        //{
 
-                    //}
-                    //SPLC.Tag tag = new SPLC.Tag("DB6.DBW50", "1");
-                    //InitSys._SPLC.funWriteSPLC(tag);
-                    //tag = new SPLC.Tag("DB6.DBW52", "2");
-                    //InitSys._SPLC.funWriteSPLC(tag);
-                    if(bolAuto)
-                    {
+                        //}
+                        //SPLC.Tag tag = new SPLC.Tag("DB6.DBW50", "1");
+                        //InitSys._SPLC.funWriteSPLC(tag);
+                        //tag = new SPLC.Tag("DB6.DBW52", "2");
+                        //InitSys._SPLC.funWriteSPLC(tag);
+                        if(bolAuto)
+                        {
 
-                    }
+                        }
                 }
             }
             catch(Exception ex)
@@ -257,10 +258,18 @@ namespace Mirle.ASRS
                 timProgram.Start();
             }
         }
-        public DB2 Db2 = new DB2();
 
         private void timUpdate_Elapsed(object sender, ElapsedEventArgs e)
         {
+            timUpdate.Stop();
+            try
+            {
+                funUpdatePosted();
+            }
+            finally
+            {
+                timUpdate.Start();
+            }
         }
         #endregion Time
 
@@ -649,6 +658,52 @@ namespace Mirle.ASRS
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+
+        private string funIntArray2String_ASCII(int[] intInput)
+        {
+            string strRet = string.Empty;
+            string strTemp_0007 = string.Empty;
+            string strTemp_0815 = string.Empty;
+            try
+            {
+                foreach(int intData in intInput)
+                {
+                    strTemp_0007 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(2, 2);
+                    strTemp_0815 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(0, 2);
+                    strRet = strRet +
+                            Convert.ToChar(Convert.ToInt32(strTemp_0007, 16)).ToString() +
+                            Convert.ToChar(Convert.ToInt32(strTemp_0815, 16)).ToString();
+                }
+
+                string strTemp = string.Empty;
+                if(strRet.IndexOf("\r"[0]) >= 0)
+                {
+                    strTemp = strRet.Remove(strRet.IndexOf("\r"[0]));
+                    strTemp = strTemp.Trim("\0"[0]).Trim();
+                }
+                else
+                {
+                    ;
+                    if(strRet.IndexOf("\0"[0]) >= 0)
+                    {
+                        strTemp = strRet.Remove(strRet.IndexOf("\0"[0]));
+                        strTemp = strTemp.Trim();
+                    }
+                    else
+                    {
+                        strTemp = strRet.Trim();
+                    }
+                }
+                return strTemp;
+
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                return string.Empty;
             }
         }
 
