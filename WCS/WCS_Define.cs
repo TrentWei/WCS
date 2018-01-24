@@ -86,6 +86,7 @@ namespace Mirle.ASRS
         {
             public const string StoreIn = "1";
             public const string StoreOut = "2";
+            public const string Picking = "3";
             public const string StationToStation = "4";
             public const string LoactionToLoaction = "5";
             public const string Move = "6";
@@ -99,16 +100,53 @@ namespace Mirle.ASRS
             }
         }
 
+        private class CMDMode
+        {
+            public const string StoreIn = "1";
+            public const string StoreOut = "2";
+            public const string Picking = "3";
+            public const string LoactionToLoaction = "5";
+
+            private CMDMode()
+            {
+            }
+        }
+
         private class DB2
         {
             public ushort BCR1_1 { get; set; }
             public ushort BCR1_2 { get; set; }
             public ushort BCR1_3 { get; set; }
+            public ushort BCR1_4 { get; set; }
+            public ushort BCR1_5 { get; set; }
             public ushort BCR2_1 { get; set; }
             public ushort BCR2_2 { get; set; }
             public ushort BCR2_3 { get; set; }
+            public ushort BCR2_4 { get; set; }
+            public ushort BCR2_5 { get; set; }
             public ushort StroreInToStation { get; set; }
             public ushort StroreOutToStation { get; set; }
+        }
+
+        private struct Cmd_Mst
+        {
+            public string Cmd_Sno;
+            public string Cmd_Sts;
+            public string Cmd_Mode;
+            public string Io_Type;
+            public string Stn_No;
+            public string Loc;
+            public string New_Loc;
+            public string Height;
+            public string Prty;
+            public string Crt_Dte;
+            public string Exp_Dte;
+            public string End_Dte;
+            public string User_Id;
+            public string Cyc_No;
+            public string Plt_No;
+            public string Trace;
+            public string Remark;
         }
     }
 }

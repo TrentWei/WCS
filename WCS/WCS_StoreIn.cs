@@ -58,43 +58,49 @@ namespace Mirle.ASRS
                         }
                         else if(bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID == "ERROR")
                         {
-                            #region BCR Read Fail && BCR Retrigger On && BCR Clear
-                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                            strMsg += bCRData[intIndex]._ResultID + "|";
-                            strMsg += "BCR Read Fail!";
-                            funWriteSysTraceLog(strMsg);
-
-                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                            strMsg += bCRData[intIndex]._BCRSts + "|";
-                            strMsg += bCRData[intIndex]._ResultID + "|";
-                            strMsg += "BCR Clear!";
-                            funWriteSysTraceLog(strMsg);
-                            bCRData[intIndex].funClear();
-
-                            if(bCRData[intIndex].funTriggerBCROn(ref strEM))
+                            string[] strValues = new string[] { "1" };
+                            if(InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
                             {
+                                #region BCR Read Fail & Write MPLC Success & BCR Clear
                                 strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                strMsg += "BCR Retrigger On Success!";
+                                strMsg += bCRData[intIndex]._ResultID + "|";
+                                strMsg += "BCR Read Fail!";
                                 funWriteSysTraceLog(strMsg);
+
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
+                                strMsg += string.Join(",", strValues) + "|";
+                                strMsg += "Write MPLC Success!";
+                                funWriteSysTraceLog(strMsg);
+
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += bCRData[intIndex]._BCRSts + "|";
+                                strMsg += bCRData[intIndex]._ResultID + "|";
+                                strMsg += "BCR Clear!";
+                                funWriteSysTraceLog(strMsg);
+
+                                bCRData[intIndex].funClear();
+                                #endregion BCR Read Fail & Write MPLC Success & BCR Clear
                             }
                             else
                             {
+                                #region BCR Read Fail But Write MPLC Fail
                                 strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                strMsg += "BCR Retrigger On Fail!";
+                                strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
+                                strMsg += string.Join(",", strValues) + "|";
+                                strMsg += "Write MPLC Fail!";
                                 funWriteSysTraceLog(strMsg);
+                                #endregion BCR Read Fail But Write MPLC Fail
                             }
-                            #endregion BCR Read Fail && BCR Retrigger On && BCR Clear
                         }
                         else if(bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR")
                         {
                             string strBCR = bCRData[intIndex]._ResultID;
                             strSQL = "SELECT * FROM CMD_MST";
                             strSQL += " WHERE Plt_No='" + strBCR + "'";
-                            strSQL += " AND ((Cmd_Sts='0'";
+                            strSQL += " AND Cmd_Sts='0'";
                             strSQL += " AND CMD_MODE='1'";
-                            strSQL += " AND TRACE='0')";
-                            strSQL += " OR (CMD_MODE='3'";
-                            strSQL += " AND TRACE='" + Trace.StoreOut_CraneCommandFinish + "'))";
+                            strSQL += " AND TRACE='0'";
                             strSQL += " ORDER BY LOC DESC";
                             if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
                             {
@@ -120,7 +126,7 @@ namespace Mirle.ASRS
                                         strMsg += commandInfo.StationNo + "|";
                                         strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
                                         strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                        strMsg += "Update Command Success!";
+                                        strMsg += "StroreIn Command Update Success!";
                                         funWriteSysTraceLog(strMsg);
 
                                         strMsg = bufferData[intBufferIndex]._BufferName + "|";
@@ -128,7 +134,7 @@ namespace Mirle.ASRS
                                         strMsg += string.Join(",", strValues) + "|";
                                         strMsg += "Write MPLC Success!";
                                         funWriteSysTraceLog(strMsg);
-                                        
+
                                         strMsg = bufferData[intBufferIndex]._BufferName + "|";
                                         strMsg += bCRData[intIndex]._BCRSts + "|";
                                         strMsg += bCRData[intIndex]._ResultID + "|";
@@ -160,19 +166,19 @@ namespace Mirle.ASRS
                                     strMsg += commandInfo.StationNo + "|";
                                     strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
                                     strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                    strMsg += "Update Command Fail!";
+                                    strMsg += "StroreIn Command Update Fail!";
                                     funWriteSysTraceLog(strMsg);
                                     #endregion Update Command Fail
                                 }
                             }
                             else
                             {
-                                string[] strValues = new string[] { "1" };
+                                string[] strValues = new string[] { "2" };
                                 if(InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
                                 {
                                     #region Can't Find Command & Write MPLC Success & BCR Clear
                                     strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                    strMsg += "Can't Find Command!";
+                                    strMsg += "StroreIn Command Can't Find!";
                                     funWriteSysTraceLog(strMsg);
 
                                     strMsg = bufferData[intBufferIndex]._BufferName + "|";
@@ -224,17 +230,18 @@ namespace Mirle.ASRS
                 {
                     int intBufferIndex = stnDef.BufferIndex;
                     if(!string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID) &&
-                        bufferData[intBufferIndex]._Mode == Buffer.StnMode.StoreIn &&
+                        (bufferData[intBufferIndex]._Mode == Buffer.StnMode.StoreOut || bufferData[intBufferIndex]._Mode == Buffer.StnMode.Picking) &&
                         !bufferData[intBufferIndex]._ReturnRequest &&
                         bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On &&
                         bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On)
                     {
-                        string strCommandID = bufferData[intBufferIndex]._CommandID.PadLeft(5,'0');
-                        strSQL = "SELECT TOP 1 * FROM CMD_MST";
-                        strSQL += " WHERE Cmd_Sts<'3'";
-                        strSQL += " AND Cmd_Sno='" + strCommandID + "'";
-                        strSQL += " AND CMD_MODE IN ('1', '3')";
-                        strSQL += " AND TRACE='" + Trace.StoreIn_GetStoreInCommandAndWritePLC + "'";
+                        string strCommandID = bufferData[intBufferIndex]._CommandID.PadLeft(5, '0');
+                        strSQL = "SELECT * FROM CMD_MST";
+                        strSQL += " WHERE Cmd_Sts='1'";
+                        strSQL += " AND ((CMD_MODE='1'";
+                        strSQL += " AND TRACE='0')";
+                        strSQL += " OR (CMD_MODE='3'";
+                        strSQL += " AND TRACE='" + Trace.StoreOut_CraneCommandFinish + "'))";
                         strSQL += " ORDER BY LOC DESC";
                         if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
                         {
@@ -249,56 +256,63 @@ namespace Mirle.ASRS
                             if(!funCheckCraneExistsCommand("1", CraneMode.StoreIn, stnDef.StationIndex.ToString()))
                             {
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                                if(funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreIn_CrateCraneCommand))
+                                if(funCrateCraneCommand("1", commandInfo.CommandID, "1", 
+                                    stnDef.StationIndex.ToString(), commandInfo.Loaction, commandInfo.Priority))
                                 {
-                                    if(funCrateCraneCommand("1", commandInfo.CommandID, "1",
-                                        stnDef.StationIndex.ToString(), commandInfo.Loaction,  commandInfo.Priority))
+                                    if(funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreIn_CrateCraneCommand))
                                     {
                                         #region Update Command & Create StoreIn Crane Command Success
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = strCommandID + "|";
+                                        strMsg += commandInfo.CommandMode + "|";
+                                        strMsg += commandInfo.Loaction + "|";
+                                        strMsg += commandInfo.StationNo + "|";
+                                        strMsg += "StoreIn Crane Command Create Success!";
+                                        funWriteSysTraceLog(strMsg);
+
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
                                         strMsg += CommandState.Start + "|";
-                                        strMsg += Trace.StoreIn_GetStoreInCommandAndWritePLC + "->" + Trace.StoreIn_CrateCraneCommand + "|";
-                                        strMsg += "Update Command Success!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        strMsg = strCommandID + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += "Create StoreIn Crane Command Success!";
+                                        if(commandInfo.CommandMode.ToString() == CMDMode.Picking)
+                                            strMsg += Trace.StoreOut_CraneCommandFinish + "->" + Trace.StoreIn_CrateCraneCommand + "|";
+                                        else
+                                            strMsg += Trace.StoreIn_GetStoreInCommandAndWritePLC + "->" + Trace.StoreIn_CrateCraneCommand + "|";
+                                        strMsg += "StoreIn Command Update Success!";
                                         funWriteSysTraceLog(strMsg);
                                         #endregion Update Command & Create StoreIn Crane Command Success
+
                                     }
                                     else
                                     {
-                                        #region Create StoreIn Crane Command Fail
+                                        #region Update Command Fail
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                                        strMsg = strCommandID + "|";
+                                        strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
-                                        strMsg += "Create StoreIn Crane Command Fail!";
+                                        strMsg += CommandState.Start + "|";
+                                        if(commandInfo.CommandMode.ToString() == CMDMode.Picking)
+                                            strMsg += Trace.StoreOut_CraneCommandFinish + "->" + Trace.StoreIn_CrateCraneCommand + "|";
+                                        else
+                                            strMsg += Trace.StoreIn_GetStoreInCommandAndWritePLC + "->" + Trace.StoreIn_CrateCraneCommand + "|";
+                                        strMsg += "StoreIn Command Update Fail!";
                                         funWriteSysTraceLog(strMsg);
-                                        #endregion Create StoreIn Crane Command Fail
+                                        #endregion Update Command Fail
                                     }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Create StoreIn Crane Command Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                                    strMsg = commandInfo.CommandID + "|";
+                                    strMsg = strCommandID + "|";
                                     strMsg += commandInfo.CommandMode + "|";
                                     strMsg += commandInfo.Loaction + "|";
                                     strMsg += commandInfo.StationNo + "|";
-                                    strMsg += CommandState.Start + "|";
-                                    strMsg += Trace.StoreIn_GetStoreInCommandAndWritePLC + "->" + Trace.StoreIn_CrateCraneCommand + "|";
-                                    strMsg += "Update Command Fail!";
+                                    strMsg += "StoreIn Crane Command Create Fail!";
                                     funWriteSysTraceLog(strMsg);
-                                    #endregion Update Command Fail
+                                    #endregion Create StoreIn Crane Command Fail
                                 }
                             }
                         }
@@ -330,169 +344,156 @@ namespace Mirle.ASRS
             DataTable dtCmdSno = new DataTable();
             try
             {
-                foreach(StationInfo stnDef in lstStoreIn)
+                strSQL = "SELECT * FROM CMD_MST";
+                strSQL += " WHERE Cmd_Sts<'3'";
+                strSQL += " AND CMD_MODE IN ('1', '3')";
+                strSQL += " AND TRACE='" + Trace.StoreIn_CrateCraneCommand + "'";
+                strSQL += " ORDER BY LOC DESC";
+                if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
                 {
-                    int intBufferIndex = stnDef.BufferIndex;
-                    if(!string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID) &&
-                        bufferData[intBufferIndex]._Mode == Buffer.StnMode.StoreIn &&
-                        !bufferData[intBufferIndex]._ReturnRequest &&
-                        bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.Off &&
-                        bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On)
+                    CommandInfo commandInfo = new CommandInfo();
+                    commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
+                    commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
+                    commandInfo.IO_Type = dtCmdSno.Rows[0]["Io_Type"].ToString();
+                    commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
+                    commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
+                    commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
+
+                    strSQL = "SELECT * FROM EQUCMD";
+                    strSQL += " WHERE CMDSNO='" + commandInfo.CommandID + "'";
+                    strSQL += " AND RENEWFLAG<>'F'";
+                    strSQL += " AND CMDMODE='1'";
+                    strSQL += " AND CMDSTS='9'";
+                    if(InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
                     {
-                        string strCommandID = bufferData[intBufferIndex]._CommandID;
-                        strSQL = "SELECT * FROM CMD_MST";
-                        strSQL += " WHERE Cmd_Sts<'3'";
-                        strSQL += " AND Cmd_Sno='" + strCommandID + "'";
-                        strSQL += " AND CMD_MODE IN ('1', '3')";
-                        strSQL += " AND TRACE='" + Trace.StoreIn_CrateCraneCommand + "'";
-                        strSQL += " ORDER BY LOC DESC";
-                        if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                        string strCmdSts = dtEquCmd.Rows[0]["CmdSts"].ToString();
+                        string strCompleteCode = dtEquCmd.Rows[0]["CompleteCode"].ToString();
+
+                        if(strCmdSts == CommandState.Completed && strCompleteCode.Substring(0, 1) == "W")
                         {
-                            CommandInfo commandInfo = new CommandInfo();
-                            commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
-                            commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
-                            commandInfo.IO_Type = dtCmdSno.Rows[0]["Io_Type"].ToString();
-                            commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
-                            commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
-                            commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
-
-                            strSQL = "SELECT * FROM EQUCMD";
-                            strSQL += " WHERE CMDSNO='" + strCommandID + "'";
-                            strSQL += " AND RENEWFLAG<>'F'";
-                            strSQL += " AND CMDMODE='1'";
-                            strSQL += " AND CMDSTS='9'";
-                            if(InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
+                            strSQL = "UPDATE EQUCMD SET CMDSTS='0' WHERE CMDSNO='" + commandInfo.CommandID + "'";
+                            if(InitSys._DB.funExecSql(strSQL, ref strEM))
                             {
-                                string strCmdSts = dtEquCmd.Rows[0]["CmdSts"].ToString();
-                                string strCompleteCode = dtEquCmd.Rows[0]["CompleteCode"].ToString();
+                                #region Retry StoreIn Crane Command Success
+                                strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CommandMode + "|";
+                                strMsg += commandInfo.Loaction + "|";
+                                strMsg += commandInfo.StationNo + "|";
+                                strMsg += CommandState.Start + "|";
+                                strMsg += Trace.StoreIn_CrateCraneCommand + "|";
+                                strMsg += strCompleteCode + "|";
+                                strMsg += "Retry StoreIn Crane Command Success!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion Retry StoreIn Crane Command Success
+                            }
+                            else
+                            {
+                                #region Retry StoreIn Crane Command Fail
+                                strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CommandMode + "|";
+                                strMsg += commandInfo.Loaction + "|";
+                                strMsg += commandInfo.StationNo + "|";
+                                strMsg += CommandState.Start + "|";
+                                strMsg += Trace.StoreIn_CrateCraneCommand + "|";
+                                strMsg += strCompleteCode + "|";
+                                strMsg += "Retry StoreIn Crane Command Fail!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion Retry StoreIn Crane Command Fail
+                            }
+                        }
+                        else if(strCmdSts == CommandState.Completed && strCompleteCode == "EF")
+                        {
+                            if(funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.StoreIn_CrateCraneCommand))
+                            {
+                                #region StoreIn Crane Command Finish & Update Command Success
+                                strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CommandMode + "|";
+                                strMsg += commandInfo.Loaction + "|";
+                                strMsg += commandInfo.StationNo + "|";
+                                strMsg += strCompleteCode + "|";
+                                strMsg += "Crane Command StoreIn Finish!";
+                                funWriteSysTraceLog(strMsg);
 
-                                if(strCmdSts == CommandState.Completed && strCompleteCode.Substring(0, 1) == "W")
+                                strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CommandMode + "|";
+                                strMsg += commandInfo.Loaction + "|";
+                                strMsg += commandInfo.StationNo + "|";
+                                strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
+                                strMsg += Trace.StoreIn_CrateCraneCommand + "|";
+                                strMsg += "StoreIn Command Update Success!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion StoreIn Crane Command Finish & Update Command Success
+                            }
+                            else
+                            {
+                                #region Update Command Fail
+                                strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CommandMode + "|";
+                                strMsg += commandInfo.Loaction + "|";
+                                strMsg += commandInfo.StationNo + "|";
+                                strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
+                                strMsg += Trace.StoreIn_CrateCraneCommand + "|";
+                                strMsg += strCompleteCode + "|";
+                                strMsg += "StoreIn Command Update Fail!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion Update Command Fail
+                            }
+                        }
+                        else if(strCmdSts == CommandState.Completed && strCompleteCode == "92")
+                        {
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if(funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.StoreIn_CraneCommandFinish))
+                            {
+                                if(funDeleteEquCmd("1", commandInfo.CommandID, ((int)Buffer.StnMode.StoreIn).ToString()))
                                 {
-                                    strSQL = "UPDATE EQUCMD SET CMDSTS='0' WHERE CMDSNO='" + strCommandID + "'";
-                                    if(InitSys._DB.funExecSql(strSQL, ref strEM))
-                                    {
-                                        #region Retry StoreIn Crane Command Success
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += CommandState.Start + "|";
-                                        strMsg += Trace.StoreIn_CrateCraneCommand + "|";
-                                        strMsg += strCompleteCode + "|";
-                                        strMsg += "Retry StoreIn Crane Command Success!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Retry StoreIn Crane Command Success
-                                    }
-                                    else
-                                    {
-                                        #region Retry StoreIn Crane Command Fail
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += CommandState.Start + "|";
-                                        strMsg += Trace.StoreIn_CrateCraneCommand + "|";
-                                        strMsg += strCompleteCode + "|";
-                                        strMsg += "Retry StoreIn Crane Command Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Retry StoreIn Crane Command Fail
-                                    }
-                                }
-                                else if(strCmdSts == CommandState.Completed && strCompleteCode == "EF")
-                                {
-                                    if(funUpdateCommand(strCommandID, CommandState.CompletedWaitPost, Trace.StoreIn_CrateCraneCommand))
-                                    {
-                                        #region StoreIn Crane Command Finish & Update Command Success
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += strCompleteCode + "|";
-                                        strMsg += "StoreIn Crane Command Finish!";
-                                        funWriteSysTraceLog(strMsg);
+                                    #region StoreIn Crane Command Finish & Update Command Success
+                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                    strMsg = commandInfo.CommandID + "|";
+                                    strMsg += commandInfo.CommandMode + "|";
+                                    strMsg += commandInfo.Loaction + "|";
+                                    strMsg += commandInfo.StationNo + "|";
+                                    strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
+                                    strMsg += Trace.StoreIn_CrateCraneCommand + "->" + Trace.StoreIn_CraneCommandFinish + "|";
+                                    strMsg += "StoreIn Command Update Success!";
+                                    funWriteSysTraceLog(strMsg);
 
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
-                                        strMsg += Trace.StoreIn_CrateCraneCommand + "|";
-                                        strMsg += "Update Command Success!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion StoreIn Crane Command Finish & Update Command Success
-                                    }
-                                    else
-                                    {
-                                        #region Update Command Fail
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
-                                        strMsg += Trace.StoreIn_CrateCraneCommand + "|";
-                                        strMsg += strCompleteCode + "|";
-                                        strMsg += "Update Command Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Update Command Fail
-                                    }
+                                    strMsg = commandInfo.CommandID + "|";
+                                    strMsg += commandInfo.CommandMode + "|";
+                                    strMsg += commandInfo.Loaction + "|";
+                                    strMsg += commandInfo.StationNo + "|";
+                                    strMsg += strCompleteCode + "|";
+                                    strMsg += "StoreIn Crane Command Delete Success!";
+                                    funWriteSysTraceLog(strMsg);
+                                    #endregion StoreIn Crane Command Finish & Update Command Success
                                 }
-                                else if(strCmdSts == CommandState.Completed && strCompleteCode == "92")
+                                else
                                 {
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                                    if(funUpdateCommand(strCommandID, CommandState.CompletedWaitPost, Trace.StoreIn_CraneCommandFinish))
-                                    {
-                                        if(funDeleteEquCmd("1", strCommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
-                                        {
-                                            #region StoreIn Crane Command Finish & Update Command Success
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
-                                            strMsg += Trace.StoreIn_CrateCraneCommand + "->" + Trace.StoreIn_CraneCommandFinish + "|";
-                                            strMsg += "Update Command Success!";
-                                            funWriteSysTraceLog(strMsg);
-
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += strCompleteCode + "|";
-                                            strMsg += "Delete StoreIn Crane Command Success!";
-                                            funWriteSysTraceLog(strMsg);
-                                            #endregion StoreIn Crane Command Finish & Update Command Success
-                                        }
-                                        else
-                                        {
-                                            #region Delete StoreIn Crane Command Fail
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += strCompleteCode + "|";
-                                            strMsg += "Delete StoreIn Crane Command Fail!";
-                                            funWriteSysTraceLog(strMsg);
-                                            #endregion Delete StoreIn Crane Command Fail
-                                        }
-                                    }
-                                    else
-                                    {
-                                        #region Update Command Fail
-                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
-                                        strMsg += Trace.StoreIn_CrateCraneCommand + "->" + Trace.StoreIn_CraneCommandFinish + "|";
-                                        strMsg += strCompleteCode + "|";
-                                        strMsg += "Update Command Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Update Command Fail
-                                    }
+                                    #region Delete StoreIn Crane Command Fail
+                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                    strMsg = commandInfo.CommandID + "|";
+                                    strMsg += commandInfo.CommandMode + "|";
+                                    strMsg += commandInfo.Loaction + "|";
+                                    strMsg += commandInfo.StationNo + "|";
+                                    strMsg += strCompleteCode + "|";
+                                    strMsg += "StoreIn Crane Command Delete Fail!";
+                                    funWriteSysTraceLog(strMsg);
+                                    #endregion Delete StoreIn Crane Command Fail
                                 }
+                            }
+                            else
+                            {
+                                #region Update Command Fail
+                                InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CommandMode + "|";
+                                strMsg += commandInfo.Loaction + "|";
+                                strMsg += commandInfo.StationNo + "|";
+                                strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
+                                strMsg += Trace.StoreIn_CrateCraneCommand + "->" + Trace.StoreIn_CraneCommandFinish + "|";
+                                strMsg += strCompleteCode + "|";
+                                strMsg += "StoreIn Command Update Fail!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion Update Command Fail
                             }
                         }
                     }

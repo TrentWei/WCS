@@ -160,12 +160,12 @@ namespace Mirle.ASRS
                 var result = sPLC.Write(tag._ItemName, value);
                 if(result is ErrorCode && (ErrorCode)result != ErrorCode.NoError)
                 {
-                    InitSys.funWriteLog("SPLC_Trace", "WriteDeviceBlock Success!|" + tag._ItemName + "|" + tag._ItemValue);
+                    InitSys.funWriteLog("SPLC_Trace", tag._ItemName + "|" + tag._ItemValue + "|WriteDeviceBlock Success!");
                     return bolIsConnection = true;
                 }
                 else
                 {
-                    InitSys.funWriteLog("SPLC_Trace", "WriteDeviceBlock Fail!|" + tag._ItemName + "|" + tag._ItemValue);
+                    InitSys.funWriteLog("SPLC_Trace", tag._ItemName + "|" + tag._ItemValue + "|WriteDeviceBlock Fail!");
                     return bolIsConnection = false;
                 }
             }

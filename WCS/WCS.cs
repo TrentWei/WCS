@@ -82,7 +82,7 @@ namespace Mirle.ASRS
         #region Reconnect
         private void btnReconnectDB_Click(object sender, EventArgs e)
         {
-            btnReconnectMPLC.Enabled = false;
+            btnReconnectDB.Enabled = false;
             thdReconnection = new Thread(funReconnectionDB);
             thdReconnection.IsBackground = true;
             thdReconnection.Start();
@@ -90,7 +90,7 @@ namespace Mirle.ASRS
 
         private void btnReconnectBCR_Click(object sender, EventArgs e)
         {
-            btnReconnectMPLC.Enabled = false;
+            btnReconnectBCR.Enabled = false;
             thdReconnection = new Thread(funReconnectionBCR);
             thdReconnection.IsBackground = true;
             thdReconnection.Start();
@@ -376,7 +376,7 @@ namespace Mirle.ASRS
             {
                 lstStoreOut.Clear();
                 lstStoreOut = new List<StationInfo>();
-                string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\StroreOut.txt");
+                string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\StoreOut.txt");
                 foreach(string strValues in strarStroreInines)
                 {
                     if(strValues.Contains("#"))
@@ -587,7 +587,7 @@ namespace Mirle.ASRS
             {
                 if(lsbUpdate.InvokeRequired)
                 {
-                    ShowMessage_EventHandler ShowMessage = new ShowMessage_EventHandler(funWriteSysTraceLog);
+                    ShowMessage_EventHandler ShowMessage = new ShowMessage_EventHandler(funWriteUpdateLog);
                     lsbUpdate.Invoke(ShowMessage, message);
                 }
                 else
@@ -596,7 +596,7 @@ namespace Mirle.ASRS
                         lsbUpdate.Items.RemoveAt(0);
 
                     lsbUpdate.Items.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + message);
-                    lsbUpdate.SelectedIndex = lsbSysTrace.Items.Count - 1;
+                    lsbUpdate.SelectedIndex = lsbUpdate.Items.Count - 1;
 
                     InitSys.funWriteLog("Update", message);
                 }

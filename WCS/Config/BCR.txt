@@ -1,4 +1,4 @@
 ﻿# BCRName, Port, ReadTimeOut, BufferName, BufferIndex
 A12,COM1,3000,A12,11
 A02,COM2,3000,A02,1
-B02,COM4,3000,B02,14
+B01,COM4,3000,B01,13

@@ -107,7 +107,7 @@ namespace Mirle.ASRS
                 }
                 else
                 {
-                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", "ReadDeviceBlock Fail!|" + address + "|" + length);
+                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", address + "|" + length + "|ReadDeviceBlock Fail!");
                     return bolIsConnection = false;
                 }
             }
@@ -143,12 +143,12 @@ namespace Mirle.ASRS
 
                 if(aeiPLC.WriteDeviceBlock(deviceBlockAddress, setData.Length, ref intData[0]) == 0)
                 {
-                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", "WriteDeviceBlock Success!|" + deviceBlockAddress + "|" + strData);
+                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", deviceBlockAddress + "|" + strData + "|WriteDeviceBlock Success!");
                     return bolIsConnection = true;
                 }
                 else
                 {
-                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", "WriteDeviceBlock Fail!|" + deviceBlockAddress + "|" + strData);
+                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", deviceBlockAddress + "|" + strData + "|WriteDeviceBlock Fail!");
                     return bolIsConnection = false;
                 }
             }
@@ -168,12 +168,12 @@ namespace Mirle.ASRS
 
                 if(aeiPLC.SetDevice(strAdrress, setBit ? 1 : 0) == 0)
                 {
-                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", "SetDevice Success!|" + deviceAddress + "|" + (setBit ? 1 : 0));
+                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", deviceAddress + "|" + (setBit ? 1 : 0) + "|SetDevice Success!");
                     return bolIsConnection = true;
                 }
                 else
                 {
-                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", "SetDevice Fail!|" + deviceAddress + "|" + (setBit ? 1 : 0));
+                    InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", deviceAddress + "|" + (setBit ? 1 : 0) + "|SetDevice Fail!");
                     return bolIsConnection = false;
                 }
             }

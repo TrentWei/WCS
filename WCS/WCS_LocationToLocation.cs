@@ -126,7 +126,7 @@ namespace Mirle.ASRS
             {
                 strSQL = "SELECT * FROM CMD_MST";
                 strSQL += " WHERE Cmd_Sts='1'";
-                strSQL += " AND CMDMODE='5'";
+                strSQL += " AND Cmd_Mode='5'";
                 strSQL += " AND TRACE='" + Trace.LoactionToLoaction_CrateCraneCommand + "'";
                 strSQL += " ORDER BY LOC DESC";
                 if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
