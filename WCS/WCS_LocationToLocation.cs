@@ -24,7 +24,7 @@ namespace Mirle.ASRS
 
             try
             {
-                if(funCheckCraneExistsCommand("1", CraneMode.LoactionToLoaction, "0"))
+                if(funCheckCraneExistsCommand(InitSys._CraneNo, CraneMode.LoactionToLoaction, "0"))
                 {
                     strSQL = "SELECT * FROM CMD_MST";
                     strSQL += " WHERE Cmd_Mode='5'";
@@ -51,7 +51,7 @@ namespace Mirle.ASRS
                         InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                         if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.LoactionToLoaction_CrateCraneCommand))
                         {
-                            if(funCrateCraneCommand("1", commandInfo.CommandID, "5",
+                            if(funCrateCraneCommand(InitSys._CraneNo, commandInfo.CommandID, CraneMode.LoactionToLoaction,
                                 commandInfo.Loaction, commandInfo.NewLoaction, commandInfo.Priority))
                             {
                                 #region Update Command & Create Transfer Crane Command Success
@@ -222,7 +222,7 @@ namespace Mirle.ASRS
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                                 if(funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.LoactionToLoaction_CraneCommandFinish))
                                 {
-                                    if(funDeleteEquCmd("1", commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
+                                    if(funDeleteEquCmd(InitSys._CraneNo, commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                     {
                                         #region Transfer Crane Command Finish & Update Command Success
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);

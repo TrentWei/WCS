@@ -26,11 +26,13 @@ namespace Mirle.ASRS
         private Thread thdReconnection = null;
         private System.Windows.Forms.Timer timRefresh = new System.Windows.Forms.Timer();
         private System.Timers.Timer timProgram = new System.Timers.Timer();
+        private System.Timers.Timer timSPLCProgram = new System.Timers.Timer();
         private System.Timers.Timer timUpdate = new System.Timers.Timer();
         private Dictionary<int, Control> dicBufferMap = new Dictionary<int, Control>();
         private List<StationInfo> lstStoreIn = new List<StationInfo>();
         private List<StationInfo> lstStoreOut = new List<StationInfo>();
-        private DB2 Db2 = new DB2();
+        private SMPLCData_1 sMPLCData_1 = new SMPLCData_1();
+        private SMPLCData_2 sMPLCData_2 = new SMPLCData_2();
 
         private delegate void ShowMessage_EventHandler(string Message);
         private delegate void ButtonEnable_EventHandler(Button button, bool enable);
@@ -121,6 +123,8 @@ namespace Mirle.ASRS
             try
             {
                 lblDataTime.Text = System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:fff");
+
+                InitSys._MPLC.funWriteMPLC("D11", "1");
 
                 funShowAutoPause(bolAuto);
                 funShowConnect(InitSys._MPLC._IsConnection, lblMPLCSts);
@@ -231,22 +235,6 @@ namespace Mirle.ASRS
                         funLocationToLocation();
                     }
                 }
-
-                if(InitSys._SPLC._IsConnection)
-                {
-                    if(InitSys._SPLC.funReadSPLC(Db2))
-                        //{
-
-                        //}
-                        //SPLC.Tag tag = new SPLC.Tag("DB6.DBW50", "1");
-                        //InitSys._SPLC.funWriteSPLC(tag);
-                        //tag = new SPLC.Tag("DB6.DBW52", "2");
-                        //InitSys._SPLC.funWriteSPLC(tag);
-                        if(bolAuto)
-                        {
-
-                        }
-                }
             }
             catch(Exception ex)
             {
@@ -256,6 +244,46 @@ namespace Mirle.ASRS
             finally
             {
                 timProgram.Start();
+            }
+        }
+
+        private void timSPLCProgram_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            timSPLCProgram.Stop();
+
+            try
+            {
+                if(InitSys._SPLC._IsConnection)
+                {
+                    if(InitSys._SPLC.funReadSPLC(sMPLCData_1))
+                    {
+                        int[] intBCRArray1 = new int[]
+                        {
+                            sMPLCData_1.BCR1_1, sMPLCData_1.BCR1_2, sMPLCData_1.BCR1_3, sMPLCData_1.BCR1_4, sMPLCData_1.BCR1_5
+                        };
+                        int[] intBCRArray2 = new int[]
+                        {
+                            sMPLCData_1.BCR2_1, sMPLCData_1.BCR2_2, sMPLCData_1.BCR2_3, sMPLCData_1.BCR2_4, sMPLCData_1.BCR2_5
+                        };
+                        string strBCR1 = funIntArrayConvertASCII(intBCRArray1);
+                        string strBCR2 = funIntArrayConvertASCII(intBCRArray2);
+
+                        if(InitSys._SPLC.funReadSPLC(sMPLCData_2, 50))
+                        {
+                            funAGVNeedStationRequest(strBCR2);
+                            funStoreInRequestFromAGV(strBCR1);
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+            finally
+            {
+                timSPLCProgram.Start();
             }
         }
 
@@ -459,6 +487,10 @@ namespace Mirle.ASRS
             timProgram.Elapsed += new ElapsedEventHandler(timProgram_Elapsed);
             timProgram.Interval = 200;
 
+            timSPLCProgram.Stop();
+            timSPLCProgram.Elapsed += new ElapsedEventHandler(timSPLCProgram_Elapsed);
+            timSPLCProgram.Interval = 200;
+
             timUpdate.Stop();
             timUpdate.Elapsed += new ElapsedEventHandler(timUpdate_Elapsed);
             timUpdate.Interval = 2000;
@@ -483,6 +515,7 @@ namespace Mirle.ASRS
 
             timRefresh.Start();
             timProgram.Start();
+            timSPLCProgram.Start();
             timUpdate.Start();
         }
         #endregion Inital Function
@@ -661,43 +694,36 @@ namespace Mirle.ASRS
             }
         }
 
-        private string funIntArray2String_ASCII(int[] intInput)
+        private string funIntArrayConvertASCII(int[] intArray)
         {
-            string strRet = string.Empty;
-            string strTemp_0007 = string.Empty;
-            string strTemp_0815 = string.Empty;
+            string strResults = string.Empty;
             try
             {
-                foreach(int intData in intInput)
+                foreach(int intData in intArray)
                 {
-                    strTemp_0007 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(2, 2);
-                    strTemp_0815 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(0, 2);
-                    strRet = strRet +
-                            Convert.ToChar(Convert.ToInt32(strTemp_0007, 16)).ToString() +
-                            Convert.ToChar(Convert.ToInt32(strTemp_0815, 16)).ToString();
+                    string strTemp_0007 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(2, 2);
+                    string strTemp_0815 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(0, 2);
+                    strResults += Convert.ToChar(Convert.ToInt32(strTemp_0007, 16)).ToString();
+                    strResults += Convert.ToChar(Convert.ToInt32(strTemp_0815, 16)).ToString();
                 }
 
                 string strTemp = string.Empty;
-                if(strRet.IndexOf("\r"[0]) >= 0)
+                if(strResults.IndexOf("\r"[0]) >= 0)
                 {
-                    strTemp = strRet.Remove(strRet.IndexOf("\r"[0]));
+                    strTemp = strResults.Remove(strResults.IndexOf("\r"[0]));
                     strTemp = strTemp.Trim("\0"[0]).Trim();
                 }
                 else
                 {
-                    ;
-                    if(strRet.IndexOf("\0"[0]) >= 0)
+                    if(strResults.IndexOf("\0"[0]) >= 0)
                     {
-                        strTemp = strRet.Remove(strRet.IndexOf("\0"[0]));
+                        strTemp = strResults.Remove(strResults.IndexOf("\0"[0]));
                         strTemp = strTemp.Trim();
                     }
                     else
-                    {
-                        strTemp = strRet.Trim();
-                    }
+                        strTemp = strResults.Trim();
                 }
                 return strTemp;
-
             }
             catch(Exception ex)
             {

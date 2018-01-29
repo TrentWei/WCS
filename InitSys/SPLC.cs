@@ -88,12 +88,12 @@ namespace Mirle.ASRS
                 ErrorCode error = sPLC.Open();
                 if(error == ErrorCode.NoError)
                 {
-                    InitSys.funWriteLog("SPLC_Trace", "Open Success!");
+                    InitSys.funWriteLog("SPLC_Trace", strIPAddress + "|Open Success!");
                     return bolIsConnection = true;
                 }
                 else
                 {
-                    InitSys.funWriteLog("SPLC_Trace", "Open Fail!|" + errMsg);
+                    InitSys.funWriteLog("SPLC_Trace", strIPAddress + "|Open Fail!" + errMsg);
                     return bolIsConnection = false;
                 }
             }
@@ -116,7 +116,7 @@ namespace Mirle.ASRS
                     sPLC.Dispose();
                     sPLC = null;
                     bolIsConnection = false;
-                    InitSys.funWriteLog("SPLC_Trace", "Close!");
+                    InitSys.funWriteLog("SPLC_Trace", strIPAddress + "|Close!");
                 }
             }
             catch(Exception ex)
@@ -134,6 +134,21 @@ namespace Mirle.ASRS
             try
             {
                 sPLC.ReadClass(sourceClass, intDb);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                return bolIsConnection = false;
+            }
+        }
+
+        public bool funReadSPLC(object sourceClass, int startAddress)
+        {
+            try
+            {
+                sPLC.ReadClass(sourceClass, intDb, startAddress);
                 return true;
             }
             catch(Exception ex)

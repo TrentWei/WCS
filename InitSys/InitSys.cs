@@ -14,7 +14,10 @@ namespace Mirle.ASRS
         #region 變數
         private static string strAPName = string.Empty;
         private static string strStartAddress = string.Empty;
+        private static string strAGV_StoreIn_SPLCAddress = string.Empty;
+        private static string strAGV_StoreOut_SPLCAddress = string.Empty;
         private static int intTotalAddress = 0;
+        private static int intCraneNo = 1;
         private static DB dBServer = new DB();
         private static MPLC mPLC = new MPLC();
         private static SPLC sPLC = new SPLC();
@@ -32,9 +35,24 @@ namespace Mirle.ASRS
             get { return strStartAddress; }
         }
 
+        public static string _AGV_StoreIn_SPLCAddress
+        {
+            get { return strAGV_StoreIn_SPLCAddress; }
+        }
+
+        public static string _AGV_StoreOut_SPLCAddress
+        {
+            get { return strAGV_StoreOut_SPLCAddress; }
+        }
+
         public static int _TotalAddress
         {
             get { return intTotalAddress; }
+        }
+
+        public static int _CraneNo
+        {
+            get { return intCraneNo; }
         }
 
         public static DB _DB
@@ -60,7 +78,10 @@ namespace Mirle.ASRS
             {
                 strAPName = ConfigurationManager.AppSettings["APName"];
                 strStartAddress = ConfigurationManager.AppSettings["StartAddress"];
+                strAGV_StoreIn_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreIn_SPLCAddress"];
+                strAGV_StoreOut_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreOut_SPLCAddress"];
                 intTotalAddress = int.Parse(ConfigurationManager.AppSettings["TotalAddress"]);
+                intCraneNo = int.Parse(ConfigurationManager.AppSettings["CraneNo"]);
                 archive = new Archive(Application.StartupPath + @"\LOG\", 10000, Application.StartupPath + @"\LOG\", 7, 90);
                 archive.funStart();
             }

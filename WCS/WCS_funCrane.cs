@@ -9,7 +9,7 @@ namespace Mirle.ASRS
 {
     public partial class WCS
     {
-        private bool funCheckCraneExistsCommand(string craneNo, string craneMode, string stnIndex)
+        private bool funCheckCraneExistsCommand(int craneNo, string craneMode, string stnIndex)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -62,7 +62,7 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funCrateCraneCommand(string craneNo, string commandID, string craneMode, string source, string destination, string priority)
+        private bool funCrateCraneCommand(int craneNo, string commandID, string craneMode, string source, string destination, string priority)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -98,7 +98,7 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funDeleteEquCmd(string craneNo, string commandID, string craneMode)
+        private bool funDeleteEquCmd(int craneNo, string commandID, string craneMode)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;

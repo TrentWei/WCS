@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -39,6 +40,48 @@ namespace Mirle.ASRS
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
                 return false;
             }
+        }
+
+        private string funGetEmptyLocation()
+        {
+            string strSQL = string.Empty;
+            string strEM = string.Empty;
+            DataTable dtLocation = new DataTable();
+
+            try
+            {
+                strSQL = "SELECT * FROM LOC_MST";
+                strSQL += " WHERE LOCSTS='N'";
+                strSQL += " AND Loc_Size='L'";
+                strSQL += " AND Loc_Type='P'";
+                strSQL += " AND Crane_No='" + InitSys._CraneNo + "'";
+                strSQL += " ORDER BY LVL_Z, BAY_Y, ROW_X";
+
+                if(InitSys._DB.funGetDT(strSQL, ref dtLocation, ref strEM))
+                    return dtLocation.Rows[0]["LOC"].ToString();
+                else
+                    return string.Empty;
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                return string.Empty;
+            }
+            finally
+            {
+                if(dtLocation != null)
+                {
+                    dtLocation.Clear();
+                    dtLocation.Dispose();
+                    dtLocation = null;
+                }
+            }
+        }
+
+        private bool funLockStoreInLocation(string strLoaction)
+        {
+            throw new NotImplementedException();
         }
     }
 }

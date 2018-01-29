@@ -49,16 +49,19 @@
     <Compile Include="WCS_Define.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WCS_funAGV.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="WCS_funCommand.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="WCS_funCrane.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WCS_funItemMaster.cs">
+    <Compile Include="WCS_funItem.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WCS_LocationMaster.cs">
+    <Compile Include="WCS_funLocation.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="WCS_LocationToLocation.cs">

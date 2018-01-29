@@ -112,7 +112,7 @@ namespace Mirle.ASRS
             }
         }
 
-        private class DB2
+        private class SMPLCData_1
         {
             public ushort BCR1_1 { get; set; }
             public ushort BCR1_2 { get; set; }
@@ -124,8 +124,12 @@ namespace Mirle.ASRS
             public ushort BCR2_3 { get; set; }
             public ushort BCR2_4 { get; set; }
             public ushort BCR2_5 { get; set; }
-            public ushort StroreInToStation { get; set; }
-            public ushort StroreOutToStation { get; set; }
+        }
+
+        private class SMPLCData_2
+        {
+            public ushort StoreIn { get; set; }
+            public ushort StoreOut { get; set; }
         }
 
         private struct Cmd_Mst

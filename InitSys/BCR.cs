@@ -181,7 +181,7 @@ namespace Mirle.ASRS
                 serialPort = new SerialPort(strPort, 115200, Parity.None, 8, StopBits.One);
                 serialPort.DataReceived += new SerialDataReceivedEventHandler(serialPort_DataReceived);
                 serialPort.Open();
-                InitSys.funWriteLog("BCR_Trace", strPort + "|Open!");
+                InitSys.funWriteLog("BCR_Trace", strBCRName + "|" + strPort + "|Open!");
                 return true;
             }
             catch(Exception ex)
@@ -202,7 +202,7 @@ namespace Mirle.ASRS
                     serialPort.Close();
                     serialPort.Dispose();
                     serialPort = null;
-                    InitSys.funWriteLog("BCR_Trace", strBCRName + "|Close!");
+                    InitSys.funWriteLog("BCR_Trace", strBCRName + "|" + strPort + "|Close!");
                 }
             }
             catch(Exception ex)

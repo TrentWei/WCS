@@ -430,8 +430,9 @@
             // lsbSysTrace
             // 
             this.lsbSysTrace.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lsbSysTrace.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lsbSysTrace.FormattingEnabled = true;
-            this.lsbSysTrace.ItemHeight = 12;
+            this.lsbSysTrace.ItemHeight = 16;
             this.lsbSysTrace.Location = new System.Drawing.Point(3, 3);
             this.lsbSysTrace.Name = "lsbSysTrace";
             this.lsbSysTrace.Size = new System.Drawing.Size(881, 525);
@@ -450,8 +451,9 @@
             // lsbUpdate
             // 
             this.lsbUpdate.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lsbUpdate.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lsbUpdate.FormattingEnabled = true;
-            this.lsbUpdate.ItemHeight = 12;
+            this.lsbUpdate.ItemHeight = 16;
             this.lsbUpdate.Location = new System.Drawing.Point(0, 0);
             this.lsbUpdate.Name = "lsbUpdate";
             this.lsbUpdate.Size = new System.Drawing.Size(887, 531);
