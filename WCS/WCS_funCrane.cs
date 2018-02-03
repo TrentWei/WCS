@@ -9,7 +9,7 @@ namespace Mirle.ASRS
 {
     public partial class WCS
     {
-        private bool funCheckCraneExistsCommand(int craneNo, string craneMode, string stnIndex)
+        private bool funCheckCraneExistsCommand(string craneMode, string stnIndex)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -20,21 +20,18 @@ namespace Mirle.ASRS
                 {
                     case CraneMode.StoreOut:
                         strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
-                        strSQL += " WHERE EQUNO='" + craneNo + "'";
-                        strSQL += " AND CmdSts IN ('0', '1')";
+                        strSQL += " WHERE CmdSts IN ('0', '1')";
                         strSQL += " AND DESTINATION='" + stnIndex + "'";
                         break;
                     case CraneMode.StoreIn:
                         strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
-                        strSQL += " WHERE EQUNO='" + craneNo + "'";
-                        strSQL += " AND CmdSts IN ('0', '1')";
+                        strSQL += " WHERE CmdSts IN ('0', '1')";
                         strSQL += " AND SOURCE='" + stnIndex + "'";
                         break;
                     case CraneMode.StationToStation:
                     case CraneMode.LoactionToLoaction:
                         strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
-                        strSQL += " WHERE EQUNO='" + craneNo + "'";
-                        strSQL += " AND CMDMODE='" + craneMode + "'";
+                        strSQL += " WHERE CMDMODE='" + craneMode + "'";
                         strSQL += " AND CmdSts IN ('0', '1')";
                         break;
                     default:
@@ -62,7 +59,7 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funCrateCraneCommand(int craneNo, string commandID, string craneMode, string source, string destination, string priority)
+        private bool funCrateCraneCommand(string commandID, string craneMode, string source, string destination, string priority)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -80,7 +77,7 @@ namespace Mirle.ASRS
 
                 strSQL = "INSERT INTO EquCmd(CmdSno, EquNo, CmdMode, CmdSts, Source, Destination, LocSize, Priority, RCVDT) Values (";
                 strSQL += "'" + commandID + "', ";
-                strSQL += "'" + craneNo + "', ";
+                strSQL += "'1', ";
                 strSQL += "'" + craneMode + "', ";
                 strSQL += "'0', ";
                 strSQL += "'" + source + "', ";
@@ -98,7 +95,7 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funDeleteEquCmd(int craneNo, string commandID, string craneMode)
+        private bool funDeleteEquCmd(string commandID, string craneMode)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -108,7 +105,6 @@ namespace Mirle.ASRS
                 strSQL = "UPDATE EQUCMD SET RENEWFLAG='F'";
                 strSQL += " WHERE CMDSTS='9'";
                 strSQL += " AND RENEWFLAG='Y'";
-                strSQL += " AND EquNo='" + craneNo + "'";
                 strSQL += " AND CMDSNO='" + commandID + "'";
                 strSQL += " AND CmdMode='" + craneMode + "'";
                 return InitSys._DB.funExecSql(strSQL, ref strEM);

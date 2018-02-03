@@ -23,7 +23,6 @@ namespace Mirle.ASRS
                 strSQL += " TRACE='" + setTrace + "'";
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
                 strSQL += " AND CMD_STS<='1'";
-                strSQL += " AND Equ_No='" + InitSys._CraneNo + "'";
                 return InitSys._DB.funExecSql(strSQL, ref strEM);
             }
             catch(Exception ex)
@@ -47,7 +46,6 @@ namespace Mirle.ASRS
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
                 strSQL += " AND Plt_No='" + palletNo + "'";
                 strSQL += " AND TRACE='" + trace + "'";
-                strSQL += " AND Equ_No='" + InitSys._CraneNo + "'";
                 return InitSys._DB.funExecSql(strSQL, ref strEM);
             }
             catch(Exception ex)
@@ -66,10 +64,9 @@ namespace Mirle.ASRS
             try
             {
 
-                strSQL = "INSERT INTO CMD_MST(Cmd_Sno, Equ_No, Cmd_Mode, Cmd_Sts, Io_Type,";
-                strSQL += " Plt_No, Stn_No, Loc, Prty, Prog_Id, User_Id, TRACE, Crt_Dte) Values (";
+                strSQL = "INSERT INTO CMD_MST(Cmd_Sno, Cmd_Mode, Cmd_Sts, Io_Type, Plt_No,";
+                strSQL += " Stn_No, Loc, Prty, Prog_Id, User_Id, TRACE, Crt_Dte) Values (";
                 strSQL += "'" + commandID + "', ";
-                strSQL += "'" + InitSys._CraneNo + "', ";
                 strSQL += "'1', ";
                 strSQL += "'0', ";
                 strSQL += "'12', ";
@@ -166,7 +163,6 @@ namespace Mirle.ASRS
                 strSQL += " AND Cmd_Sts='0'";
                 strSQL += " AND Cmd_Mode='1'";
                 strSQL += " AND Io_Type='12'";
-                strSQL += " AND Equ_No='" + InitSys._CraneNo + "'";
                 if(InitSys._DB.funGetDT(strSQL, ref dtCommand, ref strEM))
                 {
                     if(dtCommand.Rows.Count == 1)

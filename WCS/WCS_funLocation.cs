@@ -54,7 +54,6 @@ namespace Mirle.ASRS
                 strSQL += " WHERE LOCSTS='N'";
                 strSQL += " AND Loc_Size='L'";
                 strSQL += " AND Loc_Type='P'";
-                strSQL += " AND Crane_No='" + InitSys._CraneNo + "'";
                 strSQL += " ORDER BY LVL_Z, BAY_Y, ROW_X";
 
                 if(InitSys._DB.funGetDT(strSQL, ref dtLocation, ref strEM))

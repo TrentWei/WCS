@@ -32,7 +32,6 @@ namespace Mirle.ASRS
                     strSQL += " AND TRACE='0'";
                     strSQL += " AND Cmd_Mode IN('2', '3')";
                     strSQL += " AND Stn_No='" + stnDef.BufferName + "'";
-                    strSQL += " AND Equ_No='" + InitSys._CraneNo + "'";
                     strSQL += " ORDER BY Prty, Crt_Dte, Cmd_Sno";
                     if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
                     {
@@ -48,16 +47,20 @@ namespace Mirle.ASRS
                                 #region StoreOut Command Initiated
                                 CommandInfo commandInfo = new CommandInfo();
                                 commandInfo.CommandID = dtCmdSno.Rows[intRow]["Cmd_Sno"].ToString();
+                                commandInfo.CycleNo = dtCmdSno.Rows[0]["Cyc_No"].ToString();
+                                commandInfo.PalletNo = dtCmdSno.Rows[0]["Plt_No"].ToString();
                                 commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[intRow]["Cmd_Mode"].ToString());
-                                commandInfo.IO_Type = dtCmdSno.Rows[intRow]["Io_Type"].ToString();
+                                commandInfo.IOType = dtCmdSno.Rows[intRow]["Io_Type"].ToString();
                                 commandInfo.Loaction = dtCmdSno.Rows[intRow]["Loc"].ToString();
                                 commandInfo.StationNo = dtCmdSno.Rows[intRow]["Stn_No"].ToString();
                                 commandInfo.Priority = dtCmdSno.Rows[intRow]["Prty"].ToString();
 
                                 strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CycleNo + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "|";
                                 strMsg += commandInfo.StationNo + "|";
+                                strMsg += commandInfo.PalletNo + "|";
                                 strMsg += "StoreOut Command Initiated!";
                                 funWriteSysTraceLog(strMsg);
                                 #endregion StoreOut Command Initiated
@@ -71,22 +74,50 @@ namespace Mirle.ASRS
                                         #region Update Command & Write MPLC Success
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
                                         strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
                                         strMsg += "StoreOut Command Update Success!";
                                         funWriteSysTraceLog(strMsg);
 
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
                                         strMsg += string.Join(",", strValues) + "|";
                                         strMsg += "Write MPLC Success!";
                                         funWriteSysTraceLog(strMsg);
+
+                                        if(funSetKanbanInfo(commandInfo.StationNo, commandInfo.CommandID, commandInfo.CommandMode,
+                                            commandInfo.PalletNo, commandInfo.Loaction, commandInfo.CycleNo))
+                                        {
+                                            strMsg = commandInfo.CommandID + "|";
+                                            strMsg += commandInfo.CycleNo + "|";
+                                            strMsg += commandInfo.CommandMode + "|";
+                                            strMsg += commandInfo.StationNo + "|";
+                                            strMsg += commandInfo.Loaction + "|";
+                                            strMsg += commandInfo.PalletNo + "|";
+                                            strMsg += "Set KanbanInfo Success!";
+                                            funWriteSysTraceLog(strMsg);
+                                        }
+                                        else
+                                        {
+                                            strMsg = commandInfo.CommandID + "|";
+                                            strMsg += commandInfo.CycleNo + "|";
+                                            strMsg += commandInfo.CommandMode + "|";
+                                            strMsg += commandInfo.StationNo + "|";
+                                            strMsg += commandInfo.Loaction + "|";
+                                            strMsg += commandInfo.PalletNo + "|";
+                                            strMsg += "Set KanbanInfo Fail!";
+                                            funWriteSysTraceLog(strMsg);
+                                        }
                                         #endregion Update Command & Write MPLC Success
                                     }
                                     else
@@ -94,9 +125,11 @@ namespace Mirle.ASRS
                                         #region Update Command Success But Write MPLC Fail
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
                                         strMsg += string.Join(",", strValues) + "|";
                                         strMsg += "Write MPLC Fail!";
@@ -109,9 +142,11 @@ namespace Mirle.ASRS
                                     #region Update Command Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
+                                    strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
                                     strMsg += commandInfo.Loaction + "|";
                                     strMsg += commandInfo.StationNo + "|";
+                                    strMsg += commandInfo.PalletNo + "|";
                                     strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
                                     strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
                                     strMsg += "StoreOut Command Update Fail!";
@@ -159,7 +194,6 @@ namespace Mirle.ASRS
                         string strCommandID = bufferData[intBufferIndex]._CommandID.PadLeft(5, '0');
                         strSQL = "SELECT * FROM CMD_MST";
                         strSQL += " WHERE Cmd_Sts<'3'";
-                        strSQL += " AND Equ_No='" + InitSys._CraneNo + "'";
                         strSQL += " AND Cmd_Sno='" + strCommandID + "'";
                         strSQL += " AND CMD_MODE IN ('2', '3')";
                         strSQL += " AND TRACE='" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "'";
@@ -168,16 +202,18 @@ namespace Mirle.ASRS
                         {
                             CommandInfo commandInfo = new CommandInfo();
                             commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
+                            commandInfo.CycleNo = dtCmdSno.Rows[0]["Cyc_No"].ToString();
+                            commandInfo.PalletNo = dtCmdSno.Rows[0]["Plt_No"].ToString();
                             commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
-                            commandInfo.IO_Type = dtCmdSno.Rows[0]["Io_Type"].ToString();
+                            commandInfo.IOType = dtCmdSno.Rows[0]["Io_Type"].ToString();
                             commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
                             commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
                             commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
 
-                            if(!funCheckCraneExistsCommand(InitSys._CraneNo, CraneMode.StoreOut, stnDef.StationIndex.ToString()))
+                            if(!funCheckCraneExistsCommand(CraneMode.StoreOut, stnDef.StationIndex.ToString()))
                             {
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                                if(funCrateCraneCommand(InitSys._CraneNo, commandInfo.CommandID, CraneMode.StoreOut,
+                                if(funCrateCraneCommand(commandInfo.CommandID, CraneMode.StoreOut,
                                     commandInfo.Loaction, stnDef.StationIndex.ToString(), commandInfo.Priority))
                                 {
                                     if(funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreOut_CrateCraneCommand))
@@ -185,16 +221,20 @@ namespace Mirle.ASRS
                                         #region Update Command & Create StoreOut Crane Command Success
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
                                         strMsg = strCommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += "StoreOut Crane Command Create Success!";
                                         funWriteSysTraceLog(strMsg);
 
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += CommandState.Start + "|";
                                         strMsg += Trace.StoreOut_GetStoreOutCommandAndWritePLC + "->" + Trace.StoreOut_CrateCraneCommand + "|";
                                         strMsg += "StoreOut Command Update Success!";
@@ -207,9 +247,11 @@ namespace Mirle.ASRS
                                         #region Update Command Fail
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += CommandState.Start + "|";
                                         strMsg += Trace.StoreOut_GetStoreOutCommandAndWritePLC + "->" + Trace.StoreOut_CrateCraneCommand + "|";
                                         strMsg += "StoreOut Command Update Fail!";
@@ -222,9 +264,11 @@ namespace Mirle.ASRS
                                     #region Create StoreOut Crane Command Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = strCommandID + "|";
+                                    strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
                                     strMsg += commandInfo.Loaction + "|";
                                     strMsg += commandInfo.StationNo + "|";
+                                    strMsg += commandInfo.PalletNo + "|";
                                     strMsg += "StoreOut Crane Command Create Fail!";
                                     funWriteSysTraceLog(strMsg);
                                     #endregion Create StoreOut Crane Command Fail
@@ -261,7 +305,6 @@ namespace Mirle.ASRS
             {
                 strSQL = "SELECT * FROM CMD_MST";
                 strSQL += " WHERE Cmd_Sts<'3'";
-                strSQL += " AND Equ_No='" + InitSys._CraneNo + "'";
                 strSQL += " AND CMD_MODE IN ('2', '3')";
                 strSQL += " AND TRACE='" + Trace.StoreOut_CrateCraneCommand + "'";
                 strSQL += " ORDER BY LOC DESC";
@@ -269,15 +312,16 @@ namespace Mirle.ASRS
                 {
                     CommandInfo commandInfo = new CommandInfo();
                     commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
+                    commandInfo.CycleNo = dtCmdSno.Rows[0]["Cyc_No"].ToString();
+                    commandInfo.PalletNo = dtCmdSno.Rows[0]["Plt_No"].ToString();
                     commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
-                    commandInfo.IO_Type = dtCmdSno.Rows[0]["Io_Type"].ToString();
+                    commandInfo.IOType = dtCmdSno.Rows[0]["Io_Type"].ToString();
                     commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
                     commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
                     commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
 
                     strSQL = "SELECT * FROM EQUCMD";
                     strSQL += " WHERE CMDSNO='" + commandInfo.CommandID + "'";
-                    strSQL += " AND EquNo='" + InitSys._CraneNo + "'";
                     strSQL += " AND RENEWFLAG<>'F'";
                     strSQL += " AND CMDMODE='2'";
                     strSQL += " AND CMDSTS='9'";
@@ -288,16 +332,18 @@ namespace Mirle.ASRS
 
                         if(strCmdSts == CommandState.Completed && strCompleteCode.Substring(0, 1) == "W")
                         {
+                            strSQL = "UPDATE EQUCMD";
                             strSQL += " SET CMDSTS='0'";
                             strSQL += " WHERE CMDSNO='" + commandInfo.CommandID + "'";
-                            strSQL += " AND EquNo='" + InitSys._CraneNo + "'";
                             if(InitSys._DB.funExecSql(strSQL, ref strEM))
                             {
                                 #region Retry StoreOut Crane Command Success
                                 strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CycleNo + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "|";
                                 strMsg += commandInfo.StationNo + "|";
+                                strMsg += commandInfo.PalletNo + "|";
                                 strMsg += CommandState.Start + "|";
                                 strMsg += Trace.StoreOut_CrateCraneCommand + "|";
                                 strMsg += strCompleteCode + "|";
@@ -309,9 +355,11 @@ namespace Mirle.ASRS
                             {
                                 #region Retry StoreOut Crane Command Fail
                                 strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CycleNo + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "|";
                                 strMsg += commandInfo.StationNo + "|";
+                                strMsg += commandInfo.PalletNo + "|";
                                 strMsg += CommandState.Start + "|";
                                 strMsg += Trace.StoreOut_CrateCraneCommand + "|";
                                 strMsg += strCompleteCode + "|";
@@ -326,17 +374,21 @@ namespace Mirle.ASRS
                             {
                                 #region StoreOut Crane Command Finish & Update Command Success
                                 strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CycleNo + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "|";
                                 strMsg += commandInfo.StationNo + "|";
+                                strMsg += commandInfo.PalletNo + "|";
                                 strMsg += strCompleteCode + "|";
                                 strMsg += "Crane Command StoreOut Finish!";
                                 funWriteSysTraceLog(strMsg);
 
                                 strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CycleNo + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "|";
                                 strMsg += commandInfo.StationNo + "|";
+                                strMsg += commandInfo.PalletNo + "|";
                                 strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
                                 strMsg += Trace.StoreOut_CrateCraneCommand + "|";
                                 strMsg += "StoreOut Command Update Success!";
@@ -347,9 +399,11 @@ namespace Mirle.ASRS
                             {
                                 #region Update Command Fail
                                 strMsg = commandInfo.CommandID + "|";
+                                strMsg += commandInfo.CycleNo + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "|";
                                 strMsg += commandInfo.StationNo + "|";
+                                strMsg += commandInfo.PalletNo + "|";
                                 strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
                                 strMsg += Trace.StoreOut_CrateCraneCommand + "|";
                                 strMsg += strCompleteCode + "|";
@@ -366,23 +420,27 @@ namespace Mirle.ASRS
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                                 if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.StoreOut_CraneCommandFinish))
                                 {
-                                    if(funDeleteEquCmd(InitSys._CraneNo, commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
+                                    if(funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                     {
                                         #region StoreOut Crane Command Finish & Update Command Success
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += CommandState.Start + "|";
                                         strMsg += Trace.StoreOut_CrateCraneCommand + "->" + Trace.StoreOut_CraneCommandFinish + "|";
                                         strMsg += "StoreOut Command Update Success!";
                                         funWriteSysTraceLog(strMsg);
 
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += strCompleteCode + "|";
                                         strMsg += "StoreOut Crane Command Delete Success!";
                                         funWriteSysTraceLog(strMsg);
@@ -393,9 +451,11 @@ namespace Mirle.ASRS
                                         #region Delete StoreOut Crane Command Fail
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += strCompleteCode + "|";
                                         strMsg += "StoreOut Crane Command Delete Success!";
                                         funWriteSysTraceLog(strMsg);
@@ -407,9 +467,11 @@ namespace Mirle.ASRS
                                     #region Update Command Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
+                                    strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
                                     strMsg += commandInfo.Loaction + "|";
                                     strMsg += commandInfo.StationNo + "|";
+                                    strMsg += commandInfo.PalletNo + "|";
                                     strMsg += CommandState.Start + "|";
                                     strMsg += Trace.StoreOut_CrateCraneCommand + "->" + Trace.StoreOut_CraneCommandFinish + "|";
                                     strMsg += "StoreOut Command Update Fail!";
@@ -424,23 +486,27 @@ namespace Mirle.ASRS
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                                 if(funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.StoreOut_CraneCommandFinish))
                                 {
-                                    if(funDeleteEquCmd(InitSys._CraneNo, commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
+                                    if(funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                     {
                                         #region StoreOut Crane Command Finish & Update Command Success
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
                                         strMsg += Trace.StoreOut_CrateCraneCommand + "->" + Trace.StoreOut_CraneCommandFinish + "|";
                                         strMsg += "StoreOut Command Update Success!";
                                         funWriteSysTraceLog(strMsg);
 
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += strCompleteCode + "|";
                                         strMsg += "StoreOut Crane Command Delete Success!";
                                         funWriteSysTraceLog(strMsg);
@@ -451,9 +517,11 @@ namespace Mirle.ASRS
                                         #region Delete StoreOut Crane Command Fail
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                         strMsg = commandInfo.CommandID + "|";
+                                        strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "|";
                                         strMsg += commandInfo.StationNo + "|";
+                                        strMsg += commandInfo.PalletNo + "|";
                                         strMsg += strCompleteCode + "|";
                                         strMsg += "StoreOut Crane Command Delete Fail!";
                                         funWriteSysTraceLog(strMsg);
@@ -465,9 +533,11 @@ namespace Mirle.ASRS
                                     #region Update Command Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
+                                    strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
                                     strMsg += commandInfo.Loaction + "|";
                                     strMsg += commandInfo.StationNo + "|";
+                                    strMsg += commandInfo.PalletNo + "|";
                                     strMsg += CommandState.Start + "->" + CommandState.CompletedWaitPost + "|";
                                     strMsg += Trace.StoreOut_CrateCraneCommand + "->" + Trace.StoreOut_CraneCommandFinish + "|";
                                     strMsg += strCompleteCode + "|";

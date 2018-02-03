@@ -13,7 +13,6 @@ namespace Mirle.ASRS
             public int BufferIndex;
             public string StationName;
             public int StationIndex;
-            public string BCRName;
 
             public StationInfo()
             {
@@ -21,7 +20,6 @@ namespace Mirle.ASRS
                 BufferIndex = 0;
                 StationName = string.Empty;
                 StationIndex = 0;
-                BCRName = string.Empty;
             }
         }
 
@@ -49,21 +47,25 @@ namespace Mirle.ASRS
         {
             public string CommandID;
             public int CommandMode;
-            public string IO_Type;
+            public string IOType;
             public string Loaction;
             public string NewLoaction;
             public string StationNo;
             public string Priority;
+            public string CycleNo;
+            public string PalletNo;
 
             public CommandInfo()
             {
                 CommandID = string.Empty;
                 CommandMode = 0;
-                IO_Type = string.Empty;
+                IOType = string.Empty;
                 Loaction = string.Empty;
                 NewLoaction = string.Empty;
                 StationNo = string.Empty;
                 Priority = string.Empty;
+                CycleNo = string.Empty;
+                PalletNo = string.Empty;
             }
         }
 

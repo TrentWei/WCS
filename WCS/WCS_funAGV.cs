@@ -11,7 +11,6 @@ namespace Mirle.ASRS
     {
         private void funStoreInRequestFromAGV(string palletNo)
         {
-
             string strSQL = string.Empty;
             string strEM = string.Empty;
             string strMsg = string.Empty;
@@ -73,18 +72,42 @@ namespace Mirle.ASRS
                                     {
                                         if(funLockStoreInLocation(strLoaction))
                                         {
-                                            #region Create StroreIn Command & Lock StroreIn Location Success
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                            strMsg = strCommandID + "|";
-                                            strMsg += strLoaction + "|";
-                                            strMsg += palletNo + "|";
-                                            strMsg += "Create StroreIn Command Success!";
+                                            if(funLockStoreInPalletNo(palletNo))
+                                            {
+                                                #region Create StroreIn Command & Lock StroreIn Location Success
+                                                InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                                strMsg = strCommandID + "|";
+                                                strMsg += strLoaction + "|";
+                                                strMsg += palletNo + "|";
+                                                strMsg += "Create StroreIn Command Success!";
+                                                funWriteSysTraceLog(strMsg);
 
-                                            strMsg = strCommandID + "|";
-                                            strMsg += strLoaction + "|";
-                                            strMsg += palletNo + "|";
-                                            strMsg += "Lock StroreIn Location Success!";
-                                            #endregion Create StroreIn Command & Lock StroreIn Location Success
+                                                strMsg = strCommandID + "|";
+                                                strMsg += strLoaction + "|";
+                                                strMsg += palletNo + "|";
+                                                strMsg += "Lock StroreIn Location Success!";
+                                                funWriteSysTraceLog(strMsg);
+
+                                                strMsg = strCommandID + "|";
+                                                strMsg += strLoaction + "|";
+                                                strMsg += palletNo + "|";
+                                                strMsg += "|";
+                                                strMsg += "Lock StroreIn PalletNo Fail!";
+                                                funWriteSysTraceLog(strMsg);
+                                                #endregion Create StroreIn Command & Lock StroreIn Location Success
+                                            }
+                                            else
+                                            {
+                                                #region Lock StroreIn PalletNo Fail
+                                                InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                                strMsg = strCommandID + "|";
+                                                strMsg += strLoaction + "|";
+                                                strMsg += palletNo + "|";
+                                                strMsg += "|";
+                                                strMsg += "Lock StroreIn PalletNo Fail!";
+                                                funWriteSysTraceLog(strMsg);
+                                                #endregion Lock StroreIn PalletNo Fail
+                                            }
                                         }
                                         else
                                         {
@@ -94,6 +117,7 @@ namespace Mirle.ASRS
                                             strMsg += strLoaction + "|";
                                             strMsg += palletNo + "|";
                                             strMsg += "Lock StroreIn Location Fail!";
+                                            funWriteSysTraceLog(strMsg);
                                             #endregion Lock StroreIn Location Fail
                                         }
                                     }
@@ -105,6 +129,7 @@ namespace Mirle.ASRS
                                         strMsg += strLoaction + "|";
                                         strMsg += palletNo + "|";
                                         strMsg += "Create AGV StoreIn Command Fail!";
+                                        funWriteSysTraceLog(strMsg);
                                         #endregion Create AGV StoreIn Command Fail
                                     }
                                     #endregion Create StroreIn Command
@@ -120,12 +145,12 @@ namespace Mirle.ASRS
                                 {
                                     #region Write MPLC
                                     string[] strValues = new string[] { strCommandID, "1", "1" };
-                                    if(InitSys._MPLC.funWriteMPLC(bufferData[0]._W_CmdSno, strValues))
+                                    if(InitSys._MPLC.funWriteMPLC(bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno, strValues))
                                     {
                                         #region Write MPLC Success
                                         strMsg = strCommandID + "|";
                                         strMsg += strLoaction + "|";
-                                        strMsg += bufferData[0]._W_CmdSno + "|";
+                                        strMsg += bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno + "|";
                                         strMsg += string.Join(",", strValues) + "|";
                                         strMsg += "Write MPLC Success!";
                                         funWriteSysTraceLog(strMsg);
@@ -136,7 +161,7 @@ namespace Mirle.ASRS
                                         #region Write MPLC Fail
                                         strMsg = strCommandID + "|";
                                         strMsg += strLoaction + "|";
-                                        strMsg += bufferData[0]._W_CmdSno + "|";
+                                        strMsg += bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno + "|";
                                         strMsg += string.Join(",", strValues) + "|";
                                         strMsg += "Write MPLC Fail!";
                                         funWriteSysTraceLog(strMsg);
@@ -144,7 +169,7 @@ namespace Mirle.ASRS
                                     }
                                     #endregion Write MPLC
                                 }
-                                else if(sMPLCData_2.StoreOut == 0)
+                                else if(sMPLCData_2.StoreIn == 0)
                                 {
                                     #region Write SPLC
                                     SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreIn_SPLCAddress, "1");
@@ -171,7 +196,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region AGV StoreIn Command > 1
-                                if(sMPLCData_2.StoreOut == 0)
+                                if(sMPLCData_2.StoreIn == 0)
                                 {
                                     SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreIn_SPLCAddress, "2");
                                     if(InitSys._SPLC.funWriteSPLC(tag))
@@ -201,7 +226,7 @@ namespace Mirle.ASRS
                         else
                         {
                             #region Can't StoreIn
-                            if(sMPLCData_2.StoreOut == 0)
+                            if(sMPLCData_2.StoreIn == 0)
                             {
                                 strMsg = palletNo + "|";
                                 strMsg += "StoreIn Request From AGV!";
@@ -235,7 +260,7 @@ namespace Mirle.ASRS
                     else
                     {
                         #region Can't Find PalletNo
-                        if(sMPLCData_2.StoreOut == 0)
+                        if(sMPLCData_2.StoreIn == 0)
                         {
                             strMsg = palletNo + "|";
                             strMsg += "StoreIn Request From AGV!";
@@ -291,7 +316,7 @@ namespace Mirle.ASRS
             DataTable dtCmdSno = new DataTable();
             try
             {
-                if(!string.IsNullOrWhiteSpace(palletNo) && sMPLCData_2.StoreOut == 0)
+                if(!string.IsNullOrWhiteSpace(palletNo) && sMPLCData_2.StoreOut == 0 && strLastAGVBCR1 != palletNo)
                 {
                     strMsg = palletNo + "|";
                     strMsg += "AGV Need Station Request!";
@@ -307,7 +332,7 @@ namespace Mirle.ASRS
                             if(strPStation != "0")
                             {
                                 #region Write SPLC
-                                SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreIn_SPLCAddress, strPStation);
+                                SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreOut_SPLCAddress, strPStation);
                                 if(InitSys._SPLC.funWriteSPLC(tag))
                                 {
                                     #region Pallet StoreOut To AGV Finish
@@ -318,7 +343,7 @@ namespace Mirle.ASRS
                                     funWriteSysTraceLog(strMsg);
 
                                     strMsg = palletNo + "|";
-                                    strMsg = strPStation + "|";
+                                    strMsg += strPStation + "|";
                                     strMsg += "Reply AGV Station Request!";
                                     funWriteSysTraceLog(strMsg);
                                     #endregion Pallet StoreOut To AGV Finish
@@ -355,6 +380,16 @@ namespace Mirle.ASRS
                             #endregion Can't Find PStation, Please Check
                         }
                     }
+                    else
+                    {
+                        #region Can't Find PalletNo, Please Check
+                        strMsg = palletNo + "|";
+                        strMsg += "Can't Find PalletNo, Please Check!";
+                        funWriteSysTraceLog(strMsg);
+                        #endregion Can't Find PalletNo, Please Check
+                    }
+
+                    strLastAGVBCR1 = palletNo;
                 }
             }
             catch(Exception ex)

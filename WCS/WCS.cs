@@ -14,6 +14,7 @@ namespace Mirle.ASRS
 {
     public partial class WCS : Form
     {
+        private string strLastAGVBCR1 = string.Empty;
         private bool bolMPLC = false;
         private bool bolSPLC = false;
         private bool bolDB = false;
@@ -33,6 +34,8 @@ namespace Mirle.ASRS
         private List<StationInfo> lstStoreOut = new List<StationInfo>();
         private SMPLCData_1 sMPLCData_1 = new SMPLCData_1();
         private SMPLCData_2 sMPLCData_2 = new SMPLCData_2();
+        private List<StationInfo> lstClearKanbanInfo = new List<StationInfo>();
+
 
         private delegate void ShowMessage_EventHandler(string Message);
         private delegate void ButtonEnable_EventHandler(Button button, bool enable);
@@ -124,7 +127,8 @@ namespace Mirle.ASRS
             {
                 lblDataTime.Text = System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:fff");
 
-                InitSys._MPLC.funWriteMPLC("D11", "1");
+                if(InitSys._MPLC._IsConnection)
+                    InitSys._MPLC.funWriteMPLC("D11", "1");
 
                 funShowAutoPause(bolAuto);
                 funShowConnect(InitSys._MPLC._IsConnection, lblMPLCSts);
@@ -268,10 +272,13 @@ namespace Mirle.ASRS
                         string strBCR1 = funIntArrayConvertASCII(intBCRArray1);
                         string strBCR2 = funIntArrayConvertASCII(intBCRArray2);
 
-                        if(InitSys._SPLC.funReadSPLC(sMPLCData_2, 50))
+                        if(InitSys._SPLC.funReadSPLC(sMPLCData_2, InitSys._AGV_GetWirteSPLCStartIndex))
                         {
-                            funAGVNeedStationRequest(strBCR2);
-                            funStoreInRequestFromAGV(strBCR1);
+                            if(bolAuto)
+                            {
+                                funAGVNeedStationRequest(strBCR1);
+                                funStoreInRequestFromAGV(strBCR2);
+                            }
                         }
                     }
                 }
@@ -315,6 +322,7 @@ namespace Mirle.ASRS
             funInitalBuffer();
             funInitalStoreIn();
             funInitalStoreOut();
+            //funinitalKanbanInfo();
             funinitalBCR();
             funStart();
         }
@@ -435,6 +443,41 @@ namespace Mirle.ASRS
             }
         }
 
+        private void funinitalKanbanInfo()
+        {
+            try
+            {
+                lstClearKanbanInfo.Clear();
+                lstClearKanbanInfo = new List<StationInfo>();
+                string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\KanbanInfo.txt.txt");
+                foreach(string strValues in strarStroreInines)
+                {
+                    if(strValues.Contains("#"))
+                        continue;
+
+                    string[] strTmp = strValues.Split(',');
+                    StationInfo stnKanbanInfo = new StationInfo();
+                    try
+                    {
+                        stnKanbanInfo.BufferName = strTmp[0];
+                        stnKanbanInfo.BufferIndex = int.Parse(strTmp[1]);
+                        lstClearKanbanInfo.Add(stnKanbanInfo);
+                    }
+                    catch(Exception ex)
+                    {
+                        MethodBase methodBase = MethodBase.GetCurrentMethod();
+                        InitSys.funWriteLog("Exception",
+                            methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + strTmp[0] + "|" + ex.Message);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+
         private void funinitalBCR()
         {
             List<BCR> lstBCR = new List<BCR>();
@@ -523,66 +566,110 @@ namespace Mirle.ASRS
         #region Reconnection Function
         private void funReconnectionDB()
         {
-            string strEM = string.Empty;
-            if(InitSys._DB != null)
+            try
             {
-                InitSys._DB.funClose();
+                string strEM = string.Empty;
+                if(InitSys._DB != null)
+                {
+                    InitSys._DB.funClose();
 
-                if(InitSys._DB.funOpenDB(ref strEM))
-                    funWriteSysTraceLog("Try Reconnection DB Success!");
-                else
-                    funWriteSysTraceLog("Try Reconnection DB Fail!");
+                    if(InitSys._DB.funOpenDB(ref strEM))
+                        funWriteSysTraceLog("Try Reconnection DB Success!");
+                    else
+                        funWriteSysTraceLog("Try Reconnection DB Fail!");
+                }
             }
-            bolDB = false;
-            funEnableButton(btnReconnectDB, true);
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+            finally
+            {
+                bolDB = false;
+                funEnableButton(btnReconnectDB, true);
+            }
         }
 
         private void funReconnectionBCR()
         {
-            string strEM = string.Empty;
-            for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
+            try
             {
-                if(bCRData[intIndex] != null)
+                string strEM = string.Empty;
+                for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
                 {
-                    bCRData[intIndex].funClose();
-                    if(bCRData[intIndex].funOpenBCR(ref strEM))
-                        funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + " Success!");
-                    else
-                        funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + " Fail!");
+                    if(bCRData[intIndex] != null)
+                    {
+                        bCRData[intIndex].funClose();
+                        if(bCRData[intIndex].funOpenBCR(ref strEM))
+                            funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + " Success!");
+                        else
+                            funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + " Fail!");
+                    }
                 }
             }
-            bolBCR = false;
-            funEnableButton(btnReconnectBCR, true);
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+            finally
+            {
+                bolBCR = false;
+                funEnableButton(btnReconnectBCR, true);
+            }
         }
 
         private void funReconnectionMPLC()
         {
-            string strEM = string.Empty;
-            if(InitSys._MPLC != null)
+            try
             {
-                InitSys._MPLC.funClose();
-                if(InitSys._MPLC.funOpenMPLC(ref strEM))
-                    funWriteSysTraceLog("Try Reconnection MPLC Success!");
-                else
-                    funWriteSysTraceLog("Try Reconnection MPLC Fail!");
+                string strEM = string.Empty;
+                if(InitSys._MPLC != null)
+                {
+                    InitSys._MPLC.funClose();
+                    if(InitSys._MPLC.funOpenMPLC(ref strEM))
+                        funWriteSysTraceLog("Try Reconnection MPLC Success!");
+                    else
+                        funWriteSysTraceLog("Try Reconnection MPLC Fail!");
+                }
             }
-            bolMPLC = false;
-            funEnableButton(btnReconnectMPLC, true);
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+            finally
+            {
+                bolMPLC = false;
+                funEnableButton(btnReconnectMPLC, true);
+            }
         }
 
         private void funReconnectionSPLC()
         {
-            string strEM = string.Empty;
-            if(InitSys._SPLC != null)
+            try
             {
-                InitSys._SPLC.funClose();
-                if(InitSys._SPLC.funOpenSPLC(ref strEM))
-                    funWriteSysTraceLog("Try Reconnection SPLC Success!");
-                else
-                    funWriteSysTraceLog("Try Reconnection SPLC Fail!");
+                string strEM = string.Empty;
+                if(InitSys._SPLC != null)
+                {
+                    InitSys._SPLC.funClose();
+                    if(InitSys._SPLC.funOpenSPLC(ref strEM))
+                        funWriteSysTraceLog("Try Reconnection SPLC Success!");
+                    else
+                        funWriteSysTraceLog("Try Reconnection SPLC Fail!");
+                }
             }
-            bolSPLC = false;
-            funEnableButton(btnReconnectSPLC, true);
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+            finally
+            {
+                bolSPLC = false;
+                funEnableButton(btnReconnectSPLC, true);
+            }
         }
         #endregion Reconnection Function
 
@@ -701,8 +788,8 @@ namespace Mirle.ASRS
             {
                 foreach(int intData in intArray)
                 {
-                    string strTemp_0007 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(2, 2);
-                    string strTemp_0815 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(0, 2);
+                    string strTemp_0007 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(0, 2);
+                    string strTemp_0815 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(2, 2);
                     strResults += Convert.ToChar(Convert.ToInt32(strTemp_0007, 16)).ToString();
                     strResults += Convert.ToChar(Convert.ToInt32(strTemp_0815, 16)).ToString();
                 }

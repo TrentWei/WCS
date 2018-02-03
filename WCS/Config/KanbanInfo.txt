@@ -1,0 +1,5 @@
+﻿# ClearBufferName, ClearBufferIndex
+A01,0,A01,0
+A02,1,A02,1
+B04,16,B06,18
+B07,19,B09,21

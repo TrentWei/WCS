@@ -17,7 +17,8 @@ namespace Mirle.ASRS
         private static string strAGV_StoreIn_SPLCAddress = string.Empty;
         private static string strAGV_StoreOut_SPLCAddress = string.Empty;
         private static int intTotalAddress = 0;
-        private static int intCraneNo = 1;
+        private static int intAGV_StoreIn_MPLCBufferIndex = 0;
+        private static int intAGV_GetWirteSPLCStartIndex = 0;
         private static DB dBServer = new DB();
         private static MPLC mPLC = new MPLC();
         private static SPLC sPLC = new SPLC();
@@ -45,14 +46,19 @@ namespace Mirle.ASRS
             get { return strAGV_StoreOut_SPLCAddress; }
         }
 
+        public static int _AGV_StoreIn_MPLCBufferIndex
+        {
+            get { return intAGV_StoreIn_MPLCBufferIndex; }
+        }
+
+        public static int _AGV_GetWirteSPLCStartIndex
+        {
+            get { return intAGV_GetWirteSPLCStartIndex; }
+        }
+
         public static int _TotalAddress
         {
             get { return intTotalAddress; }
-        }
-
-        public static int _CraneNo
-        {
-            get { return intCraneNo; }
         }
 
         public static DB _DB
@@ -81,45 +87,77 @@ namespace Mirle.ASRS
                 strAGV_StoreIn_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreIn_SPLCAddress"];
                 strAGV_StoreOut_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreOut_SPLCAddress"];
                 intTotalAddress = int.Parse(ConfigurationManager.AppSettings["TotalAddress"]);
-                intCraneNo = int.Parse(ConfigurationManager.AppSettings["CraneNo"]);
+                intAGV_StoreIn_MPLCBufferIndex = int.Parse(ConfigurationManager.AppSettings["AGV_StoreIn_MPLCBufferIndex"]);
+                intAGV_GetWirteSPLCStartIndex = int.Parse(ConfigurationManager.AppSettings["AGV_GetWirteSPLCStartIndex"]);
                 archive = new Archive(Application.StartupPath + @"\LOG\", 10000, Application.StartupPath + @"\LOG\", 7, 90);
                 archive.funStart();
             }
             catch(Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
-                funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.StackTrace);
             }
         }
 
         public static bool funOpendDB()
         {
-            string strEM = string.Empty;
-            dBServer = new DB(ConfigurationManager.ConnectionStrings["ASRS"].ConnectionString);
-            if(dBServer.funOpenDB(ref strEM))
-                return true;
-            else
+            try
+            {
+                string strEM = string.Empty;
+                dBServer = new DB(ConfigurationManager.ConnectionStrings["ASRS"].ConnectionString);
+                if(dBServer.funOpenDB(ref strEM))
+                    return true;
+                else
+                    return false;
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
                 return false;
+            }
         }
 
         public static bool funOpendMPLC()
         {
-            string strEM = string.Empty;
-            mPLC = new MPLC(int.Parse(ConfigurationManager.AppSettings["StationNumber"]));
-            if(mPLC.funOpenMPLC(ref strEM))
-                return true;
-            else
+            try
+            {
+                string strEM = string.Empty;
+                mPLC = new MPLC(int.Parse(ConfigurationManager.AppSettings["StationNumber"]));
+                if(mPLC.funOpenMPLC(ref strEM))
+                    return true;
+                else
+                    return false;
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
                 return false;
+            }
         }
 
         public static bool funOpendSPLC()
         {
-            string strEM = string.Empty;
-            sPLC = new SPLC(S7.Net.CpuType.S7300, "192.168.1.21", 0, 2, 6);
-            if(sPLC.funOpenSPLC(ref strEM))
-                return true;
-            else
+            try
+            {
+                string strEM = string.Empty;
+                string strIP = ConfigurationManager.AppSettings["AGV_Connection_IP"];
+                short intRack = short.Parse(ConfigurationManager.AppSettings["AGV_Connection_Rack"]);
+                short intSlot = short.Parse(ConfigurationManager.AppSettings["AGV_Connection_Slot"]);
+                int intDB = int.Parse(ConfigurationManager.AppSettings["AGV_Connection_DB"]);
+                sPLC = new SPLC(S7.Net.CpuType.S7300, strIP, intRack, intSlot, intDB);
+                if(sPLC.funOpenSPLC(ref strEM))
+                    return true;
+                else
+                    return false;
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
                 return false;
+            }
         }
 
         public static void funWriteLog(string fileName, string logMsg)

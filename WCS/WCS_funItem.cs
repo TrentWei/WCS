@@ -31,5 +31,26 @@ namespace Mirle.ASRS
                 return false;
             }
         }
+
+        private bool funLockStoreInPalletNo(string palletNo)
+        {
+            string strSQL = string.Empty;
+            string strEM = string.Empty;
+            string strMsg = string.Empty;
+            try
+            {
+                strSQL = "UPDATE ITEM_MST";
+                strSQL += " SET Status='I',";
+                strSQL += " Trn_Dte=GETDATE()";
+                strSQL += " WHERE Plt_No='" + palletNo + "'";
+                return InitSys._DB.funExecSql(strSQL, ref strEM);
+            }
+            catch(Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                return false;
+            }
+        }
     }
 }

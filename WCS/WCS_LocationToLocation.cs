@@ -24,7 +24,7 @@ namespace Mirle.ASRS
 
             try
             {
-                if(funCheckCraneExistsCommand(InitSys._CraneNo, CraneMode.LoactionToLoaction, "0"))
+                if(funCheckCraneExistsCommand(CraneMode.LoactionToLoaction, "0"))
                 {
                     strSQL = "SELECT * FROM CMD_MST";
                     strSQL += " WHERE Cmd_Mode='5'";
@@ -36,7 +36,7 @@ namespace Mirle.ASRS
                         CommandInfo commandInfo = new CommandInfo();
                         commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
                         commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
-                        commandInfo.IO_Type = dtCmdSno.Rows[0]["Io_Type"].ToString();
+                        commandInfo.IOType = dtCmdSno.Rows[0]["Io_Type"].ToString();
                         commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
                         commandInfo.NewLoaction = dtCmdSno.Rows[0]["New_Loc"].ToString();
                         commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
@@ -51,7 +51,7 @@ namespace Mirle.ASRS
                         InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                         if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.LoactionToLoaction_CrateCraneCommand))
                         {
-                            if(funCrateCraneCommand(InitSys._CraneNo, commandInfo.CommandID, CraneMode.LoactionToLoaction,
+                            if(funCrateCraneCommand(commandInfo.CommandID, CraneMode.LoactionToLoaction,
                                 commandInfo.Loaction, commandInfo.NewLoaction, commandInfo.Priority))
                             {
                                 #region Update Command & Create Transfer Crane Command Success
@@ -136,7 +136,7 @@ namespace Mirle.ASRS
                         CommandInfo commandInfo = new CommandInfo();
                         commandInfo.CommandID = dtCmdSno.Rows[intCmdSno]["Cmd_Sno"].ToString();
                         commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[intCmdSno]["Cmd_Mode"].ToString());
-                        commandInfo.IO_Type = dtCmdSno.Rows[intCmdSno]["Io_Type"].ToString();
+                        commandInfo.IOType = dtCmdSno.Rows[intCmdSno]["Io_Type"].ToString();
                         commandInfo.Loaction = dtCmdSno.Rows[intCmdSno]["Loc"].ToString();
                         commandInfo.NewLoaction = dtCmdSno.Rows[intCmdSno]["New_Loc"].ToString();
                         commandInfo.StationNo = dtCmdSno.Rows[intCmdSno]["Stn_No"].ToString();
@@ -222,7 +222,7 @@ namespace Mirle.ASRS
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
                                 if(funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.LoactionToLoaction_CraneCommandFinish))
                                 {
-                                    if(funDeleteEquCmd(InitSys._CraneNo, commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
+                                    if(funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                     {
                                         #region Transfer Crane Command Finish & Update Command Success
                                         InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);

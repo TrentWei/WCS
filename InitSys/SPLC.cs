@@ -173,7 +173,7 @@ namespace Mirle.ASRS
                     value = (bool)tag._ItemValue ? 1 : 0;
 
                 var result = sPLC.Write(tag._ItemName, value);
-                if(result is ErrorCode && (ErrorCode)result != ErrorCode.NoError)
+                if(result is ErrorCode && (ErrorCode)result == ErrorCode.NoError)
                 {
                     InitSys.funWriteLog("SPLC_Trace", tag._ItemName + "|" + tag._ItemValue + "|WriteDeviceBlock Success!");
                     return bolIsConnection = true;

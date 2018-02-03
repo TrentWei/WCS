@@ -567,9 +567,9 @@ namespace Mirle.ASRS
                     {
                         #region Picking
                         InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true))
+                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "C", cmd_Mst.Loc, true))
                         {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
+                            if(funUpdateLocationMaster(cmd_Mst.Loc, "C", cmd_Mst.Plt_No))
                             {
                                 if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                 {
