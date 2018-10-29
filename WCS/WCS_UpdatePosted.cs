@@ -27,9 +27,9 @@ namespace Mirle.ASRS
                 strSQL = "SELECT * FROM CMD_MST";
                 strSQL += " WHERE Cmd_Sts='7'";
                 strSQL += " ORDER BY Cmd_Sno";
-                if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
                 {
-                    for(int intRow = 0; intRow < dtCmdSno.Rows.Count; intRow++)
+                    for (int intRow = 0; intRow < dtCmdSno.Rows.Count; intRow++)
                     {
                         Cmd_Mst cmd_Mst = new Cmd_Mst();
                         cmd_Mst.Cmd_Sno = dtCmdSno.Rows[intRow]["Cmd_Sno"].ToString();
@@ -54,14 +54,14 @@ namespace Mirle.ASRS
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
             }
             finally
             {
-                if(dtCmdSno != null)
+                if (dtCmdSno != null)
                 {
                     dtCmdSno.Clear();
                     dtCmdSno.Dispose();
@@ -81,9 +81,9 @@ namespace Mirle.ASRS
                 strSQL = "SELECT * FROM CMD_MST";
                 strSQL += " WHERE Cmd_Sts='6'";
                 strSQL += " ORDER BY Cmd_Sno";
-                if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
                 {
-                    for(int intRow = 0; intRow < dtCmdSno.Rows.Count; intRow++)
+                    for (int intRow = 0; intRow < dtCmdSno.Rows.Count; intRow++)
                     {
                         Cmd_Mst cmd_Mst = new Cmd_Mst();
                         cmd_Mst.Cmd_Sno = dtCmdSno.Rows[intRow]["Cmd_Sno"].ToString();
@@ -108,14 +108,14 @@ namespace Mirle.ASRS
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
             }
             finally
             {
-                if(dtCmdSno != null)
+                if (dtCmdSno != null)
                 {
                     dtCmdSno.Clear();
                     dtCmdSno.Dispose();
@@ -129,591 +129,595 @@ namespace Mirle.ASRS
             string strSQL = string.Empty;
             string strEM = string.Empty;
             string strMsg = string.Empty;
+            string strType = string.Empty;
             try
             {
-                if(cancel)
+                if (funQITEMTYPE(cmd_Mst.Loc, ref strType))
                 {
-                    #region Cancel
-                    if(cmd_Mst.Cmd_Mode == CMDMode.StoreIn)
+                    if (cancel)
                     {
-                        #region StoreIn
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "N", string.Empty, true))
+                        #region Cancel
+                        if (cmd_Mst.Cmd_Mode == CMDMode.StoreIn)
                         {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty))
+                            #region StoreIn
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funUpdateItemMaster(cmd_Mst.Plt_No, "N", string.Empty, true, strType))
                             {
-                                if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                if (funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty))
                                 {
-                                    #region Update Success
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                    strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "6->9|";
-                                    strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "I->N|";
-                                    strMsg += "Update StoreIn Command Cancel Success!";
-                                    funWriteUpdateLog(strMsg);
-                                    #endregion Update Success
+                                    if (funUpdateCommand(cmd_Mst.Cmd_Sno, "D", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                    {
+                                        #region Update Success
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "6->D|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "I->N|";
+                                        strMsg += "Update StoreIn Command Cancel Success!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Success
+                                    }
+                                    else
+                                    {
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "6->D|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "Update StoreIn Command Cancel Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Command Fail
+
+                                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
+                                    }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Update Location Master Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "6->9|";
                                     strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "Update StoreIn Command Cancel Fail!";
+                                    strMsg += cmd_Mst.Loc + "|";
+                                    strMsg += "I->N|";
+                                    strMsg += "Update Location Cancel Fail!";
                                     funWriteUpdateLog(strMsg);
-                                    #endregion Update Command Fail
+                                    #endregion Update Location Master Fail
 
                                     funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                                 }
                             }
                             else
                             {
-                                #region Update Location Master Fail
+                                #region Update Item Master Fail
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
                                 strMsg += "I->N|";
-                                strMsg += "Update Location Cancel Fail!";
+                                strMsg += "Update Item Cancel Fail!";
                                 funWriteUpdateLog(strMsg);
-                                #endregion Update Location Master Fail
+                                #endregion Update Item Master Fail
 
                                 funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                             }
+                            #endregion StoreIn
                         }
-                        else
+                        else if (cmd_Mst.Cmd_Mode == CMDMode.StoreOut)
                         {
-                            #region Update Item Master Fail
-                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                            strMsg = cmd_Mst.Cmd_Sno + "|";
-                            strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += cmd_Mst.Loc + "|";
-                            strMsg += "I->N|";
-                            strMsg += "Update Item Cancel Fail!";
-                            funWriteUpdateLog(strMsg);
-                            #endregion Update Item Master Fail
-
-                            funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
-                        }
-                        #endregion StoreIn
-                    }
-                    else if(cmd_Mst.Cmd_Mode == CMDMode.StoreOut)
-                    {
-                        #region StoreOut
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true))
-                        {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
+                            #region StoreOut
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true, strType))
                             {
-                                if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
                                 {
-                                    #region Update Success
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                    strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "6->9|";
-                                    strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "O->N|";
-                                    strMsg += "Update StoreOut Command Cancel Success!";
-                                    funWriteUpdateLog(strMsg);
-                                    #endregion Update Success
+                                    if (funUpdateCommand(cmd_Mst.Cmd_Sno, "D", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                    {
+                                        #region Update Success
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "6->D|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "O->N|";
+                                        strMsg += "Update StoreOut Command Cancel Success!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Success
+                                    }
+                                    else
+                                    {
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "6->D|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "Update StoreOut Command Cancel Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Command Fail
+
+                                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
+                                    }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Update Location Master Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "6->9|";
                                     strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "Update StoreOut Command Cancel Fail!";
+                                    strMsg += cmd_Mst.Loc + "|";
+                                    strMsg += "O->S|";
+                                    strMsg += "Update Location Cancel Fail!";
                                     funWriteUpdateLog(strMsg);
-                                    #endregion Update Command Fail
+                                    #endregion Update Location Master Fail
 
                                     funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                                 }
                             }
                             else
                             {
-                                #region Update Location Master Fail
+                                #region Update Item Master Fail
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
                                 strMsg += "O->S|";
-                                strMsg += "Update Location Cancel Fail!";
+                                strMsg += "Update Item Cancel Fail!";
                                 funWriteUpdateLog(strMsg);
-                                #endregion Update Location Master Fail
+                                #endregion Update Item Master Fail
 
                                 funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                             }
+                            #endregion StoreOut
                         }
-                        else
+                        else if (cmd_Mst.Cmd_Mode == CMDMode.Picking)
                         {
-                            #region Update Item Master Fail
-                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                            strMsg = cmd_Mst.Cmd_Sno + "|";
-                            strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += cmd_Mst.Loc + "|";
-                            strMsg += "O->S|";
-                            strMsg += "Update Item Cancel Fail!";
-                            funWriteUpdateLog(strMsg);
-                            #endregion Update Item Master Fail
-
-                            funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
-                        }
-                        #endregion StoreOut
-                    }
-                    else if(cmd_Mst.Cmd_Mode == CMDMode.Picking)
-                    {
-                        #region Picking
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true))
-                        {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
+                            #region Picking
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true, strType))
                             {
-                                if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
                                 {
-                                    #region Update Success
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                    strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "6->9|";
-                                    strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "C->S|";
-                                    strMsg += "Update Picking Command Cancel Success!";
-                                    funWriteUpdateLog(strMsg);
-                                    #endregion Update Success
+                                    if (funUpdateCommand(cmd_Mst.Cmd_Sno, "D", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                    {
+                                        #region Update Success
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "6->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "C->S|";
+                                        strMsg += "Update Picking Command Cancel Success!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Success
+                                    }
+                                    else
+                                    {
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "6->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "Update Picking Command Cancel Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Command Fail
+
+                                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
+                                    }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Update Location Master Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "6->9|";
                                     strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "Update Picking Command Cancel Fail!";
+                                    strMsg += cmd_Mst.Loc + "|";
+                                    strMsg += "C->S|";
+                                    strMsg += "Update Location Cancel Fail!";
                                     funWriteUpdateLog(strMsg);
-                                    #endregion Update Command Fail
+                                    #endregion Update Location Master Fail
 
                                     funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                                 }
                             }
                             else
                             {
-                                #region Update Location Master Fail
-                                InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                #region Update Item Master Fail
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
                                 strMsg += "C->S|";
-                                strMsg += "Update Location Cancel Fail!";
+                                strMsg += "Update Item Cancel Cancel Fail!";
                                 funWriteUpdateLog(strMsg);
-                                #endregion Update Location Master Fail
+                                #endregion Update Item Master Fail
 
                                 funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                             }
+                            #endregion Picking
                         }
-                        else
+                        else if (cmd_Mst.Cmd_Mode == CMDMode.LoactionToLoaction)
                         {
-                            #region Update Item Master Fail
-                            strMsg = cmd_Mst.Cmd_Sno + "|";
-                            strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += cmd_Mst.Loc + "|";
-                            strMsg += "C->S|";
-                            strMsg += "Update Item Cancel Cancel Fail!";
-                            funWriteUpdateLog(strMsg);
-                            #endregion Update Item Master Fail
-
-                            funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
-                        }
-                        #endregion Picking
-                    }
-                    else if(cmd_Mst.Cmd_Mode == CMDMode.LoactionToLoaction)
-                    {
-                        #region LoactionToLoaction
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, false))
-                        {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No) &&
-                                funUpdateLocationMaster(cmd_Mst.New_Loc, "N", string.Empty))
+                            #region LoactionToLoaction
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, false, strType))
                             {
-                                if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No) &&
+                                    funUpdateLocationMaster(cmd_Mst.New_Loc, "N", string.Empty))
                                 {
-                                    #region Update Success
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                    strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "6->9|";
-                                    strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "O->S,I->N|";
-                                    strMsg += "Update LoactionToLoaction Command Cancel Success!";
-                                    funWriteUpdateLog(strMsg);
-                                    #endregion Update Success
+                                    if (funUpdateCommand(cmd_Mst.Cmd_Sno, "D", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                    {
+                                        #region Update Success
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "6->D|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "O->S,I->N|";
+                                        strMsg += "Update LoactionToLoaction Command Cancel Success!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Success
+                                    }
+                                    else
+                                    {
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "6->D|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "Update LoactionToLoaction Command Cancel Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Command Fail
+
+                                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
+                                    }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Update Location Master Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "6->9|";
                                     strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "Update LoactionToLoaction Command Cancel Fail!";
+                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
+                                    strMsg += "O->S,I->N|";
+                                    strMsg += "Update Location Fail!";
                                     funWriteUpdateLog(strMsg);
-                                    #endregion Update Command Fail
+                                    #endregion Update Location Master Fail
 
                                     funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                                 }
                             }
                             else
                             {
-                                #region Update Location Master Fail
+                                #region Update Item Master Fail
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
-                                strMsg += "O->S,I->N|";
-                                strMsg += "Update Location Fail!";
+                                strMsg += "Update Item Cancel Fail!";
                                 funWriteUpdateLog(strMsg);
-                                #endregion Update Location Master Fail
+                                #endregion Update Item Master Fail
 
                                 funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                             }
+                            #endregion LoactionToLoaction
                         }
                         else
                         {
-                            #region Update Item Master Fail
-                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                             strMsg = cmd_Mst.Cmd_Sno + "|";
+                            strMsg = cmd_Mst.Cmd_Mode + "|";
+                            strMsg += "6->D|";
                             strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
-                            strMsg += "Update Item Cancel Fail!";
+                            strMsg += "Cancel Command Posted Error!";
                             funWriteUpdateLog(strMsg);
-                            #endregion Update Item Master Fail
 
                             funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                         }
-                        #endregion LoactionToLoaction
+                        #endregion Cancel
                     }
                     else
                     {
-                        strMsg = cmd_Mst.Cmd_Sno + "|";
-                        strMsg = cmd_Mst.Cmd_Mode + "|";
-                        strMsg += "6->E|";
-                        strMsg += cmd_Mst.Plt_No + "|";
-                        strMsg += "Cancel Command Posted Error!";
-                        funWriteUpdateLog(strMsg);
-
-                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
-                    }
-                    #endregion Cancel
-                }
-                else
-                {
-                    #region Finish
-                    if(cmd_Mst.Cmd_Mode == CMDMode.StoreIn)
-                    {
-                        #region StoreIn
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true))
+                        #region Finish
+                        if (cmd_Mst.Cmd_Mode == CMDMode.StoreIn)
                         {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
+                            #region StoreIn
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true, strType))
                             {
-                                if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
                                 {
-                                    #region Update Success
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                    strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "7->9|";
-                                    strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "I->S|";
-                                    strMsg += "Update StoreIn Command Success!";
-                                    funWriteUpdateLog(strMsg);
-                                    #endregion Update Success
+                                    if (funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                    {
+                                        #region Update Success
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "7->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "I->S|";
+                                        strMsg += "Update StoreIn Command Success!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Success
+                                    }
+                                    else
+                                    {
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "7->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "Update StoreIn Command Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Command Fail
+
+                                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
+                                    }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Update Location Master Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "7->9|";
                                     strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "Update StoreIn Command Fail!";
+                                    strMsg += cmd_Mst.Loc + "|";
+                                    strMsg += "I->S|";
+                                    strMsg += "Update Location Fail!";
                                     funWriteUpdateLog(strMsg);
-                                    #endregion Update Command Fail
+                                    #endregion Update Location Master Fail
 
                                     funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                                 }
                             }
                             else
                             {
-                                #region Update Location Master Fail
+                                #region Update Item Master Fail
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
                                 strMsg += "I->S|";
-                                strMsg += "Update Location Fail!";
+                                strMsg += "Update Item Fail!";
                                 funWriteUpdateLog(strMsg);
-                                #endregion Update Location Master Fail
+                                #endregion Update Item Master Fail
 
                                 funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                             }
+                            #endregion StoreIn
                         }
-                        else
+                        else if (cmd_Mst.Cmd_Mode == CMDMode.StoreOut)
                         {
-                            #region Update Item Master Fail
-                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                            strMsg = cmd_Mst.Cmd_Sno + "|";
-                            strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += cmd_Mst.Loc + "|";
-                            strMsg += "I->S|";
-                            strMsg += "Update Item Fail!";
-                            funWriteUpdateLog(strMsg);
-                            #endregion Update Item Master Fail
-
-                            funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
-                        }
-                        #endregion StoreIn
-                    }
-                    else if(cmd_Mst.Cmd_Mode == CMDMode.StoreOut)
-                    {
-                        #region StoreOut
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "N", string.Empty, false))
-                        {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "N", cmd_Mst.Plt_No))
+                            #region StoreOut
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funUpdateItemMaster(cmd_Mst.Plt_No, "N", string.Empty, false, strType))
                             {
-                                if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                if (funUpdateLocationMaster(cmd_Mst.Loc, "N", cmd_Mst.Plt_No))
                                 {
-                                    #region Update Success
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                    strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "7->9|";
-                                    strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "O->N|";
-                                    strMsg += "Update StoreOut Command Success!";
-                                    funWriteUpdateLog(strMsg);
-                                    #endregion Update Success
+                                    if (funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                    {
+                                        #region Update Success
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "7->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "O->N|";
+                                        strMsg += "Update StoreOut Command Success!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Success
+                                    }
+                                    else
+                                    {
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "7->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "Update StoreOut Command Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Command Fail
+
+                                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
+                                    }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Update Location Master Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "7->9|";
                                     strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "Update StoreOut Command Fail!";
+                                    strMsg += cmd_Mst.Loc + "|";
+                                    strMsg += "O->N|";
+                                    strMsg += "Update Location Fail!";
                                     funWriteUpdateLog(strMsg);
-                                    #endregion Update Command Fail
+                                    #endregion Update Location Master Fail
 
                                     funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                                 }
                             }
                             else
                             {
-                                #region Update Location Master Fail
+                                #region Update Item Master Fail
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
                                 strMsg += "O->N|";
-                                strMsg += "Update Location Fail!";
+                                strMsg += "Update Item Fail!";
                                 funWriteUpdateLog(strMsg);
-                                #endregion Update Location Master Fail
+                                #endregion Update Item Master Fail
 
                                 funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                             }
+                            #endregion StoreOut
                         }
-                        else
+                        else if (cmd_Mst.Cmd_Mode == CMDMode.Picking)
                         {
-                            #region Update Item Master Fail
-                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                            strMsg = cmd_Mst.Cmd_Sno + "|";
-                            strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += cmd_Mst.Loc + "|";
-                            strMsg += "O->N|";
-                            strMsg += "Update Item Fail!";
-                            funWriteUpdateLog(strMsg);
-                            #endregion Update Item Master Fail
-
-                            funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
-                        }
-                        #endregion StoreOut
-                    }
-                    else if(cmd_Mst.Cmd_Mode == CMDMode.Picking)
-                    {
-                        #region Picking
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "C", cmd_Mst.Loc, true))
-                        {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "C", cmd_Mst.Plt_No))
+                            #region Picking
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true, strType))
                             {
-                                if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
                                 {
-                                    #region Update Success
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                    strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "7->9|";
-                                    strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "C->S|";
-                                    strMsg += "Update Picking Command Success!";
-                                    funWriteUpdateLog(strMsg);
-                                    #endregion Update Success
+                                    if (funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                    {
+                                        #region Update Success
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "7->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "C->S|";
+                                        strMsg += "Update Picking Command Success!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Success
+                                    }
+                                    else
+                                    {
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "7->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "Update Picking Command Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Command Fail
+
+                                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
+                                    }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Update Location Master Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "7->9|";
                                     strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "Update Picking Command Fail!";
+                                    strMsg += cmd_Mst.Loc + "|";
+                                    strMsg += "C->S|";
+                                    strMsg += "Update Location Fail!";
                                     funWriteUpdateLog(strMsg);
-                                    #endregion Update Command Fail
+                                    #endregion Update Location Master Fail
 
                                     funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                                 }
                             }
                             else
                             {
-                                #region Update Location Master Fail
-                                InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                #region Update Item Master Fail
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
                                 strMsg += "C->S|";
-                                strMsg += "Update Location Fail!";
+                                strMsg += "Update Item Fail!";
                                 funWriteUpdateLog(strMsg);
-                                #endregion Update Location Master Fail
+                                #endregion Update Item Master Fail
 
                                 funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                             }
+                            #endregion Picking
                         }
-                        else
+                        else if (cmd_Mst.Cmd_Mode == CMDMode.LoactionToLoaction)
                         {
-                            #region Update Item Master Fail
-                            strMsg = cmd_Mst.Cmd_Sno + "|";
-                            strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += cmd_Mst.Loc + "|";
-                            strMsg += "C->S|";
-                            strMsg += "Update Item Fail!";
-                            funWriteUpdateLog(strMsg);
-                            #endregion Update Item Master Fail
-
-                            funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
-                        }
-                        #endregion Picking
-                    }
-                    else if(cmd_Mst.Cmd_Mode == CMDMode.LoactionToLoaction)
-                    {
-                        #region LoactionToLoaction
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                        if(funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.New_Loc, false))
-                        {
-                            if(funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty) && funUpdateLocationMaster(cmd_Mst.New_Loc, "S", cmd_Mst.Plt_No))
+                            #region LoactionToLoaction
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.New_Loc, false, strType))
                             {
-                                if(funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                if (funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty) && funUpdateLocationMaster(cmd_Mst.New_Loc, "S", cmd_Mst.Plt_No))
                                 {
-                                    #region Update Success
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                    strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "7->9|";
-                                    strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "O->N,I->S|";
-                                    strMsg += "Update StoreIn Command Success!";
-                                    funWriteUpdateLog(strMsg);
-                                    #endregion Update Success
+                                    if (funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
+                                    {
+                                        #region Update Success
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "7->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "O->N,I->S|";
+                                        strMsg += "Update StoreIn Command Success!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update Success
+                                    }
+                                    else
+                                    {
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = cmd_Mst.Cmd_Sno + "|";
+                                        strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
+                                        strMsg += cmd_Mst.Trace + "|";
+                                        strMsg += "7->9|";
+                                        strMsg += cmd_Mst.Plt_No + "|";
+                                        strMsg += "Update Command Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                        #endregion Update LoactionToLoaction Command Fail
+
+                                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
+                                    }
                                 }
                                 else
                                 {
-                                    #region Update Command Fail
+                                    #region Update Location Master Fail
                                     InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
-                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
-                                    strMsg += cmd_Mst.Trace + "|";
-                                    strMsg += "7->9|";
                                     strMsg += cmd_Mst.Plt_No + "|";
-                                    strMsg += "Update Command Fail!";
+                                    strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
+                                    strMsg += "O->N,I->S|";
+                                    strMsg += "Update Location Fail!";
                                     funWriteUpdateLog(strMsg);
-                                    #endregion Update LoactionToLoaction Command Fail
+                                    #endregion Update Location Master Fail
 
                                     funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                                 }
                             }
                             else
                             {
-                                #region Update Location Master Fail
+                                #region Update Item Master Fail
                                 InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
-                                strMsg += "O->N,I->S|";
-                                strMsg += "Update Location Fail!";
+                                strMsg += "Update Item Fail!";
                                 funWriteUpdateLog(strMsg);
-                                #endregion Update Location Master Fail
+                                #endregion Update Item Master Fail
 
                                 funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                             }
+                            #endregion LoactionToLoaction
                         }
                         else
                         {
-                            #region Update Item Master Fail
-                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                             strMsg = cmd_Mst.Cmd_Sno + "|";
+                            strMsg = cmd_Mst.Cmd_Mode + "|";
+                            strMsg += "7->E|";
                             strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
-                            strMsg += "Update Item Fail!";
+                            strMsg += "Command Posted Error!";
                             funWriteUpdateLog(strMsg);
-                            #endregion Update Item Master Fail
 
                             funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
                         }
-                        #endregion LoactionToLoaction
+                        #endregion Finish
                     }
-                    else
-                    {
-                        strMsg = cmd_Mst.Cmd_Sno + "|";
-                        strMsg = cmd_Mst.Cmd_Mode + "|";
-                        strMsg += "7->E|";
-                        strMsg += cmd_Mst.Plt_No + "|";
-                        strMsg += "Command Posted Error!";
-                        funWriteUpdateLog(strMsg);
-
-                        funUpdateCommand(cmd_Mst.Cmd_Sno, "E", cmd_Mst.Trace, cmd_Mst.Plt_No);
-                    }
-                    #endregion Finish
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -728,19 +732,19 @@ namespace Mirle.ASRS
             DataTable dtCmdSno = new DataTable();
             try
             {
-                if(DateTime.Now.ToString("HH:mm") == "00:00")
+                if (DateTime.Now.ToString("HH:mm") == "00:00")
                 {
                     strSQL = "INSERT INTO CMD_MST_HIS";
                     strSQL += " SELECT * FROM CMD_MST";
                     strSQL += " WHERE Cmd_Sts='9'";
-                    strSQL += " AND SUBSTRING(End_Dte,1,10)='" + DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd") + "'";
+                    strSQL += " AND SUBSTRING(End_Dte,1,10)='" + DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd") + "'";
                     InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                    if(InitSys._DB.funExecSql(strSQL, ref strEM))
+                    if (InitSys._DB.funExecSql(strSQL, ref strEM))
                     {
                         strSQL = " DELETE CMD_MST";
                         strSQL += " WHERE Cmd_Sts='9'";
-                        strSQL += " AND SUBSTRING(End_Dte,1,10)='" + DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd") + "'";
-                        if(InitSys._DB.funExecSql(strSQL, ref strEM))
+                        strSQL += " AND SUBSTRING(End_Dte,1,10)='" + DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd") + "'";
+                        if (InitSys._DB.funExecSql(strSQL, ref strEM))
                         {
                             InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
                             strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
@@ -764,14 +768,14 @@ namespace Mirle.ASRS
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
             }
             finally
             {
-                if(dtCmdSno != null)
+                if (dtCmdSno != null)
                 {
                     dtCmdSno.Clear();
                     dtCmdSno.Dispose();

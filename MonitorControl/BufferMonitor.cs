@@ -32,7 +32,6 @@ namespace Mirle.ASRS
             set
             {
                 autoSignal = value;
-
                 if(autoSignal == Buffer.Signal.On)
                     funUpdate(lblAuto, "1", Color.Lime);
                 else
@@ -60,27 +59,28 @@ namespace Mirle.ASRS
             {
                 errorSignal = value;
                 if(errorSignal == Buffer.Signal.On)
-                    funUpdate(lblError, string.Empty, Color.Red);
+                    funUpdate(lblError, "X", Color.Red);
                 else
                     funUpdate(lblError, string.Empty, Color.White);
             }
         }
 
-        public string _CmdSno
+        public string _CommandID
         {
-            get { return lblCmdSno.Text; }
+            get { return lblCommandID.Text; }
             set
             {
-                funUpdate(lblCmdSno, value, Color.White);
+                funUpdate(lblCommandID, value, Color.White);
             }
         }
 
-        public Buffer.StnMode _StnMode
+        public Buffer.StnMode _Mode
         {
             get { return stnMode; }
             set
             {
-                funUpdate(lblStnMode, ((int)stnMode).ToString(), Color.DimGray);
+                stnMode = value;
+                funUpdate(lblMode, ((int)stnMode).ToString(), Color.Lime);
             }
         }
 
@@ -93,12 +93,15 @@ namespace Mirle.ASRS
             }
         }
 
-        public string _FunNotice
+        public bool _ReturnRequest
         {
-            get { return lblFunNotice.Text; }
+            get { return lblReturnRequest.Text == "1"; }
             set
             {
-                funUpdate(lblFunNotice, value, Color.DarkGray);
+                if(value)
+                    funUpdate(lblReturnRequest, "1", Color.Red);
+                else
+                    funUpdate(lblReturnRequest, "0", Color.White);
             }
         }
 

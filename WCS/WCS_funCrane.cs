@@ -16,7 +16,7 @@ namespace Mirle.ASRS
             DataTable dtEquCmd = new DataTable();
             try
             {
-                switch(craneMode)
+                switch (craneMode)
                 {
                     case CraneMode.StoreOut:
                         strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
@@ -37,12 +37,12 @@ namespace Mirle.ASRS
                     default:
                         break;
                 }
-                if(InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
+                if (InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
                     return int.Parse(dtEquCmd.Rows[0]["ICOUNT"].ToString()) > 0;
                 else
                     return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -50,7 +50,7 @@ namespace Mirle.ASRS
             }
             finally
             {
-                if(dtEquCmd != null)
+                if (dtEquCmd != null)
                 {
                     dtEquCmd.Clear();
                     dtEquCmd.Dispose();
@@ -65,12 +65,12 @@ namespace Mirle.ASRS
             string strEM = string.Empty;
             try
             {
-                if(source.Length == 6)
+                if (source.Length == 6)
                     source = source.Insert(2, "0");
                 else
                     source = source.PadLeft(7, '0');
 
-                if(destination.Length == 6)
+                if (destination.Length == 6)
                     destination = destination.Insert(2, "0");
                 else
                     destination = destination.PadLeft(7, '0');
@@ -87,14 +87,43 @@ namespace Mirle.ASRS
                 strSQL += "'" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "')";
                 return InitSys._DB.funExecSql(strSQL, ref strEM);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
                 return false;
             }
         }
-
+        private bool funQueryEquCmdCount(string craneMode)
+        {
+            string strSQL = string.Empty;
+            string strEM = string.Empty;
+            DataTable dtEquCmd = new DataTable();
+            try
+            {
+                strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
+                strSQL += " WHERE CMDMODE='" + craneMode + "'";
+                if (InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
+                    return int.Parse(dtEquCmd.Rows[0]["ICOUNT"].ToString()) == 0;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                return false;
+            }
+            finally
+            {
+                if (dtEquCmd != null)
+                {
+                    dtEquCmd.Clear();
+                    dtEquCmd.Dispose();
+                    dtEquCmd = null;
+                }
+            }
+        }
         private bool funDeleteEquCmd(string commandID, string craneMode)
         {
             string strSQL = string.Empty;
@@ -109,11 +138,55 @@ namespace Mirle.ASRS
                 strSQL += " AND CmdMode='" + craneMode + "'";
                 return InitSys._DB.funExecSql(strSQL, ref strEM);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
                 return false;
+            }
+        }
+
+        public bool funLoda()
+        {
+            string strEM = string.Empty;
+            string strMsg = string.Empty;
+            DataTable dtCmdSno = new DataTable();
+            try
+            {
+                string strSql = string.Format("select * from CtrlHs where EquNo='{0}'", "A1");
+                if (InitSys._DB.funGetDT(strSql, ref dtCmdSno, ref strEM))
+                {
+                    if (dtCmdSno.Rows[0]["HS"].ToString() == "0")
+                    {
+                        strSql = string.Format("update CtrlHs set Hs='1' where EquNo='{0}'", "A1");
+                        return InitSys._DB.funExecSql(strSql, ref strEM);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                else
+                {
+                    strSql = string.Format("insert into ctrlhs(HS,EquNo,trndt) values ('1','{0}','2015-10-10 12:00:00')", "A1");
+                   return InitSys._DB.funExecSql(strSql, ref strEM);
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                return false;
+            }
+            finally
+            {
+                if (dtCmdSno != null)
+                {
+                    dtCmdSno.Clear();
+                    dtCmdSno.Dispose();
+                    dtCmdSno = null;
+                }
             }
         }
     }

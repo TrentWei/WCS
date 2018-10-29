@@ -18,6 +18,7 @@ namespace Mirle.ASRS
         private static string strAGV_StoreOut_SPLCAddress = string.Empty;
         private static int intTotalAddress = 0;
         private static int intAGV_StoreIn_MPLCBufferIndex = 0;
+        private static int intAGV_StoreOut_MPLCBufferIndex = 0;
         private static int intAGV_GetWirteSPLCStartIndex = 0;
         private static DB dBServer = new DB();
         private static MPLC mPLC = new MPLC();
@@ -49,6 +50,11 @@ namespace Mirle.ASRS
         public static int _AGV_StoreIn_MPLCBufferIndex
         {
             get { return intAGV_StoreIn_MPLCBufferIndex; }
+        }
+
+        public static int _AGV_StoreOut_MPLCBufferIndex
+        {
+            get { return intAGV_StoreOut_MPLCBufferIndex; }
         }
 
         public static int _AGV_GetWirteSPLCStartIndex
@@ -88,6 +94,7 @@ namespace Mirle.ASRS
                 strAGV_StoreOut_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreOut_SPLCAddress"];
                 intTotalAddress = int.Parse(ConfigurationManager.AppSettings["TotalAddress"]);
                 intAGV_StoreIn_MPLCBufferIndex = int.Parse(ConfigurationManager.AppSettings["AGV_StoreIn_MPLCBufferIndex"]);
+                intAGV_StoreOut_MPLCBufferIndex = int.Parse(ConfigurationManager.AppSettings["AGV_StoreOut_MPLCBufferIndex"]);
                 intAGV_GetWirteSPLCStartIndex = int.Parse(ConfigurationManager.AppSettings["AGV_GetWirteSPLCStartIndex"]);
                 archive = new Archive(Application.StartupPath + @"\LOG\", 10000, Application.StartupPath + @"\LOG\", 7, 90);
                 archive.funStart();

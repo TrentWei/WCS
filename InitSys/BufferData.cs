@@ -23,6 +23,11 @@ namespace Mirle.ASRS
         {
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="bufferList">bufferName</param>
+        /// <param name="bufferAddressMAP">地址</param>
         public BufferData(List<string> bufferList, Dictionary<string, string> bufferAddressMAP)
         {
             arrBuffer = new Buffer[bufferList.Count];

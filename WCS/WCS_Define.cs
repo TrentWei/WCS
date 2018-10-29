@@ -54,6 +54,7 @@ namespace Mirle.ASRS
             public string Priority;
             public string CycleNo;
             public string PalletNo;
+            public string Cmd_Sts;
 
             public CommandInfo()
             {
@@ -66,6 +67,7 @@ namespace Mirle.ASRS
                 Priority = string.Empty;
                 CycleNo = string.Empty;
                 PalletNo = string.Empty;
+                Cmd_Sts = string.Empty;
             }
         }
 
@@ -126,6 +128,8 @@ namespace Mirle.ASRS
             public ushort BCR2_3 { get; set; }
             public ushort BCR2_4 { get; set; }
             public ushort BCR2_5 { get; set; }
+            public ushort Tmp { get; set; }
+            public ushort Load { get; set; }
         }
 
         private class SMPLCData_2
@@ -153,6 +157,16 @@ namespace Mirle.ASRS
             public string Plt_No;
             public string Trace;
             public string Remark;
+        }
+
+        private struct Prodecu
+        {
+            public string Prodecu_No;
+            public string Item_No;
+            public string PStn_No;
+            public int Prodecu_Qty;
+            public string Cmd_Sno;
+            public string Item_Type;
         }
     }
 }

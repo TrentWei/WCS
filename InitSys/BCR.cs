@@ -99,6 +99,11 @@ namespace Mirle.ASRS
         }
 
         #region Event Function
+        /// <summary>
+        /// 获取读到条码
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void serialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             try
@@ -107,7 +112,7 @@ namespace Mirle.ASRS
                 switch(enuBCRSts)
                 {
                     case BCRSts.Reading:
-                        strResultID = serialPort.ReadExisting().Replace("\r", "");
+                        strResultID = serialPort.ReadExisting().Replace("\n", "");
                         if(!string.IsNullOrWhiteSpace(strResultID))
                         {
                             enuBCRSts = BCRSts.ReadFinish;
@@ -132,18 +137,22 @@ namespace Mirle.ASRS
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
             }
         }
-
+        /// <summary>
+        /// 条码读取线程，关闭条码机，获取读到条码 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void timBCRReadTimeOut_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             timBCRReadTimeOut.Stop();
             if(DateTime.Now > dtBCRReadTime.AddMilliseconds(intBCRReadTimeOut))
             {
                 serialPort.Write(bytarTriggerOff, 0, bytarTriggerOff.Length);
-                strResultID = serialPort.ReadExisting().Replace("\r", "");
+                strResultID = serialPort.ReadExisting().Replace("\n", "");
                 switch(enuBCRSts)
                 {
                     case BCRSts.Reading:
-                        strResultID = serialPort.ReadExisting().Replace("\r", "");
+                        strResultID = serialPort.ReadExisting().Replace("\n", "");
                         if(!string.IsNullOrWhiteSpace(strResultID))
                         {
                             enuBCRSts = BCRSts.ReadFinish;
@@ -227,7 +236,7 @@ namespace Mirle.ASRS
                 serialPort.DiscardInBuffer();
                 serialPort.DiscardOutBuffer();
                 serialPort.Write(bytarTriggerOn, 0, bytarTriggerOn.Length);
-
+                int a = serialPort.BytesToWrite;
                 InitSys.funWriteLog("BCR_Trace", strBCRName + "|TriggerBCROn!");
 
                 strResultID = string.Empty;

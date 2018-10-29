@@ -9,6 +9,228 @@ namespace Mirle.ASRS
 {
     public partial class WCS
     {
+        private void funAGVSchedule(bool load)
+        {
+            funAGVSchedule_GetScheduleAndCreateCommand(load);
+            funAGVSchedule_ScheduleComandFinish();
+        }
+
+        private void funAGVSchedule_GetScheduleAndCreateCommand(bool load)
+        {
+            string strSQL = string.Empty;
+            string strEM = string.Empty;
+            string strMsg = string.Empty;
+            DataTable dtProduce = new DataTable();
+            try
+            {
+                if (!load && !funCheckExistsAGVSchedule())
+                {
+                    strSQL = "SELECT * FROM PRODUCE ";
+                    strSQL += " WHERE STATUS='0'";
+                    strSQL += " AND Wh_NO='A'";
+                    strSQL += " AND ITEM_TYPE='P'";
+                    strSQL += " AND TIME <='" + DateTime.Now.ToString("HH:mm") + "'";
+                    strSQL += " ORDER BY PRODUCE_NO";
+                    if (InitSys._DB.funGetDT(strSQL, ref dtProduce, ref strEM))
+                    {
+                        Prodecu prodecu = new Prodecu();
+                        prodecu.Prodecu_No = dtProduce.Rows[0]["PRODUCE_No"].ToString();
+                        prodecu.Item_No = dtProduce.Rows[0]["ITEM_NO"].ToString();
+                        prodecu.PStn_No = dtProduce.Rows[0]["PSTN_NO"].ToString();
+                        prodecu.Prodecu_Qty = int.Parse(dtProduce.Rows[0]["PRODUCE_QTY"].ToString());
+                        prodecu.Cmd_Sno = dtProduce.Rows[0]["Cmd_Sno"].ToString();
+                        prodecu.Item_Type = dtProduce.Rows[0]["ITEM_TYPE"].ToString();
+
+                        string strLocation = string.Empty;
+
+                        if (funGetItemNoLocation(prodecu.Item_No, prodecu.Item_Type, ref strLocation))
+                        {
+                            string strCommandID = funGetCommandID();
+                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            if (funCreateAGVStoreOutCommand(strCommandID, strLocation, prodecu.Item_No, "A03"))
+                            {
+                                if (funLockStoreOutLocation(strLocation))
+                                {
+                                    if (funLockStoreOutPalletNo(prodecu.Item_No, prodecu.Prodecu_Qty, prodecu.PStn_No, prodecu.Item_Type))
+                                    {
+                                        if (funUpdateProdecu(prodecu.Prodecu_No, "1", strCommandID))
+                                        {
+                                            #region Create AGV StroreOut Command & Lock StroreOut Location Success
+                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLocation + "|";
+                                            strMsg += prodecu.Item_No + "|";
+                                            strMsg += "Create AGV StroreOut Command Success!";
+                                            funWriteSysTraceLog(strMsg);
+
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLocation + "|";
+                                            strMsg += prodecu.Item_No + "|";
+                                            strMsg += "Lock AGV StroreOut Location Success!";
+                                            funWriteSysTraceLog(strMsg);
+
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLocation + "|";
+                                            strMsg += prodecu.Item_No + "|";
+                                            strMsg += "|";
+                                            strMsg += "Lock AGV StroreOut PalletNo Success!";
+                                            funWriteSysTraceLog(strMsg);
+
+                                            strMsg = prodecu.Prodecu_No + "|";
+                                            strMsg += prodecu.Item_No + "|";
+                                            strMsg += strLocation + "|";
+                                            strMsg += "0->1|";
+                                            strMsg += strCommandID + "|";
+                                            strMsg += "Update Prodecu Success!";
+                                            funWriteSysTraceLog(strMsg);
+                                            #endregion Create AGV StroreOut Command & Lock StroreOut Location Success
+                                        }
+                                        else
+                                        {
+                                            #region Update Prodecu Fail
+                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                            strMsg = prodecu.Prodecu_No + "|";
+                                            strMsg += prodecu.Item_No + "|";
+                                            strMsg += strLocation + "|";
+                                            strMsg += "0->1|";
+                                            strMsg += "Update Prodecu Fail!";
+                                            funWriteSysTraceLog(strMsg);
+                                            #endregion Update Prodecu Fail
+                                        }
+                                    }
+                                    else
+                                    {
+                                        #region Lock AGV StroreOut PalletNo Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        strMsg = strCommandID + "|";
+                                        strMsg += strLocation + "|";
+                                        strMsg += prodecu.Item_No + "|";
+                                        strMsg += "|";
+                                        strMsg += "Lock AGV StroreOut PalletNo Fail!";
+                                        funWriteSysTraceLog(strMsg);
+                                        #endregion Lock AGV StroreOut PalletNo Fail
+                                    }
+                                }
+                                else
+                                {
+                                    #region Lock AGV StroreOut Location Fail
+                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                    strMsg = strCommandID + "|";
+                                    strMsg += strLocation + "|";
+                                    strMsg += prodecu.Item_No + "|";
+                                    strMsg += "Lock AGV StroreOut Location Fail!";
+                                    funWriteSysTraceLog(strMsg);
+                                    #endregion Lock AGV StroreOut Location Fail
+                                }
+                            }
+                            else
+                            {
+                                #region Create AGV StoreOut Command Fail
+                                InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                strMsg = prodecu.Prodecu_No + "|";
+                                strMsg += prodecu.Item_No + "|";
+                                strMsg += strLocation + "|";
+                                strMsg += "Create AGV StoreOut Command Fail!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion Create AGV StoreOut Command Fail
+                            }
+                        }
+                        else
+                        {
+                            if (funUpdateProdecu(prodecu.Prodecu_No, "3", "00000"))
+                            {
+
+                                strMsg += strLocation + "|";
+                                strMsg += prodecu.Item_No + "|";
+                                strMsg += "Create 芯盒 StroreOut Command Fail!";
+                                funWriteSysTraceLog(strMsg);
+
+                                strMsg = prodecu.Prodecu_No + "|";
+                                strMsg += prodecu.Item_No + "|";
+                                strMsg += strLocation + "|";
+                                strMsg += "0->3|";
+
+                                strMsg = prodecu.Prodecu_No + "|";
+                                strMsg += prodecu.Item_No + "|";
+                                strMsg += prodecu.Item_Type + "|";
+                                strMsg += strLocation + "|";
+                                strMsg += "Find PalletNo Location Error!";
+                                funWriteSysTraceLog(strMsg);
+
+                            }
+                            else
+                            {
+                                #region Update Prodecu Fail
+                                strMsg = prodecu.Prodecu_No + "|";
+                                strMsg += prodecu.Item_No + "|";
+                                strMsg += strLocation + "|";
+                                strMsg += "0->3|";
+                                strMsg += "Update 芯盒 Prodecu Fail!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion Update Prodecu Fail
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+            finally
+            {
+                if (dtProduce != null)
+                {
+                    dtProduce.Clear();
+                    dtProduce.Dispose();
+                    dtProduce = null;
+                }
+            }
+        }
+
+        private void funAGVSchedule_ScheduleComandFinish()
+        {
+            string strMsg = string.Empty;
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(bufferData[InitSys._AGV_StoreOut_MPLCBufferIndex]._CommandID) &&
+                    bufferData[InitSys._AGV_StoreOut_MPLCBufferIndex]._Mode == Buffer.StnMode.StoreOut &&
+                    bufferData[InitSys._AGV_StoreOut_MPLCBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On &&
+                    bufferData[InitSys._AGV_StoreOut_MPLCBufferIndex]._EQUStatus.Load == Buffer.Signal.On)
+                {
+                    string strCommandID = bufferData[InitSys._AGV_StoreOut_MPLCBufferIndex]._CommandID;
+                    if (funCheckExistsAGVSchedule(strCommandID))
+                    {
+                        if (funUpdateProdecu(strCommandID, "2"))
+                        {
+                            #region Update Prodecu Finish Success
+                            strMsg = strCommandID + "|";
+                            strMsg += "1->2|";
+                            strMsg += "Update Prodecu Finish Success!";
+                            funWriteSysTraceLog(strMsg);
+                            #endregion Update Prodecu Finish Success
+                        }
+                        else
+                        {
+                            #region Update Prodecu Finish Fail
+                            strMsg = strCommandID + "|";
+                            strMsg += "1->2|";
+                            strMsg += "Update Prodecu Finish Fail!";
+                            funWriteSysTraceLog(strMsg);
+                            #endregion Update Prodecu Finish Fail
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+
         private void funStoreInRequestFromAGV(string palletNo)
         {
             string strSQL = string.Empty;
@@ -17,108 +239,68 @@ namespace Mirle.ASRS
             DataTable dtCmdSno = new DataTable();
             try
             {
-                if(!string.IsNullOrWhiteSpace(palletNo))
+                if ((!string.IsNullOrWhiteSpace(palletNo) && palletNo != "ERROR"))
                 {
                     strSQL = "SELECT * FROM ITEM_MST";
                     strSQL += " WHERE Plt_No='" + palletNo + "'";
-                    if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                    strSQL += " and Item_Type='P'";
+                    if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
                     {
-                        if(dtCmdSno.Rows[0]["Wh_No"].ToString().Substring(0, 1) != "A")
+                        if (dtCmdSno.Rows[0]["Wh_No"].ToString().Substring(0, 1) == "A")
                         {
                             string strCommandID = string.Empty;
                             string strLoaction = string.Empty;
                             int intCommandCount = funCheckExistsAGVStoreInCommand(palletNo, ref strCommandID, ref strLoaction);
 
-                            if(intCommandCount == 0)
+                            if (intCommandCount == 0)
                             {
                                 strMsg = palletNo + "|";
                                 strMsg += "StoreIn Request From AGV!";
                                 funWriteSysTraceLog(strMsg);
 
-                                bool bolCreateCommandFlag = false;
-                                strLoaction = dtCmdSno.Rows[0]["Loc"].ToString();
+                                InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
 
-                                #region StoreIn Loaction
-                                if(string.IsNullOrWhiteSpace(strLoaction))
+                                #region Create StroreIn Command
+                                strCommandID = funGetCommandID();
+                                if (funGetEmptyLocation("L", "P", ref strLoaction))
                                 {
-                                    strLoaction = funGetEmptyLocation();
-                                    if(string.IsNullOrWhiteSpace(strLoaction))
+                                    if (funCreateAGVStoreInCommand(strCommandID, strLoaction, palletNo, "A13"))
                                     {
-                                        strMsg = palletNo + "|";
-                                        strMsg += "Try Get New Empty Location Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        bolCreateCommandFlag = false;
-
-                                    }
-                                    else
-                                    {
-                                        strMsg = palletNo + "|";
-                                        strMsg += strLoaction + "|";
-                                        strMsg += "Try Get New Empty Location Success!";
-                                        funWriteSysTraceLog(strMsg);
-                                        bolCreateCommandFlag = true;
-                                    }
-                                }
-                                else
-                                    bolCreateCommandFlag = true;
-                                #endregion StoreIn Loaction
-
-                                if(bolCreateCommandFlag)
-                                {
-                                    #region Create StroreIn Command
-                                    strCommandID = funGetCommandID();
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
-                                    if(funCreateAGVStoreInCommand(strCommandID, strLoaction, palletNo))
-                                    {
-                                        if(funLockStoreInLocation(strLoaction))
+                                        if (funLockStoreInPalletNo(palletNo, "P"))
                                         {
-                                            if(funLockStoreInPalletNo(palletNo))
-                                            {
-                                                #region Create StroreIn Command & Lock StroreIn Location Success
-                                                InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
-                                                strMsg = strCommandID + "|";
-                                                strMsg += strLoaction + "|";
-                                                strMsg += palletNo + "|";
-                                                strMsg += "Create StroreIn Command Success!";
-                                                funWriteSysTraceLog(strMsg);
+                                            #region Create AGV StroreIn Command & Lock StroreIn Location Success
+                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLoaction + "|";
+                                            strMsg += palletNo + "|";
+                                            strMsg += "Create AGV StroreIn Command Success!";
+                                            funWriteSysTraceLog(strMsg);
 
-                                                strMsg = strCommandID + "|";
-                                                strMsg += strLoaction + "|";
-                                                strMsg += palletNo + "|";
-                                                strMsg += "Lock StroreIn Location Success!";
-                                                funWriteSysTraceLog(strMsg);
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLoaction + "|";
+                                            strMsg += palletNo + "|";
+                                            strMsg += "Lock AGV StroreIn Location Success!";
+                                            funWriteSysTraceLog(strMsg);
 
-                                                strMsg = strCommandID + "|";
-                                                strMsg += strLoaction + "|";
-                                                strMsg += palletNo + "|";
-                                                strMsg += "|";
-                                                strMsg += "Lock StroreIn PalletNo Fail!";
-                                                funWriteSysTraceLog(strMsg);
-                                                #endregion Create StroreIn Command & Lock StroreIn Location Success
-                                            }
-                                            else
-                                            {
-                                                #region Lock StroreIn PalletNo Fail
-                                                InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                                                strMsg = strCommandID + "|";
-                                                strMsg += strLoaction + "|";
-                                                strMsg += palletNo + "|";
-                                                strMsg += "|";
-                                                strMsg += "Lock StroreIn PalletNo Fail!";
-                                                funWriteSysTraceLog(strMsg);
-                                                #endregion Lock StroreIn PalletNo Fail
-                                            }
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLoaction + "|";
+                                            strMsg += palletNo + "|";
+                                            strMsg += "|";
+                                            strMsg += "Lock AGV StroreIn PalletNo Success!";
+                                            funWriteSysTraceLog(strMsg);
+                                            #endregion Create AGV StroreIn Command & Lock StroreIn Location Success
                                         }
                                         else
                                         {
-                                            #region Lock StroreIn Location Fail
+                                            #region Lock AGV StroreIn PalletNo Fail
                                             InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                             strMsg = strCommandID + "|";
                                             strMsg += strLoaction + "|";
                                             strMsg += palletNo + "|";
-                                            strMsg += "Lock StroreIn Location Fail!";
+                                            strMsg += "|";
+                                            strMsg += "Lock AGV StroreIn PalletNo Fail!";
                                             funWriteSysTraceLog(strMsg);
-                                            #endregion Lock StroreIn Location Fail
+                                            #endregion Lock AGV StroreIn PalletNo Fail
                                         }
                                     }
                                     else
@@ -132,48 +314,87 @@ namespace Mirle.ASRS
                                         funWriteSysTraceLog(strMsg);
                                         #endregion Create AGV StoreIn Command Fail
                                     }
-                                    #endregion Create StroreIn Command
                                 }
+                                else
+                                {
+                                    #region Lock AGV StroreIn Location Fail
+                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                    strMsg = strCommandID + "|";
+                                    strMsg += strLoaction + "|";
+                                    strMsg += palletNo + "|";
+                                    strMsg += "Lock AGV StroreIn Location Fail!";
+                                    funWriteSysTraceLog(strMsg);
+                                    #endregion Lock AGV StroreIn Location Fail
+                                }
+                                #endregion Create StroreIn Command
+
                             }
-                            else if(intCommandCount == 1)
+                            else if (intCommandCount == 1)
                             {
                                 #region AGV StoreIn Command = 1
-                                if(string.IsNullOrWhiteSpace(bufferData[0]._CommandID) &&
-                                    string.IsNullOrWhiteSpace(bufferData[0]._Destination) &&
-                                    bufferData[0]._Mode == Buffer.StnMode.None &&
-                                    bufferData[0]._EQUStatus.AutoMode == Buffer.Signal.On)
+                                if (string.IsNullOrWhiteSpace(bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._CommandID) &&
+                                    string.IsNullOrWhiteSpace(bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._Destination) &&
+                                    bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._Mode == Buffer.StnMode.None &&
+                                    bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On)
                                 {
-                                    #region Write MPLC
-                                    string[] strValues = new string[] { strCommandID, "1", "1" };
-                                    if(InitSys._MPLC.funWriteMPLC(bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno, strValues))
+                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                                    if (funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreIn_GetStoreInCommandAndWritePLC))
                                     {
-                                        #region Write MPLC Success
-                                        strMsg = strCommandID + "|";
-                                        strMsg += strLoaction + "|";
-                                        strMsg += bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Success!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Write MPLC Success
+                                        #region Write MPLC
+                                        string[] strValues = new string[] { strCommandID, "1", "1" };
+                                        if (InitSys._MPLC.funWriteMPLC(bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno, strValues))
+                                        {
+                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLoaction + "|";
+                                            strMsg += palletNo + "|";
+                                            strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
+                                            strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
+                                            strMsg += "StroreIn Command Update Success!";
+                                            funWriteSysTraceLog(strMsg);
+
+                                            #region Write MPLC Success
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLoaction + "|";
+                                            strMsg += bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno + "|";
+                                            strMsg += string.Join(",", strValues) + "|";
+                                            strMsg += "Write MPLC Success!";
+                                            funWriteSysTraceLog(strMsg);
+                                            #endregion Write MPLC Success
+                                        }
+                                        else
+                                        {
+                                            #region Write MPLC Fail
+                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLoaction + "|";
+                                            strMsg += bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno + "|";
+                                            strMsg += string.Join(",", strValues) + "|";
+                                            strMsg += "Write MPLC Fail!";
+                                            funWriteSysTraceLog(strMsg);
+                                            #endregion Write MPLC Fail
+                                        }
+                                        #endregion Write MPLC
                                     }
                                     else
                                     {
-                                        #region Write MPLC Fail
+                                        #region Update Command Fail
+                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
                                         strMsg = strCommandID + "|";
                                         strMsg += strLoaction + "|";
-                                        strMsg += bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Fail!";
+                                        strMsg += palletNo + "|";
+                                        strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
+                                        strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
+                                        strMsg += "StroreIn Command Update Fail!";
                                         funWriteSysTraceLog(strMsg);
-                                        #endregion Write MPLC Fail
+                                        #endregion Update Command Fail
                                     }
-                                    #endregion Write MPLC
                                 }
-                                else if(sMPLCData_2.StoreIn == 0)
+                                else if (sMPLCData_2.StoreIn == 0)
                                 {
                                     #region Write SPLC
                                     SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreIn_SPLCAddress, "1");
-                                    if(InitSys._SPLC.funWriteSPLC(tag))
+                                    if (InitSys._SPLC.funWriteSPLC(tag))
                                     {
                                         strMsg = palletNo + "|";
                                         strMsg += tag._ItemName + "|";
@@ -196,10 +417,10 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region AGV StoreIn Command > 1
-                                if(sMPLCData_2.StoreIn == 0)
+                                if (sMPLCData_2.StoreIn == 0)
                                 {
                                     SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreIn_SPLCAddress, "2");
-                                    if(InitSys._SPLC.funWriteSPLC(tag))
+                                    if (InitSys._SPLC.funWriteSPLC(tag))
                                     {
                                         strMsg = palletNo + "|";
                                         strMsg += tag._ItemName + "|";
@@ -226,14 +447,14 @@ namespace Mirle.ASRS
                         else
                         {
                             #region Can't StoreIn
-                            if(sMPLCData_2.StoreIn == 0)
+                            if (sMPLCData_2.StoreIn == 0)
                             {
                                 strMsg = palletNo + "|";
                                 strMsg += "StoreIn Request From AGV!";
                                 funWriteSysTraceLog(strMsg);
 
                                 SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreIn_SPLCAddress, "2");
-                                if(InitSys._SPLC.funWriteSPLC(tag))
+                                if (InitSys._SPLC.funWriteSPLC(tag))
                                 {
                                     strMsg = palletNo + "|";
                                     strMsg += tag._ItemName + "|";
@@ -260,14 +481,14 @@ namespace Mirle.ASRS
                     else
                     {
                         #region Can't Find PalletNo
-                        if(sMPLCData_2.StoreIn == 0)
+                        if (sMPLCData_2.StoreIn == 0)
                         {
                             strMsg = palletNo + "|";
                             strMsg += "StoreIn Request From AGV!";
                             funWriteSysTraceLog(strMsg);
 
                             SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreIn_SPLCAddress, "2");
-                            if(InitSys._SPLC.funWriteSPLC(tag))
+                            if (InitSys._SPLC.funWriteSPLC(tag))
                             {
                                 strMsg = palletNo + "|";
                                 strMsg += tag._ItemName + "|";
@@ -292,14 +513,14 @@ namespace Mirle.ASRS
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
             }
             finally
             {
-                if(dtCmdSno != null)
+                if (dtCmdSno != null)
                 {
                     dtCmdSno.Clear();
                     dtCmdSno.Dispose();
@@ -316,7 +537,7 @@ namespace Mirle.ASRS
             DataTable dtCmdSno = new DataTable();
             try
             {
-                if(!string.IsNullOrWhiteSpace(palletNo) && sMPLCData_2.StoreOut == 0 && strLastAGVBCR1 != palletNo)
+                if (!string.IsNullOrWhiteSpace(palletNo) && sMPLCData_2.StoreOut == 0 && strLastAGVBCR1 != palletNo)
                 {
                     strMsg = palletNo + "|";
                     strMsg += "AGV Need Station Request!";
@@ -324,16 +545,17 @@ namespace Mirle.ASRS
 
                     strSQL = "SELECT * FROM ITEM_MST";
                     strSQL += " WHERE Plt_No='" + palletNo + "'";
-                    if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                    strSQL += " and Item_Type='P'";
+                    if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
                     {
                         string strPStation = dtCmdSno.Rows[0]["PStn_No"].ToString();
-                        if(!string.IsNullOrWhiteSpace(strPStation))
+                        if (!string.IsNullOrWhiteSpace(strPStation))
                         {
-                            if(strPStation != "0")
+                            if (strPStation != "0")
                             {
                                 #region Write SPLC
                                 SPLC.Tag tag = new SPLC.Tag(InitSys._AGV_StoreOut_SPLCAddress, strPStation);
-                                if(InitSys._SPLC.funWriteSPLC(tag))
+                                if (InitSys._SPLC.funWriteSPLC(tag))
                                 {
                                     #region Pallet StoreOut To AGV Finish
                                     strMsg = palletNo + "|";
@@ -392,14 +614,14 @@ namespace Mirle.ASRS
                     strLastAGVBCR1 = palletNo;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
             }
             finally
             {
-                if(dtCmdSno != null)
+                if (dtCmdSno != null)
                 {
                     dtCmdSno.Clear();
                     dtCmdSno.Dispose();

@@ -36,31 +36,77 @@ namespace Mirle.ASRS
         public string _Destination { get; set; }
         public StnMode _Mode { get; set; }
         public bool _ReturnRequest { get; set; }
+        public bool W_Discharged { get; set; }
+        public bool _APositioning { get; set; }
+        public bool _Clearnotice  { get; set; }
+
+        /// <summary>
+        /// 设备状态信号
+        /// </summary>
         public EQU_Status_Signal _EQUStatus { get; set; }
+        /// <summary>
+        /// 设备报警状态信号
+        /// </summary>
         public EQU_Alarm_Status_Signal _EQUAlarmStatus { get; set; }
+        /// <summary>
+        /// 设备状态信号地址
+        /// </summary>
         public EQU_Status_Signal_Address _EQUStatusAddress { get; set; }
+        /// <summary>
+        /// 设备报警状态信号地址
+        /// </summary>
         public EQU_Alarm_Status_Signal_Address _EQUAlarmStatusAddress { get; set; }
 
         #region PLC位址
+
+        /// <summary>
+        /// 命令序号
+        /// </summary>
         public string _W_CmdSno
         {
             get { return strAddress; }
         }
+
+        /// <summary>
+        /// 目的站
+        /// </summary>
         public string _W_Destination
         {
             get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 1).ToString(); }
         }
+        /// <summary>
+        /// 模式
+        /// </summary>
         public string _W_Mode
         {
             get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 2).ToString(); }
         }
+        /// <summary>
+        /// 退回请求
+        /// </summary>
         public string _W_ReturnRequest
         {
             get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 3).ToString(); }
         }
-        public string _W_LocSize
+
+        /// <summary>
+        /// A12PC放行
+        /// </summary>
+        public string _W_Discharged
+        {
+            get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 4).ToString(); }
+        }
+        /// <summary>
+        /// A12、B01，荷有/后定位
+        /// </summary>
+        public string _W_APositioning
         {
             get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 5).ToString(); }
+        }
+
+        public string _W_Clearnotice
+        {
+            get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 8).ToString(); }
         }
         #endregion PLC位址
 
@@ -71,16 +117,19 @@ namespace Mirle.ASRS
         {
             public Signal AutoMode { get; set; }
             public Signal Load { get; set; }
+            //public Signal APositioning { get; set; }
 
             public EQU_Status_Signal()
             {
                 AutoMode = Signal.Off;
                 Load = Signal.Off;
+                //APositioning= Signal.Off;
             }
         }
 
         public class EQU_Alarm_Status_Signal
         {
+            public bool Error { get; set; }
             public Signal EMO { get; set; }
             public Signal TransportMotorOverLoad { get; set; }
             public Signal TransportTimeout { get; set; }
@@ -109,14 +158,19 @@ namespace Mirle.ASRS
             private string strAutoMode = string.Empty;
             private string strLoad = string.Empty;
 
+            //private string strAPositioning = string.Empty;
+
             public string B_AutoMode { get { return strAutoMode; } }
             public string B_Load { get { return strLoad; } }
+
+            //public string B_APositioning { get { return strAPositioning; } }
 
             public EQU_Status_Signal_Address(string address)
             {
                 int intAddress = int.Parse(address.Remove(0, 1)) + 7;
                 strAutoMode = "D" + intAddress.ToString() + ".0";
                 strLoad = "D" + intAddress.ToString() + ".1";
+                //strAPositioning= "D" + intAddress.ToString() + ".2";
             }
         }
 

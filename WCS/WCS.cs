@@ -21,21 +21,22 @@ namespace Mirle.ASRS
         private bool bolBCR = false;
         private bool bolAuto = true;
         private bool bolClose = false;
+        private bool bolChkStn = false;
         private int[] intarResultData = new int[0];
         private BufferData bufferData = new BufferData();
         private BCRData bCRData = new BCRData();
         private Thread thdReconnection = null;
         private System.Windows.Forms.Timer timRefresh = new System.Windows.Forms.Timer();
         private System.Timers.Timer timProgram = new System.Timers.Timer();
-        private System.Timers.Timer timSPLCProgram = new System.Timers.Timer();
-        private System.Timers.Timer timUpdate = new System.Timers.Timer();
-        private Dictionary<int, Control> dicBufferMap = new Dictionary<int, Control>();
+        //private System.Timers.Timer timSPLCProgram = new System.Timers.Timer();
+        //private System.Timers.Timer timUpdate = new System.Timers.Timer();
+        private Dictionary<int, BufferMonitor> dicBufferMap = new Dictionary<int, BufferMonitor>();
+        private Dictionary<int, CraneMonitor> dicCraneMap = new Dictionary<int, CraneMonitor>();
         private List<StationInfo> lstStoreIn = new List<StationInfo>();
         private List<StationInfo> lstStoreOut = new List<StationInfo>();
         private SMPLCData_1 sMPLCData_1 = new SMPLCData_1();
         private SMPLCData_2 sMPLCData_2 = new SMPLCData_2();
         private List<StationInfo> lstClearKanbanInfo = new List<StationInfo>();
-
 
         private delegate void ShowMessage_EventHandler(string Message);
         private delegate void ButtonEnable_EventHandler(Button button, bool enable);
@@ -43,6 +44,7 @@ namespace Mirle.ASRS
         public WCS()
         {
             InitializeComponent();
+
         }
 
         #region Event Function
@@ -50,14 +52,19 @@ namespace Mirle.ASRS
         {
             InitSys.funItialSys();
 
-            if(string.IsNullOrWhiteSpace(InitSys._APName))
-                this.Text = "盟立自动仓控制系统" + " (V." + Application.ProductVersion + ")";
+            if (string.IsNullOrWhiteSpace(InitSys._APName))
+                this.Text = "盟立自动仓控制系统,鲁达一期" + " (V." + Application.ProductVersion + ")";
             else
                 this.Text = InitSys._APName + " (V." + Application.ProductVersion + ")";
 
             funWriteSysTraceLog(this.Text + " Program Start!");
 
             funInital();
+            if (!funLoda())
+            {
+                MessageBox.Show("网络内已有程式运行！");
+                funClose();
+            }
         }
 
         private void btnAutoPause_Click(object sender, EventArgs e)
@@ -80,6 +87,11 @@ namespace Mirle.ASRS
         private void btnExit_Click(object sender, EventArgs e)
         {
             funWriteSysTraceLog(this.Text + " Program Stop!");
+            string strEM = string.Empty;
+            string strMsg = string.Empty;
+            string strSql = "";
+            strSql = string.Format("update CtrlHs set Hs='0' where EquNo='{0}'", "A1");
+            InitSys._DB.funExecSql(strSql, ref strEM);
             funClose();
         }
         #endregion Close
@@ -125,10 +137,7 @@ namespace Mirle.ASRS
 
             try
             {
-                lblDataTime.Text = System.DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss:fff");
-
-                if(InitSys._MPLC._IsConnection)
-                    InitSys._MPLC.funWriteMPLC("D11", "1");
+                lblDataTime.Text = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:fff");
 
                 funShowAutoPause(bolAuto);
                 funShowConnect(InitSys._MPLC._IsConnection, lblMPLCSts);
@@ -136,25 +145,25 @@ namespace Mirle.ASRS
                 funShowConnect(InitSys._DB._IsConnection, lblDBSts);
 
                 #region Auto Reconnect
-                if(chkAutoReconnect.Checked && !bolAuto)
+                if (chkAutoReconnect.Checked && !bolAuto)
                 {
-                    if(!InitSys._MPLC._IsConnection && !bolMPLC)
+                    if (!InitSys._MPLC._IsConnection && !bolMPLC)
                     {
                         bolMPLC = true;
                         thdReconnection = new Thread(funReconnectionMPLC);
                         thdReconnection.IsBackground = true;
                         thdReconnection.Start();
                     }
-                    if(!InitSys._SPLC._IsConnection && !bolSPLC)
+                    if (!InitSys._SPLC._IsConnection && !bolSPLC)
                     {
                         bolSPLC = true;
                         thdReconnection = new Thread(funReconnectionSPLC);
                         thdReconnection.IsBackground = true;
                         thdReconnection.Start();
                     }
-                    for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
+                    for (int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
                     {
-                        if(!bCRData[intIndex]._IsOpen && !bolBCR)
+                        if (!bCRData[intIndex]._IsOpen && !bolBCR)
                         {
                             bolBCR = true;
                             thdReconnection = new Thread(funReconnectionBCR);
@@ -162,7 +171,7 @@ namespace Mirle.ASRS
                             thdReconnection.Start();
                         }
                     }
-                    if(!InitSys._DB._IsConnection && !bolDB)
+                    if (!InitSys._DB._IsConnection && !bolDB)
                     {
                         bolDB = true;
                         thdReconnection = new Thread(funReconnectionDB);
@@ -171,8 +180,32 @@ namespace Mirle.ASRS
                     }
                 }
                 #endregion Auto Reconnect
+
+                if (InitSys._MPLC._IsConnection)
+                {
+                    InitSys._MPLC.funWriteMPLC("D11", "1");
+
+                    for (int intIndex = 0; intIndex < bufferData._BufferCount; intIndex++)
+                    {
+                        if (dicBufferMap.ContainsKey(intIndex))
+                        {
+                            BufferMonitor bufferMonitor = dicBufferMap[intIndex];
+                            bufferMonitor._CommandID = bufferData[intIndex]._CommandID;
+                            bufferMonitor._Destination = bufferData[intIndex]._Destination;
+                            bufferMonitor._Mode = bufferData[intIndex]._Mode;
+                            bufferMonitor._ReturnRequest = bufferData[intIndex]._ReturnRequest;
+                            bufferMonitor._Auto = bufferData[intIndex]._EQUStatus.AutoMode;
+                            bufferMonitor._Load = bufferData[intIndex]._EQUStatus.Load;
+                            bufferMonitor._Error = bufferData[intIndex]._EQUAlarmStatus.Error ? Buffer.Signal.On : Buffer.Signal.Off;
+
+                        }
+                    }
+                }
+
+                if (InitSys._DB._IsConnection)
+                    funRefreshCrane();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -189,58 +222,97 @@ namespace Mirle.ASRS
 
             try
             {
-                if(InitSys._MPLC._IsConnection)
+                if (InitSys._DB._IsConnection)
                 {
-                    if(InitSys._MPLC.funReadMPLC(InitSys._StartAddress, InitSys._TotalAddress, ref intarResultData))
+                    if (InitSys._MPLC._IsConnection)
                     {
-                        for(int intIndex = 0; intIndex < bufferData._BufferCount; intIndex++)
+                        if (InitSys._MPLC.funReadMPLC(InitSys._StartAddress, InitSys._TotalAddress, ref intarResultData))
                         {
-                            bufferData[intIndex]._CommandID = intarResultData[(intIndex * 10)].ToString() == "0" ?
-                                string.Empty : intarResultData[(intIndex * 10)].ToString();
-                            bufferData[intIndex]._Destination = intarResultData[(intIndex * 10) + 1].ToString() == "0" ?
-                                string.Empty : intarResultData[(intIndex * 10) + 1].ToString();
-                            bufferData[intIndex]._Mode = (Buffer.StnMode)intarResultData[(intIndex * 10) + 2];
-                            bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 3] == 1;
+                            for (int intIndex = 0; intIndex < bufferData._BufferCount; intIndex++)
+                            {
+                                bufferData[intIndex]._CommandID = intarResultData[(intIndex * 10)].ToString() == "0" ?
+                                    string.Empty : intarResultData[(intIndex * 10)].ToString();
+                                bufferData[intIndex]._Destination = intarResultData[(intIndex * 10) + 1].ToString() == "0" ?
+                                    string.Empty : intarResultData[(intIndex * 10) + 1].ToString();
+                                bufferData[intIndex]._Mode = (Buffer.StnMode)intarResultData[(intIndex * 10) + 2];
+                                bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 3] == 1;
 
-                            #region EQUStatus
-                            string strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 6], 2).PadLeft(16, '0');
-                            bufferData[intIndex]._EQUStatus.AutoMode =
-                                strTmp.Substring(15, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            bufferData[intIndex]._EQUStatus.Load =
-                                strTmp.Substring(14, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            #endregion EQUStatus
+                                bufferData[intIndex].W_Discharged = intarResultData[(intIndex * 10) + 4] == 1;
 
-                            #region EQUAlarmStatus
-                            strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 7], 2).PadLeft(16, '0');
-                            bufferData[intIndex]._EQUAlarmStatus.EMO =
-                                strTmp.Substring(15, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            bufferData[intIndex]._EQUAlarmStatus.TransportMotorOverLoad =
-                                strTmp.Substring(14, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            bufferData[intIndex]._EQUAlarmStatus.TransportTimeout =
-                                strTmp.Substring(13, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            bufferData[intIndex]._EQUAlarmStatus.LiftMotorOverLoad =
-                                strTmp.Substring(12, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            bufferData[intIndex]._EQUAlarmStatus.LiftTimeout =
-                                strTmp.Substring(11, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            bufferData[intIndex]._EQUAlarmStatus.OverHigh =
-                                strTmp.Substring(10, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            bufferData[intIndex]._EQUAlarmStatus.LoadNoData =
-                                strTmp.Substring(9, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            bufferData[intIndex]._EQUAlarmStatus.DataNoLoad =
-                                strTmp.Substring(8, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                            #endregion EQUAlarmStatus
+                                bufferData[intIndex]._APositioning = intarResultData[(intIndex * 10) + 5] == 1;
+
+                                bufferData[intIndex]._Clearnotice = intarResultData[(intIndex * 10) + 8] == 1;
+                                #region EQUStatus
+                                string strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 6], 2).PadLeft(16, '0');
+                                bufferData[intIndex]._EQUStatus.AutoMode =
+                                    strTmp.Substring(15, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUStatus.Load =
+                                    strTmp.Substring(14, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                #endregion EQUStatus
+
+                                #region EQUAlarmStatus
+                                strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 7], 2).PadLeft(16, '0');
+                                bufferData[intIndex]._EQUAlarmStatus.Error = (intarResultData[(intIndex * 10) + 7] > 0);
+                                bufferData[intIndex]._EQUAlarmStatus.EMO =
+                                    strTmp.Substring(15, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.TransportMotorOverLoad =
+                                    strTmp.Substring(14, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.TransportTimeout =
+                                    strTmp.Substring(13, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.LiftMotorOverLoad =
+                                    strTmp.Substring(12, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.LiftTimeout =
+                                    strTmp.Substring(11, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.OverHigh =
+                                    strTmp.Substring(10, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.LoadNoData =
+                                    strTmp.Substring(9, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.DataNoLoad =
+                                    strTmp.Substring(8, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+
+                                #endregion EQUAlarmStatus
+                            }
+                        }
+
+                        if (bolAuto)
+                        {
+                            funKanbanInfo();
+                            funStoreOut();
+                            funStroreIn();
+                            funLocationToLocation();
                         }
                     }
 
-                    if(bolAuto)
+                    if (InitSys._SPLC._IsConnection)
                     {
-                        funStoreOut();
-                        funStroreIn();
-                        funLocationToLocation();
+                        if (InitSys._SPLC.funReadSPLC(sMPLCData_1))
+                        {
+                            int[] intBCRArray1 = new int[]
+                            {
+                                    sMPLCData_1.BCR1_1, sMPLCData_1.BCR1_2, sMPLCData_1.BCR1_3, sMPLCData_1.BCR1_4, sMPLCData_1.BCR1_5
+                            };
+                            int[] intBCRArray2 = new int[]
+                            {
+                                    sMPLCData_1.BCR2_1, sMPLCData_1.BCR2_2, sMPLCData_1.BCR2_3, sMPLCData_1.BCR2_4, sMPLCData_1.BCR2_5
+                            };
+                            string strBCR1 = funIntArrayConvertASCII(intBCRArray1);
+                            string strBCR2 = funIntArrayConvertASCII(intBCRArray2);
+                            bool bolLoad = Convert.ToString(sMPLCData_1.Load, 2).PadLeft(16, '0').Substring(15, 1) == "1";
+                            if (InitSys._SPLC.funReadSPLC(sMPLCData_2, InitSys._AGV_GetWirteSPLCStartIndex))
+                            {
+                                if (bolAuto)
+                                {
+                                    funAGVSchedule(bolLoad);
+                                    funAGVNeedStationRequest(strBCR1);
+                                    funStoreInRequestFromAGV(strBCR2);
+                                }
+                            }
+                        }
                     }
+                    funUpdatePosted();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -251,61 +323,42 @@ namespace Mirle.ASRS
             }
         }
 
-        private void timSPLCProgram_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            timSPLCProgram.Stop();
+        //private void timSPLCProgram_Elapsed(object sender, ElapsedEventArgs e)
+        //{
+        //    timSPLCProgram.Stop();
 
-            try
-            {
-                if(InitSys._SPLC._IsConnection)
-                {
-                    if(InitSys._SPLC.funReadSPLC(sMPLCData_1))
-                    {
-                        int[] intBCRArray1 = new int[]
-                        {
-                            sMPLCData_1.BCR1_1, sMPLCData_1.BCR1_2, sMPLCData_1.BCR1_3, sMPLCData_1.BCR1_4, sMPLCData_1.BCR1_5
-                        };
-                        int[] intBCRArray2 = new int[]
-                        {
-                            sMPLCData_1.BCR2_1, sMPLCData_1.BCR2_2, sMPLCData_1.BCR2_3, sMPLCData_1.BCR2_4, sMPLCData_1.BCR2_5
-                        };
-                        string strBCR1 = funIntArrayConvertASCII(intBCRArray1);
-                        string strBCR2 = funIntArrayConvertASCII(intBCRArray2);
+        //    try
+        //    {
+        //        if(InitSys._DB._IsConnection)
+        //        {
+        //            if(InitSys._MPLC._IsConnection)
+        //            {
 
-                        if(InitSys._SPLC.funReadSPLC(sMPLCData_2, InitSys._AGV_GetWirteSPLCStartIndex))
-                        {
-                            if(bolAuto)
-                            {
-                                funAGVNeedStationRequest(strBCR1);
-                                funStoreInRequestFromAGV(strBCR2);
-                            }
-                        }
-                    }
-                }
-            }
-            catch(Exception ex)
-            {
-                MethodBase methodBase = MethodBase.GetCurrentMethod();
-                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
-            }
-            finally
-            {
-                timSPLCProgram.Start();
-            }
-        }
+        //            }
+        //        }
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        MethodBase methodBase = MethodBase.GetCurrentMethod();
+        //        InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+        //    }
+        //    finally
+        //    {
+        //        timSPLCProgram.Start();
+        //    }
+        //}
 
-        private void timUpdate_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            timUpdate.Stop();
-            try
-            {
-                funUpdatePosted();
-            }
-            finally
-            {
-                timUpdate.Start();
-            }
-        }
+        //private void timUpdate_Elapsed(object sender, ElapsedEventArgs e)
+        //{
+        //    timUpdate.Stop();
+        //    try
+        //    {
+        //    }
+        //    finally
+        //    {
+        //        timUpdate.Start();
+        //    }
+        //}
         #endregion Time
 
         #endregion Event Function
@@ -322,9 +375,29 @@ namespace Mirle.ASRS
             funInitalBuffer();
             funInitalStoreIn();
             funInitalStoreOut();
-            //funinitalKanbanInfo();
+            funinitalKanbanInfo();
+            funinitalCrane();
             funinitalBCR();
             funStart();
+        }
+
+        private void funInitalTimer()
+        {
+            timRefresh.Stop();
+            timRefresh.Tick += new EventHandler(timRefresh_Tick);
+            timRefresh.Interval = 100;
+
+            timProgram.Stop();
+            timProgram.Elapsed += new ElapsedEventHandler(timProgram_Elapsed);
+            timProgram.Interval = 200;
+
+            //timSPLCProgram.Stop();
+            //timSPLCProgram.Elapsed += new ElapsedEventHandler(timSPLCProgram_Elapsed);
+            //timSPLCProgram.Interval = 200;
+
+            //timUpdate.Stop();
+            //timUpdate.Elapsed += new ElapsedEventHandler(timUpdate_Elapsed);
+            //timUpdate.Interval = 2000;
         }
 
         private void funInitalBuffer()
@@ -335,9 +408,9 @@ namespace Mirle.ASRS
             try
             {
                 string[] strarBufferMAPLines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\Buffer.txt");
-                foreach(string strValues in strarBufferMAPLines)
+                foreach (string strValues in strarBufferMAPLines)
                 {
-                    if(strValues.Contains("#"))
+                    if (strValues.Contains("#"))
                         continue;
 
                     string[] strTmp = strValues.Split(',');
@@ -346,10 +419,13 @@ namespace Mirle.ASRS
                     {
                         dicPLCMap.Add(strTmp[0], strTmp[1]);
                         lstBuffer.Add(strTmp[0]);
-                        if(tbpFlowControl.Controls.ContainsKey(strTmp[0]))
-                            dicBufferMap.Add(int.Parse(strTmp[2]), tbpFlowControl.Controls[strTmp[0]]);
+                        if (sctMain1.Panel2.Controls.ContainsKey(strTmp[0]))
+                        {
+                            if (sctMain1.Panel1.Controls[strTmp[0]] is BufferMonitor)
+                                dicBufferMap.Add(int.Parse(strTmp[2]), (BufferMonitor)sctMain1.Panel2.Controls[strTmp[0]]);
+                        }
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         MethodBase methodBase = MethodBase.GetCurrentMethod();
                         InitSys.funWriteLog("Exception",
@@ -359,10 +435,10 @@ namespace Mirle.ASRS
                 bufferData = new BufferData(lstBuffer, dicPLCMap);
 
                 intarResultData = new int[InitSys._TotalAddress];
-                for(int i = 0; i < intarResultData.Length; i++)
+                for (int i = 0; i < intarResultData.Length; i++)
                     intarResultData[i] = 0;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -376,9 +452,9 @@ namespace Mirle.ASRS
                 lstStoreIn.Clear();
                 lstStoreIn = new List<StationInfo>();
                 string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\StoreIn.txt");
-                foreach(string strValues in strarStroreInines)
+                foreach (string strValues in strarStroreInines)
                 {
-                    if(strValues.Contains("#"))
+                    if (strValues.Contains("#"))
                         continue;
 
                     string[] strTmp = strValues.Split(',');
@@ -391,7 +467,7 @@ namespace Mirle.ASRS
                         stnDef.StationIndex = int.Parse(strTmp[3]);
                         lstStoreIn.Add(stnDef);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         MethodBase methodBase = MethodBase.GetCurrentMethod();
                         InitSys.funWriteLog("Exception",
@@ -399,7 +475,7 @@ namespace Mirle.ASRS
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -413,9 +489,9 @@ namespace Mirle.ASRS
                 lstStoreOut.Clear();
                 lstStoreOut = new List<StationInfo>();
                 string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\StoreOut.txt");
-                foreach(string strValues in strarStroreInines)
+                foreach (string strValues in strarStroreInines)
                 {
-                    if(strValues.Contains("#"))
+                    if (strValues.Contains("#"))
                         continue;
 
                     string[] strTmp = strValues.Split(',');
@@ -428,7 +504,7 @@ namespace Mirle.ASRS
                         stnDef.StationIndex = int.Parse(strTmp[3]);
                         lstStoreOut.Add(stnDef);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         MethodBase methodBase = MethodBase.GetCurrentMethod();
                         InitSys.funWriteLog("Exception",
@@ -436,7 +512,7 @@ namespace Mirle.ASRS
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -449,10 +525,10 @@ namespace Mirle.ASRS
             {
                 lstClearKanbanInfo.Clear();
                 lstClearKanbanInfo = new List<StationInfo>();
-                string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\KanbanInfo.txt.txt");
-                foreach(string strValues in strarStroreInines)
+                string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\KanbanInfo.txt");
+                foreach (string strValues in strarStroreInines)
                 {
-                    if(strValues.Contains("#"))
+                    if (strValues.Contains("#"))
                         continue;
 
                     string[] strTmp = strValues.Split(',');
@@ -463,7 +539,7 @@ namespace Mirle.ASRS
                         stnKanbanInfo.BufferIndex = int.Parse(strTmp[1]);
                         lstClearKanbanInfo.Add(stnKanbanInfo);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         MethodBase methodBase = MethodBase.GetCurrentMethod();
                         InitSys.funWriteLog("Exception",
@@ -471,10 +547,32 @@ namespace Mirle.ASRS
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+
+        private void funinitalCrane()
+        {
+            try
+            {
+                dicCraneMap.Clear();
+                for (int intIndex = 0; intIndex < sctMain1.Panel2.Controls.Count; intIndex++)
+                {
+                    if (sctMain1.Panel2.Controls[intIndex] is CraneMonitor)
+                    {
+                        CraneMonitor craneMonitor = (CraneMonitor)sctMain1.Panel2.Controls[intIndex];
+                        dicCraneMap.Add(craneMonitor._CraneNo, craneMonitor);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception",
+                    methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
             }
         }
 
@@ -485,9 +583,9 @@ namespace Mirle.ASRS
             try
             {
                 string[] strarBCRPLines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\BCR.txt");
-                foreach(string strValues in strarBCRPLines)
+                foreach (string strValues in strarBCRPLines)
                 {
-                    if(strValues.Contains("#"))
+                    if (strValues.Contains("#"))
                         continue;
 
                     string[] strTmp = strValues.Split(',');
@@ -496,7 +594,7 @@ namespace Mirle.ASRS
                         BCR bCR = new BCR(strTmp[0], strTmp[1], int.Parse(strTmp[2]), strTmp[3], int.Parse(strTmp[4]));
                         lstBCR.Add(bCR);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         MethodBase methodBase = MethodBase.GetCurrentMethod();
                         InitSys.funWriteLog("Exception",
@@ -505,61 +603,42 @@ namespace Mirle.ASRS
                 }
 
                 bCRData = new BCRData(lstBCR);
-                for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
+                for (int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
                 {
-                    if(bCRData[intIndex].funOpenBCR(ref strEM))
+                    if (bCRData[intIndex].funOpenBCR(ref strEM))
                         funWriteSysTraceLog("Connection BCR:" + bCRData[intIndex]._BCRName + " Success!");
                     else
                         funWriteSysTraceLog("Connection BCR:" + bCRData[intIndex]._BCRName + " Fail!");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
             }
         }
 
-        private void funInitalTimer()
-        {
-            timRefresh.Stop();
-            timRefresh.Tick += new EventHandler(timRefresh_Tick);
-            timRefresh.Interval = 100;
-
-            timProgram.Stop();
-            timProgram.Elapsed += new ElapsedEventHandler(timProgram_Elapsed);
-            timProgram.Interval = 200;
-
-            timSPLCProgram.Stop();
-            timSPLCProgram.Elapsed += new ElapsedEventHandler(timSPLCProgram_Elapsed);
-            timSPLCProgram.Interval = 200;
-
-            timUpdate.Stop();
-            timUpdate.Elapsed += new ElapsedEventHandler(timUpdate_Elapsed);
-            timUpdate.Interval = 2000;
-        }
-
         private void funStart()
         {
-            if(InitSys.funOpendMPLC())
+            if (InitSys.funOpendMPLC())
                 funWriteSysTraceLog("Connection MPLC Success!");
             else
                 funWriteSysTraceLog("Connection MPLC Fail!");
 
-            if(InitSys.funOpendSPLC())
+            if (InitSys.funOpendSPLC())
                 funWriteSysTraceLog("Connection SPLC Success!");
             else
                 funWriteSysTraceLog("Connection SPLC Fail!");
 
-            if(InitSys.funOpendDB())
+            if (InitSys.funOpendDB())
                 funWriteSysTraceLog("Connection DB Success!");
             else
                 funWriteSysTraceLog("Connection DB Fail!");
 
             timRefresh.Start();
             timProgram.Start();
-            timSPLCProgram.Start();
-            timUpdate.Start();
+            //timSPLCProgram.Start();
+            //timUpdate.Start();
         }
         #endregion Inital Function
 
@@ -569,17 +648,17 @@ namespace Mirle.ASRS
             try
             {
                 string strEM = string.Empty;
-                if(InitSys._DB != null)
+                if (InitSys._DB != null)
                 {
                     InitSys._DB.funClose();
 
-                    if(InitSys._DB.funOpenDB(ref strEM))
+                    if (InitSys._DB.funOpenDB(ref strEM))
                         funWriteSysTraceLog("Try Reconnection DB Success!");
                     else
                         funWriteSysTraceLog("Try Reconnection DB Fail!");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -596,19 +675,19 @@ namespace Mirle.ASRS
             try
             {
                 string strEM = string.Empty;
-                for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
+                for (int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
                 {
-                    if(bCRData[intIndex] != null)
+                    if (bCRData[intIndex] != null)
                     {
                         bCRData[intIndex].funClose();
-                        if(bCRData[intIndex].funOpenBCR(ref strEM))
+                        if (bCRData[intIndex].funOpenBCR(ref strEM))
                             funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + " Success!");
                         else
                             funWriteSysTraceLog("Try Reconnection BCR:" + bCRData[intIndex]._BCRName + " Fail!");
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -625,16 +704,16 @@ namespace Mirle.ASRS
             try
             {
                 string strEM = string.Empty;
-                if(InitSys._MPLC != null)
+                if (InitSys._MPLC != null)
                 {
                     InitSys._MPLC.funClose();
-                    if(InitSys._MPLC.funOpenMPLC(ref strEM))
+                    if (InitSys._MPLC.funOpenMPLC(ref strEM))
                         funWriteSysTraceLog("Try Reconnection MPLC Success!");
                     else
                         funWriteSysTraceLog("Try Reconnection MPLC Fail!");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -651,16 +730,16 @@ namespace Mirle.ASRS
             try
             {
                 string strEM = string.Empty;
-                if(InitSys._SPLC != null)
+                if (InitSys._SPLC != null)
                 {
                     InitSys._SPLC.funClose();
-                    if(InitSys._SPLC.funOpenSPLC(ref strEM))
+                    if (InitSys._SPLC.funOpenSPLC(ref strEM))
                         funWriteSysTraceLog("Try Reconnection SPLC Success!");
                     else
                         funWriteSysTraceLog("Try Reconnection SPLC Fail!");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -678,14 +757,14 @@ namespace Mirle.ASRS
         {
             try
             {
-                if(lsbSysTrace.InvokeRequired)
+                if (lsbSysTrace.InvokeRequired)
                 {
                     ShowMessage_EventHandler ShowMessage = new ShowMessage_EventHandler(funWriteSysTraceLog);
                     lsbSysTrace.Invoke(ShowMessage, message);
                 }
                 else
                 {
-                    if(lsbSysTrace.Items.Count >= 200)
+                    if (lsbSysTrace.Items.Count >= 200)
                         lsbSysTrace.Items.RemoveAt(0);
 
                     lsbSysTrace.Items.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + message);
@@ -694,7 +773,7 @@ namespace Mirle.ASRS
                     InitSys.funWriteLog("SysTrace", message);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -705,14 +784,14 @@ namespace Mirle.ASRS
         {
             try
             {
-                if(lsbUpdate.InvokeRequired)
+                if (lsbUpdate.InvokeRequired)
                 {
                     ShowMessage_EventHandler ShowMessage = new ShowMessage_EventHandler(funWriteUpdateLog);
                     lsbUpdate.Invoke(ShowMessage, message);
                 }
                 else
                 {
-                    if(lsbUpdate.Items.Count >= 200)
+                    if (lsbUpdate.Items.Count >= 200)
                         lsbUpdate.Items.RemoveAt(0);
 
                     lsbUpdate.Items.Add(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + message);
@@ -721,7 +800,7 @@ namespace Mirle.ASRS
                     InitSys.funWriteLog("Update", message);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -732,7 +811,7 @@ namespace Mirle.ASRS
         #region Other Function
         private void funShowAutoPause(bool auto)
         {
-            switch(auto)
+            switch (auto)
             {
                 case true:
                     lblCmuSts.Text = "自动模式";
@@ -748,7 +827,7 @@ namespace Mirle.ASRS
 
         private void funShowConnect(bool connect, Label label)
         {
-            switch(connect)
+            switch (connect)
             {
                 case true:
                     label.Text = "已连线";
@@ -766,7 +845,7 @@ namespace Mirle.ASRS
         {
             try
             {
-                if(button.InvokeRequired)
+                if (button.InvokeRequired)
                 {
                     ButtonEnable_EventHandler ShowMessage = new ButtonEnable_EventHandler(funEnableButton);
                     button.Invoke(ShowMessage, button, enable);
@@ -774,10 +853,96 @@ namespace Mirle.ASRS
                 else
                     button.Enabled = enable;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+
+        private void funRefreshCrane()
+        {
+            string strSQL = string.Empty;
+            string strEM = string.Empty;
+            string strMsg = string.Empty;
+            DataTable dtCraneMode = new DataTable();
+            DataTable dtCraneState = new DataTable();
+            DataTable dtCmdSno = new DataTable();
+
+            try
+            {
+                strSQL = "SELECT * FROM EQUMODELOG";
+                strSQL += " WHERE ENDDT IN ('', ' ')";
+                if (InitSys._DB.funGetDT(strSQL, ref dtCraneMode, ref strEM))
+                {
+                    for (int intCount = 0; intCount < dtCraneMode.Rows.Count; intCount++)
+                    {
+                        int intCraneNo = int.Parse(dtCraneMode.Rows[intCount]["EQUNO"].ToString());
+                        if (dicCraneMap.ContainsKey(intCraneNo))
+                        {
+                            string strCurrentCraneMode = dtCraneMode.Rows[intCount]["EQUMODE"].ToString();
+                            string strLastCraneMode = dicCraneMap[intCraneNo]._CraneMode;
+                            dicCraneMap[intCraneNo]._CraneMode = strCurrentCraneMode;
+                            strMsg = "Crane" + intCraneNo + "|";
+                            strMsg += strLastCraneMode + ">" + strCurrentCraneMode + "|";
+                            strMsg += "Crane Mode Change!";
+                        }
+                    }
+                }
+                strSQL = "SELECT * FROM EQUSTSLOG";
+                strSQL += " WHERE ENDDT IN ('', ' ')";
+                if (InitSys._DB.funGetDT(strSQL, ref dtCraneState, ref strEM))
+                {
+                    for (int intCount = 0; intCount < dtCraneState.Rows.Count; intCount++)
+                    {
+                        int intCraneNo = int.Parse(dtCraneState.Rows[intCount]["EQUNO"].ToString());
+                        if (dicCraneMap.ContainsKey(intCraneNo))
+                        {
+                            string strCurrentCraneState = dtCraneState.Rows[intCount]["EQUSTS"].ToString();
+                            string strLastCraneState = dicCraneMap[intCraneNo]._CraneState;
+                            dicCraneMap[intCraneNo]._CraneState = strCurrentCraneState;
+                            strMsg = "Crane" + intCraneNo + "|";
+                            strMsg += strLastCraneState + ">" + strCurrentCraneState + "|";
+                            strMsg += "Crane State Change!";
+                        }
+                    }
+                }
+                foreach (int intCraneNo in dicCraneMap.Keys)
+                {
+                    strSQL = "SELECT * FROM EQUCMD";
+                    strSQL += " WHERE CMDSTS ='1'";
+                    strSQL += " AND EQUNO='" + intCraneNo + "'";
+                    if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                        dicCraneMap[intCraneNo]._CommandID = dtCmdSno.Rows[0]["CmdSno"].ToString();
+                    else
+                        dicCraneMap[intCraneNo]._CommandID = string.Empty;
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+            finally
+            {
+                if (dtCraneMode != null)
+                {
+                    dtCraneMode.Clear();
+                    dtCraneMode.Dispose();
+                    dtCraneMode = null;
+                }
+                if (dtCraneState != null)
+                {
+                    dtCraneState.Clear();
+                    dtCraneState.Dispose();
+                    dtCraneState = null;
+                }
+                if (dtCraneMode != null)
+                {
+                    dtCmdSno.Clear();
+                    dtCmdSno.Dispose();
+                    dtCmdSno = null;
+                }
             }
         }
 
@@ -786,7 +951,7 @@ namespace Mirle.ASRS
             string strResults = string.Empty;
             try
             {
-                foreach(int intData in intArray)
+                foreach (int intData in intArray)
                 {
                     string strTemp_0007 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(0, 2);
                     string strTemp_0815 = intData.ToString("X").PadLeft(4, "0"[0]).Substring(2, 2);
@@ -795,14 +960,14 @@ namespace Mirle.ASRS
                 }
 
                 string strTemp = string.Empty;
-                if(strResults.IndexOf("\r"[0]) >= 0)
+                if (strResults.IndexOf("\n"[0]) >= 0)
                 {
-                    strTemp = strResults.Remove(strResults.IndexOf("\r"[0]));
+                    strTemp = strResults.Remove(strResults.IndexOf("\n"[0]));
                     strTemp = strTemp.Trim("\0"[0]).Trim();
                 }
                 else
                 {
-                    if(strResults.IndexOf("\0"[0]) >= 0)
+                    if (strResults.IndexOf("\0"[0]) >= 0)
                     {
                         strTemp = strResults.Remove(strResults.IndexOf("\0"[0]));
                         strTemp = strTemp.Trim();
@@ -812,7 +977,7 @@ namespace Mirle.ASRS
                 }
                 return strTemp;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -825,21 +990,67 @@ namespace Mirle.ASRS
             bolAuto = false;
             timRefresh.Stop();
             timProgram.Stop();
-            timUpdate.Stop();
+            //timUpdate.Stop();
             InitSys._DB.funClose();
             InitSys._MPLC.funClose();
             InitSys._SPLC.funClose();
-            for(int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
+            for (int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
             {
-                if(bCRData[intIndex] != null)
-                {
-                    string strEM = string.Empty;
+                if (bCRData[intIndex] != null)
                     bCRData[intIndex].funClose();
-                }
             }
             bolClose = true;
             this.Close();
         }
         #endregion Other Function
+
+
+
+        private void btn_Query_Click(object sender, EventArgs e)
+        {
+            Query();
+        }
+        private void Query()
+        {
+            string strEM = string.Empty;
+            string strMsg = string.Empty;
+            DataTable dtCmdSno = new DataTable();
+            string strSql = string.Format("select * from equcmd");
+            if (InitSys._DB.funGetDT(strSql, ref dtCmdSno, ref strEM))
+            {
+                dgvCmdMst.DataSource = dtCmdSno;
+            }
+        }
+
+        private void btn_Delete_Click(object sender, EventArgs e)
+        {
+            string strEM = string.Empty;
+            if (dgvCmdMst.CurrentCell.RowIndex < 0)
+            {
+                return;
+            }
+            int row = dgvCmdMst.CurrentCell.RowIndex;
+            string strCmdSno = dgvCmdMst.Rows[row].Cells[1].Value.ToString();
+            string strSql = string.Format("insert into EquCmdHis select '{1}' as HISDT,* from EquCmd where EquNo = 'R1' and CmdSno = '{0}'", strCmdSno, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            if (InitSys._DB.funExecSql(strSql, ref strEM))
+            {
+                strSql = string.Format("delete from equcmd where cmdsno='{0}'", strCmdSno);
+                if (InitSys._DB.funExecSql(strSql, ref strEM))
+                {
+                    Query();
+                    funWriteSysTraceLog(strCmdSno + "清除成功!");
+                }
+                else
+                {
+                    funWriteSysTraceLog(strCmdSno + "清除失败!");
+                }
+            }
+            else
+            {
+                funWriteSysTraceLog(strCmdSno + "清除失败!");
+            }
+
+        }
+
     }
 }
