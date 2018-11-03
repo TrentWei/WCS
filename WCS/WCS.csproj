@@ -138,6 +138,9 @@
     <Content Include="Config\StoreIn.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\top.png" />
+    <None Include="Resources\dow.png" />
+    <None Include="Resources\top.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\InitSys\InitSys.csproj">

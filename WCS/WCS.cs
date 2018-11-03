@@ -242,6 +242,7 @@ namespace Mirle.ASRS
                                 bufferData[intIndex]._APositioning = intarResultData[(intIndex * 10) + 5] == 1;
 
                                 bufferData[intIndex]._Clearnotice = intarResultData[(intIndex * 10) + 8] == 1;
+                               
                                 #region EQUStatus
                                 string strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 6], 2).PadLeft(16, '0');
                                 bufferData[intIndex]._EQUStatus.AutoMode =
@@ -282,33 +283,34 @@ namespace Mirle.ASRS
                             funLocationToLocation();
                         }
                     }
-
-                    if (InitSys._SPLC._IsConnection)
-                    {
-                        if (InitSys._SPLC.funReadSPLC(sMPLCData_1))
-                        {
-                            int[] intBCRArray1 = new int[]
-                            {
-                                    sMPLCData_1.BCR1_1, sMPLCData_1.BCR1_2, sMPLCData_1.BCR1_3, sMPLCData_1.BCR1_4, sMPLCData_1.BCR1_5
-                            };
-                            int[] intBCRArray2 = new int[]
-                            {
-                                    sMPLCData_1.BCR2_1, sMPLCData_1.BCR2_2, sMPLCData_1.BCR2_3, sMPLCData_1.BCR2_4, sMPLCData_1.BCR2_5
-                            };
-                            string strBCR1 = funIntArrayConvertASCII(intBCRArray1);
-                            string strBCR2 = funIntArrayConvertASCII(intBCRArray2);
-                            bool bolLoad = Convert.ToString(sMPLCData_1.Load, 2).PadLeft(16, '0').Substring(15, 1) == "1";
-                            if (InitSys._SPLC.funReadSPLC(sMPLCData_2, InitSys._AGV_GetWirteSPLCStartIndex))
-                            {
-                                if (bolAuto)
-                                {
-                                    funAGVSchedule(bolLoad);
-                                    funAGVNeedStationRequest(strBCR1);
-                                    funStoreInRequestFromAGV(strBCR2);
-                                }
-                            }
-                        }
-                    }
+                    #region 烟台鲁达西门子PLC部分 //注释
+                    //if (InitSys._SPLC._IsConnection)
+                    //{
+                    //    if (InitSys._SPLC.funReadSPLC(sMPLCData_1))
+                    //    {
+                    //        int[] intBCRArray1 = new int[]
+                    //        {
+                    //                sMPLCData_1.BCR1_1, sMPLCData_1.BCR1_2, sMPLCData_1.BCR1_3, sMPLCData_1.BCR1_4, sMPLCData_1.BCR1_5
+                    //        };
+                    //        int[] intBCRArray2 = new int[]
+                    //        {
+                    //                sMPLCData_1.BCR2_1, sMPLCData_1.BCR2_2, sMPLCData_1.BCR2_3, sMPLCData_1.BCR2_4, sMPLCData_1.BCR2_5
+                    //        };
+                    //        string strBCR1 = funIntArrayConvertASCII(intBCRArray1);
+                    //        string strBCR2 = funIntArrayConvertASCII(intBCRArray2);
+                    //        bool bolLoad = Convert.ToString(sMPLCData_1.Load, 2).PadLeft(16, '0').Substring(15, 1) == "1";
+                    //        if (InitSys._SPLC.funReadSPLC(sMPLCData_2, InitSys._AGV_GetWirteSPLCStartIndex))
+                    //        {
+                    //            if (bolAuto)
+                    //            {
+                    //                funAGVSchedule(bolLoad);
+                    //                funAGVNeedStationRequest(strBCR1);
+                    //                funStoreInRequestFromAGV(strBCR2);
+                    //            }
+                    //        }
+                    //    }
+                    //}
+                    #endregion
                     funUpdatePosted();
                 }
             }
@@ -1005,7 +1007,7 @@ namespace Mirle.ASRS
         #endregion Other Function
 
 
-
+        #region Maintain Function
         private void btn_Query_Click(object sender, EventArgs e)
         {
             Query();
@@ -1051,6 +1053,6 @@ namespace Mirle.ASRS
             }
 
         }
-
+        #endregion
     }
 }
