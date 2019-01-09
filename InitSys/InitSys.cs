@@ -20,7 +20,7 @@ namespace Mirle.ASRS
         private static int intAGV_StoreIn_MPLCBufferIndex = 0;
         private static int intAGV_StoreOut_MPLCBufferIndex = 0;
         private static int intAGV_GetWirteSPLCStartIndex = 0;
-        private static DB dBServer = new DB();
+        private static DBSQL dBServer = new DBSQL();
         private static MPLC mPLC = new MPLC();
         private static SPLC sPLC = new SPLC();
         private static Archive archive = new Archive();
@@ -67,7 +67,7 @@ namespace Mirle.ASRS
             get { return intTotalAddress; }
         }
 
-        public static DB _DB
+        public static DBSQL _DB
         {
             get { return dBServer; }
         }
@@ -111,7 +111,7 @@ namespace Mirle.ASRS
             try
             {
                 string strEM = string.Empty;
-                dBServer = new DB(ConfigurationManager.ConnectionStrings["ASRS"].ConnectionString);
+                dBServer = new DBSQL(ConfigurationManager.ConnectionStrings["ASRS"].ConnectionString);
                 if(dBServer.funOpenDB(ref strEM))
                     return true;
                 else

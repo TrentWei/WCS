@@ -68,19 +68,20 @@ namespace Mirle.ASRS
         }
 
         /// <summary>
-        /// 目的站
-        /// </summary>
-        public string _W_Destination
-        {
-            get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 1).ToString(); }
-        }
-        /// <summary>
         /// 模式
         /// </summary>
         public string _W_Mode
         {
+            get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 1).ToString(); }
+        }
+        /// <summary>
+        /// 目的站
+        /// </summary>
+        public string _W_Destination
+        {
             get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 2).ToString(); }
         }
+
         /// <summary>
         /// 退回请求
         /// </summary>
@@ -220,6 +221,7 @@ namespace Mirle.ASRS
             _EQUAlarmStatusAddress = new EQU_Alarm_Status_Signal_Address(address);
             _EQUStatus = new EQU_Status_Signal();
             _EQUAlarmStatus = new EQU_Alarm_Status_Signal();
+
         }
     }
 }

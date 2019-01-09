@@ -63,6 +63,11 @@ namespace Mirle.ASRS
             if (!funLoda())
             {
                 MessageBox.Show("网络内已有程式运行！");
+                string strEM = string.Empty;
+                string strMsg = string.Empty;
+                string strSql = "";
+                strSql = string.Format("update CtrlHs set Hs='0' where EquNo='{0}'", "A1");
+                InitSys._DB.funExecSql(strSql, ref strEM);
                 funClose();
             }
         }
@@ -189,6 +194,7 @@ namespace Mirle.ASRS
                     {
                         if (dicBufferMap.ContainsKey(intIndex))
                         {
+                            //界面控件赋值
                             BufferMonitor bufferMonitor = dicBufferMap[intIndex];
                             bufferMonitor._CommandID = bufferData[intIndex]._CommandID;
                             bufferMonitor._Destination = bufferData[intIndex]._Destination;
@@ -219,7 +225,6 @@ namespace Mirle.ASRS
         private void timProgram_Elapsed(object sender, ElapsedEventArgs e)
         {
             timProgram.Stop();
-
             try
             {
                 if (InitSys._DB._IsConnection)
@@ -325,42 +330,7 @@ namespace Mirle.ASRS
             }
         }
 
-        //private void timSPLCProgram_Elapsed(object sender, ElapsedEventArgs e)
-        //{
-        //    timSPLCProgram.Stop();
-
-        //    try
-        //    {
-        //        if(InitSys._DB._IsConnection)
-        //        {
-        //            if(InitSys._MPLC._IsConnection)
-        //            {
-
-        //            }
-        //        }
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        MethodBase methodBase = MethodBase.GetCurrentMethod();
-        //        InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
-        //    }
-        //    finally
-        //    {
-        //        timSPLCProgram.Start();
-        //    }
-        //}
-
-        //private void timUpdate_Elapsed(object sender, ElapsedEventArgs e)
-        //{
-        //    timUpdate.Stop();
-        //    try
-        //    {
-        //    }
-        //    finally
-        //    {
-        //        timUpdate.Start();
-        //    }
-        //}
+     
         #endregion Time
 
         #endregion Event Function
@@ -1054,5 +1024,6 @@ namespace Mirle.ASRS
 
         }
         #endregion
+
     }
 }

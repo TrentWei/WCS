@@ -58,6 +58,10 @@
             this.lsbUpdate = new System.Windows.Forms.ListBox();
             this.tbpSingelMonitor = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox41 = new System.Windows.Forms.PictureBox();
+            this.pictureBox40 = new System.Windows.Forms.PictureBox();
+            this.pictureBox39 = new System.Windows.Forms.PictureBox();
+            this.pictureBox38 = new System.Windows.Forms.PictureBox();
             this.pictureBox37 = new System.Windows.Forms.PictureBox();
             this.pictureBox34 = new System.Windows.Forms.PictureBox();
             this.pictureBox33 = new System.Windows.Forms.PictureBox();
@@ -95,6 +99,11 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox35 = new System.Windows.Forms.PictureBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.dgvCmdMst = new System.Windows.Forms.DataGridView();
+            this.btn_Delete = new System.Windows.Forms.Button();
+            this.btn_Query = new System.Windows.Forms.Button();
             this.A66 = new Mirle.ASRS.BufferMonitor();
             this.A65 = new Mirle.ASRS.BufferMonitor();
             this.A79 = new Mirle.ASRS.BufferMonitor();
@@ -132,12 +141,12 @@
             this.A45 = new Mirle.ASRS.BufferMonitor();
             this.A42 = new Mirle.ASRS.BufferMonitor();
             this.A41 = new Mirle.ASRS.BufferMonitor();
-            this.A60 = new Mirle.ASRS.BufferMonitor();
+            this.A16 = new Mirle.ASRS.BufferMonitor();
             this.A81 = new Mirle.ASRS.BufferMonitor();
-            this.A75 = new Mirle.ASRS.BufferMonitor();
+            this.A77 = new Mirle.ASRS.BufferMonitor();
             this.A82 = new Mirle.ASRS.BufferMonitor();
             this.A83 = new Mirle.ASRS.BufferMonitor();
-            this.A55 = new Mirle.ASRS.BufferMonitor();
+            this.A08 = new Mirle.ASRS.BufferMonitor();
             this.A84 = new Mirle.ASRS.BufferMonitor();
             this.A85 = new Mirle.ASRS.BufferMonitor();
             this.A86 = new Mirle.ASRS.BufferMonitor();
@@ -201,11 +210,7 @@
             this.A118 = new Mirle.ASRS.BufferMonitor();
             this.A117 = new Mirle.ASRS.BufferMonitor();
             this.craneMonitor1 = new Mirle.ASRS.CraneMonitor();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.dgvCmdMst = new System.Windows.Forms.DataGridView();
-            this.btn_Delete = new System.Windows.Forms.Button();
-            this.btn_Query = new System.Windows.Forms.Button();
+            this.pictureBox42 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.sctMain1)).BeginInit();
             this.sctMain1.Panel1.SuspendLayout();
             this.sctMain1.Panel2.SuspendLayout();
@@ -220,6 +225,10 @@
             this.tbpUpdatePosted.SuspendLayout();
             this.tbpSingelMonitor.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox41)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox40)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox39)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox38)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox37)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox34)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox33)).BeginInit();
@@ -260,6 +269,7 @@
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCmdMst)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox42)).BeginInit();
             this.SuspendLayout();
             // 
             // sctMain1
@@ -604,7 +614,7 @@
             this.tbcMain.Location = new System.Drawing.Point(0, 0);
             this.tbcMain.Name = "tbcMain";
             this.tbcMain.SelectedIndex = 0;
-            this.tbcMain.Size = new System.Drawing.Size(1846, 702);
+            this.tbcMain.Size = new System.Drawing.Size(1846, 893);
             this.tbcMain.TabIndex = 0;
             // 
             // tbpSystemTrace
@@ -613,7 +623,7 @@
             this.tbpSystemTrace.Location = new System.Drawing.Point(4, 22);
             this.tbpSystemTrace.Name = "tbpSystemTrace";
             this.tbpSystemTrace.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSystemTrace.Size = new System.Drawing.Size(1838, 676);
+            this.tbpSystemTrace.Size = new System.Drawing.Size(1838, 867);
             this.tbpSystemTrace.TabIndex = 0;
             this.tbpSystemTrace.Text = "System Trace";
             this.tbpSystemTrace.UseVisualStyleBackColor = true;
@@ -626,7 +636,7 @@
             this.lsbSysTrace.ItemHeight = 20;
             this.lsbSysTrace.Location = new System.Drawing.Point(3, 3);
             this.lsbSysTrace.Name = "lsbSysTrace";
-            this.lsbSysTrace.Size = new System.Drawing.Size(1832, 670);
+            this.lsbSysTrace.Size = new System.Drawing.Size(1832, 861);
             this.lsbSysTrace.TabIndex = 0;
             // 
             // tbpUpdatePosted
@@ -634,7 +644,7 @@
             this.tbpUpdatePosted.Controls.Add(this.lsbUpdate);
             this.tbpUpdatePosted.Location = new System.Drawing.Point(4, 22);
             this.tbpUpdatePosted.Name = "tbpUpdatePosted";
-            this.tbpUpdatePosted.Size = new System.Drawing.Size(1838, 676);
+            this.tbpUpdatePosted.Size = new System.Drawing.Size(1838, 867);
             this.tbpUpdatePosted.TabIndex = 2;
             this.tbpUpdatePosted.Text = "Update Posted";
             this.tbpUpdatePosted.UseVisualStyleBackColor = true;
@@ -647,7 +657,7 @@
             this.lsbUpdate.ItemHeight = 20;
             this.lsbUpdate.Location = new System.Drawing.Point(0, 0);
             this.lsbUpdate.Name = "lsbUpdate";
-            this.lsbUpdate.Size = new System.Drawing.Size(1838, 676);
+            this.lsbUpdate.Size = new System.Drawing.Size(1838, 867);
             this.lsbUpdate.TabIndex = 1;
             // 
             // tbpSingelMonitor
@@ -657,7 +667,7 @@
             this.tbpSingelMonitor.Location = new System.Drawing.Point(4, 22);
             this.tbpSingelMonitor.Name = "tbpSingelMonitor";
             this.tbpSingelMonitor.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSingelMonitor.Size = new System.Drawing.Size(1838, 676);
+            this.tbpSingelMonitor.Size = new System.Drawing.Size(1838, 867);
             this.tbpSingelMonitor.TabIndex = 1;
             this.tbpSingelMonitor.Text = "Singel Monitor";
             this.tbpSingelMonitor.UseVisualStyleBackColor = true;
@@ -665,6 +675,11 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.pictureBox42);
+            this.panel1.Controls.Add(this.pictureBox41);
+            this.panel1.Controls.Add(this.pictureBox40);
+            this.panel1.Controls.Add(this.pictureBox39);
+            this.panel1.Controls.Add(this.pictureBox38);
             this.panel1.Controls.Add(this.pictureBox37);
             this.panel1.Controls.Add(this.pictureBox34);
             this.panel1.Controls.Add(this.pictureBox33);
@@ -739,12 +754,12 @@
             this.panel1.Controls.Add(this.A45);
             this.panel1.Controls.Add(this.A42);
             this.panel1.Controls.Add(this.A41);
-            this.panel1.Controls.Add(this.A60);
+            this.panel1.Controls.Add(this.A16);
             this.panel1.Controls.Add(this.A81);
-            this.panel1.Controls.Add(this.A75);
+            this.panel1.Controls.Add(this.A77);
             this.panel1.Controls.Add(this.A82);
             this.panel1.Controls.Add(this.A83);
-            this.panel1.Controls.Add(this.A55);
+            this.panel1.Controls.Add(this.A08);
             this.panel1.Controls.Add(this.A84);
             this.panel1.Controls.Add(this.A85);
             this.panel1.Controls.Add(this.A86);
@@ -810,8 +825,48 @@
             this.panel1.Controls.Add(this.craneMonitor1);
             this.panel1.Location = new System.Drawing.Point(8, 8);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1828, 663);
+            this.panel1.Size = new System.Drawing.Size(1828, 735);
             this.panel1.TabIndex = 0;
+            // 
+            // pictureBox41
+            // 
+            this.pictureBox41.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox41.BackgroundImage")));
+            this.pictureBox41.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox41.Location = new System.Drawing.Point(846, 158);
+            this.pictureBox41.Name = "pictureBox41";
+            this.pictureBox41.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox41.TabIndex = 611;
+            this.pictureBox41.TabStop = false;
+            // 
+            // pictureBox40
+            // 
+            this.pictureBox40.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox40.BackgroundImage")));
+            this.pictureBox40.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox40.Location = new System.Drawing.Point(691, 158);
+            this.pictureBox40.Name = "pictureBox40";
+            this.pictureBox40.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox40.TabIndex = 610;
+            this.pictureBox40.TabStop = false;
+            // 
+            // pictureBox39
+            // 
+            this.pictureBox39.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox39.BackgroundImage")));
+            this.pictureBox39.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox39.Location = new System.Drawing.Point(537, 158);
+            this.pictureBox39.Name = "pictureBox39";
+            this.pictureBox39.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox39.TabIndex = 609;
+            this.pictureBox39.TabStop = false;
+            // 
+            // pictureBox38
+            // 
+            this.pictureBox38.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox38.BackgroundImage")));
+            this.pictureBox38.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox38.Location = new System.Drawing.Point(239, 158);
+            this.pictureBox38.Name = "pictureBox38";
+            this.pictureBox38.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox38.TabIndex = 608;
+            this.pictureBox38.TabStop = false;
             // 
             // pictureBox37
             // 
@@ -1025,7 +1080,7 @@
             // 
             this.pictureBox12.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox12.BackgroundImage")));
             this.pictureBox12.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox12.Location = new System.Drawing.Point(1423, 173);
+            this.pictureBox12.Location = new System.Drawing.Point(1262, 142);
             this.pictureBox12.Name = "pictureBox12";
             this.pictureBox12.Size = new System.Drawing.Size(24, 24);
             this.pictureBox12.TabIndex = 584;
@@ -1035,7 +1090,7 @@
             // 
             this.pictureBox13.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox13.BackgroundImage")));
             this.pictureBox13.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox13.Location = new System.Drawing.Point(1423, 150);
+            this.pictureBox13.Location = new System.Drawing.Point(1421, 142);
             this.pictureBox13.Name = "pictureBox13";
             this.pictureBox13.Size = new System.Drawing.Size(24, 24);
             this.pictureBox13.TabIndex = 583;
@@ -1045,7 +1100,7 @@
             // 
             this.pictureBox10.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox10.BackgroundImage")));
             this.pictureBox10.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox10.Location = new System.Drawing.Point(1321, 174);
+            this.pictureBox10.Location = new System.Drawing.Point(1421, 172);
             this.pictureBox10.Name = "pictureBox10";
             this.pictureBox10.Size = new System.Drawing.Size(24, 24);
             this.pictureBox10.TabIndex = 582;
@@ -1055,7 +1110,7 @@
             // 
             this.pictureBox11.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox11.BackgroundImage")));
             this.pictureBox11.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox11.Location = new System.Drawing.Point(1321, 151);
+            this.pictureBox11.Location = new System.Drawing.Point(1262, 172);
             this.pictureBox11.Name = "pictureBox11";
             this.pictureBox11.Size = new System.Drawing.Size(24, 24);
             this.pictureBox11.TabIndex = 581;
@@ -1170,6 +1225,64 @@
             this.pictureBox35.Size = new System.Drawing.Size(25, 23);
             this.pictureBox35.TabIndex = 565;
             this.pictureBox35.TabStop = false;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.groupBox2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1838, 867);
+            this.tabPage1.TabIndex = 3;
+            this.tabPage1.Text = "Maintain";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.dgvCmdMst);
+            this.groupBox2.Controls.Add(this.btn_Delete);
+            this.groupBox2.Controls.Add(this.btn_Query);
+            this.groupBox2.Location = new System.Drawing.Point(79, 30);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(692, 222);
+            this.groupBox2.TabIndex = 0;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "命令查询";
+            // 
+            // dgvCmdMst
+            // 
+            this.dgvCmdMst.AllowUserToAddRows = false;
+            this.dgvCmdMst.AllowUserToDeleteRows = false;
+            this.dgvCmdMst.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dgvCmdMst.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvCmdMst.Location = new System.Drawing.Point(6, 19);
+            this.dgvCmdMst.Name = "dgvCmdMst";
+            this.dgvCmdMst.ReadOnly = true;
+            this.dgvCmdMst.RowHeadersVisible = false;
+            this.dgvCmdMst.RowTemplate.Height = 23;
+            this.dgvCmdMst.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvCmdMst.Size = new System.Drawing.Size(683, 154);
+            this.dgvCmdMst.TabIndex = 3;
+            // 
+            // btn_Delete
+            // 
+            this.btn_Delete.Location = new System.Drawing.Point(559, 179);
+            this.btn_Delete.Name = "btn_Delete";
+            this.btn_Delete.Size = new System.Drawing.Size(129, 37);
+            this.btn_Delete.TabIndex = 2;
+            this.btn_Delete.Text = "清理主机命令";
+            this.btn_Delete.UseVisualStyleBackColor = true;
+            this.btn_Delete.Click += new System.EventHandler(this.btn_Delete_Click);
+            // 
+            // btn_Query
+            // 
+            this.btn_Query.Location = new System.Drawing.Point(6, 179);
+            this.btn_Query.Name = "btn_Query";
+            this.btn_Query.Size = new System.Drawing.Size(129, 37);
+            this.btn_Query.TabIndex = 0;
+            this.btn_Query.Text = "查询主机命令";
+            this.btn_Query.UseVisualStyleBackColor = true;
+            this.btn_Query.Click += new System.EventHandler(this.btn_Query_Click);
             // 
             // A66
             // 
@@ -1837,23 +1950,23 @@
             this.A41.Size = new System.Drawing.Size(51, 66);
             this.A41.TabIndex = 239;
             // 
-            // A60
+            // A16
             // 
-            this.A60._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A60._BufferName = "A60";
-            this.A60._CommandID = "00000";
-            this.A60._Destination = "0";
-            this.A60._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A60._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A60._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A60._ReturnRequest = false;
-            this.A60.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A60.Location = new System.Drawing.Point(1409, 73);
-            this.A60.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A60.Name = "A60";
-            this.A60.Padding = new System.Windows.Forms.Padding(3);
-            this.A60.Size = new System.Drawing.Size(51, 66);
-            this.A60.TabIndex = 238;
+            this.A16._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A16._BufferName = "A16";
+            this.A16._CommandID = "00000";
+            this.A16._Destination = "0";
+            this.A16._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A16._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A16._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A16._ReturnRequest = false;
+            this.A16.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A16.Location = new System.Drawing.Point(1409, 73);
+            this.A16.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A16.Name = "A16";
+            this.A16.Padding = new System.Windows.Forms.Padding(3);
+            this.A16.Size = new System.Drawing.Size(51, 66);
+            this.A16.TabIndex = 238;
             // 
             // A81
             // 
@@ -1873,23 +1986,23 @@
             this.A81.Size = new System.Drawing.Size(51, 66);
             this.A81.TabIndex = 237;
             // 
-            // A75
+            // A77
             // 
-            this.A75._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A75._BufferName = "A75";
-            this.A75._CommandID = "00000";
-            this.A75._Destination = "0";
-            this.A75._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A75._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A75._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A75._ReturnRequest = false;
-            this.A75.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A75.Location = new System.Drawing.Point(1513, 74);
-            this.A75.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A75.Name = "A75";
-            this.A75.Padding = new System.Windows.Forms.Padding(3);
-            this.A75.Size = new System.Drawing.Size(51, 66);
-            this.A75.TabIndex = 235;
+            this.A77._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A77._BufferName = "A77";
+            this.A77._CommandID = "00000";
+            this.A77._Destination = "0";
+            this.A77._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A77._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A77._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A77._ReturnRequest = false;
+            this.A77.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A77.Location = new System.Drawing.Point(1513, 74);
+            this.A77.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A77.Name = "A77";
+            this.A77.Padding = new System.Windows.Forms.Padding(3);
+            this.A77.Size = new System.Drawing.Size(51, 66);
+            this.A77.TabIndex = 235;
             // 
             // A82
             // 
@@ -1927,23 +2040,23 @@
             this.A83.Size = new System.Drawing.Size(51, 66);
             this.A83.TabIndex = 233;
             // 
-            // A55
+            // A08
             // 
-            this.A55._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A55._BufferName = "A55";
-            this.A55._CommandID = "00000";
-            this.A55._Destination = "0";
-            this.A55._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A55._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A55._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A55._ReturnRequest = false;
-            this.A55.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A55.Location = new System.Drawing.Point(1304, 73);
-            this.A55.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A55.Name = "A55";
-            this.A55.Padding = new System.Windows.Forms.Padding(3);
-            this.A55.Size = new System.Drawing.Size(51, 66);
-            this.A55.TabIndex = 232;
+            this.A08._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A08._BufferName = "A08";
+            this.A08._CommandID = "00000";
+            this.A08._Destination = "0";
+            this.A08._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A08._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A08._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A08._ReturnRequest = false;
+            this.A08.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A08.Location = new System.Drawing.Point(1304, 73);
+            this.A08.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A08.Name = "A08";
+            this.A08.Padding = new System.Windows.Forms.Padding(3);
+            this.A08.Size = new System.Drawing.Size(51, 66);
+            this.A08.TabIndex = 232;
             // 
             // A84
             // 
@@ -3054,63 +3167,15 @@
             this.craneMonitor1.Size = new System.Drawing.Size(103, 90);
             this.craneMonitor1.TabIndex = 168;
             // 
-            // tabPage1
+            // pictureBox42
             // 
-            this.tabPage1.Controls.Add(this.groupBox2);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1838, 676);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "Maintain";
-            this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.dgvCmdMst);
-            this.groupBox2.Controls.Add(this.btn_Delete);
-            this.groupBox2.Controls.Add(this.btn_Query);
-            this.groupBox2.Location = new System.Drawing.Point(79, 30);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(692, 222);
-            this.groupBox2.TabIndex = 0;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "命令查询";
-            // 
-            // dgvCmdMst
-            // 
-            this.dgvCmdMst.AllowUserToAddRows = false;
-            this.dgvCmdMst.AllowUserToDeleteRows = false;
-            this.dgvCmdMst.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
-            this.dgvCmdMst.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvCmdMst.Location = new System.Drawing.Point(6, 19);
-            this.dgvCmdMst.Name = "dgvCmdMst";
-            this.dgvCmdMst.ReadOnly = true;
-            this.dgvCmdMst.RowHeadersVisible = false;
-            this.dgvCmdMst.RowTemplate.Height = 23;
-            this.dgvCmdMst.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCmdMst.Size = new System.Drawing.Size(683, 154);
-            this.dgvCmdMst.TabIndex = 3;
-            // 
-            // btn_Delete
-            // 
-            this.btn_Delete.Location = new System.Drawing.Point(559, 179);
-            this.btn_Delete.Name = "btn_Delete";
-            this.btn_Delete.Size = new System.Drawing.Size(129, 37);
-            this.btn_Delete.TabIndex = 2;
-            this.btn_Delete.Text = "清理主机命令";
-            this.btn_Delete.UseVisualStyleBackColor = true;
-            this.btn_Delete.Click += new System.EventHandler(this.btn_Delete_Click);
-            // 
-            // btn_Query
-            // 
-            this.btn_Query.Location = new System.Drawing.Point(6, 179);
-            this.btn_Query.Name = "btn_Query";
-            this.btn_Query.Size = new System.Drawing.Size(129, 37);
-            this.btn_Query.TabIndex = 0;
-            this.btn_Query.Text = "查询主机命令";
-            this.btn_Query.UseVisualStyleBackColor = true;
-            this.btn_Query.Click += new System.EventHandler(this.btn_Query_Click);
+            this.pictureBox42.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox42.BackgroundImage")));
+            this.pictureBox42.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox42.Location = new System.Drawing.Point(16, 45);
+            this.pictureBox42.Name = "pictureBox42";
+            this.pictureBox42.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox42.TabIndex = 612;
+            this.pictureBox42.TabStop = false;
             // 
             // WCS
             // 
@@ -3145,6 +3210,10 @@
             this.tbpUpdatePosted.ResumeLayout(false);
             this.tbpSingelMonitor.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox41)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox40)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox39)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox38)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox37)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox34)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox33)).EndInit();
@@ -3185,6 +3254,7 @@
             this.tabPage1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCmdMst)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox42)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -3292,12 +3362,12 @@
         private BufferMonitor A45;
         private BufferMonitor A42;
         private BufferMonitor A41;
-        private BufferMonitor A60;
+        private BufferMonitor A16;
         private BufferMonitor A81;
-        private BufferMonitor A75;
+        private BufferMonitor A77;
         private BufferMonitor A82;
         private BufferMonitor A83;
-        private BufferMonitor A55;
+        private BufferMonitor A08;
         private BufferMonitor A84;
         private BufferMonitor A85;
         private BufferMonitor A86;
@@ -3368,6 +3438,11 @@
         internal System.Windows.Forms.PictureBox pictureBox37;
         internal System.Windows.Forms.PictureBox pictureBox34;
         internal System.Windows.Forms.PictureBox pictureBox33;
+        internal System.Windows.Forms.PictureBox pictureBox41;
+        internal System.Windows.Forms.PictureBox pictureBox40;
+        internal System.Windows.Forms.PictureBox pictureBox39;
+        internal System.Windows.Forms.PictureBox pictureBox38;
+        internal System.Windows.Forms.PictureBox pictureBox42;
     }
 }
 

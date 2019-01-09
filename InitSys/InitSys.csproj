@@ -33,6 +33,9 @@
     <Reference Include="Ionic.Zip">
       <HintPath>..\DLL\Ionic.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="Oracle.DataAccess">
+      <HintPath>C:\Users\Think\Desktop\Oracle.DataAccess.dll</HintPath>
+    </Reference>
     <Reference Include="S7.Net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLL\S7.Net.dll</HintPath>
@@ -53,7 +56,8 @@
     <Compile Include="BCRData.cs" />
     <Compile Include="Buffer.cs" />
     <Compile Include="BufferData.cs" />
-    <Compile Include="DB.cs" />
+    <Compile Include="DBOracle.cs" />
+    <Compile Include="DBSQL.cs" />
     <Compile Include="InitSys.cs" />
     <Compile Include="MPLC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

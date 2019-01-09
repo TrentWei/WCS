@@ -48,14 +48,14 @@ namespace Mirle.ASRS
                         strMsg += "Transfer Command Initiated!";
                         funWriteSysTraceLog(strMsg);
 
-                        InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
                         if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.LoactionToLoaction_CrateCraneCommand))
                         {
                             if(funCrateCraneCommand(commandInfo.CommandID, CraneMode.LoactionToLoaction,
                                 commandInfo.Loaction, commandInfo.NewLoaction, commandInfo.Priority))
                             {
                                 #region Update Command & Create Transfer Crane Command Success
-                                InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -74,7 +74,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Create Transfer Crane Command Fail
-                                InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -86,7 +86,7 @@ namespace Mirle.ASRS
                         else
                         {
                             #region Update Command Fail
-                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                             strMsg = commandInfo.CommandID + "|";
                             strMsg += commandInfo.CommandMode + "|";
                             strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -219,13 +219,13 @@ namespace Mirle.ASRS
                             }
                             else if(strCmdSts == CommandState.Completed && strCompleteCode == "92")
                             {
-                                InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
                                 if(funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.LoactionToLoaction_CraneCommandFinish))
                                 {
                                     if(funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                     {
                                         #region Transfer Crane Command Finish & Update Command Success
-                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -245,7 +245,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Delete Transfer Crane Command Fail
-                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -258,7 +258,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Command Fail
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CommandMode + "|";
                                     strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";

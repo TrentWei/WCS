@@ -46,7 +46,7 @@ namespace Mirle.ASRS
                         if (funGetItemNoLocation(prodecu.Item_No, prodecu.Item_Type, ref strLocation))
                         {
                             string strCommandID = funGetCommandID();
-                            InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
                             if (funCreateAGVStoreOutCommand(strCommandID, strLocation, prodecu.Item_No, "A03"))
                             {
                                 if (funLockStoreOutLocation(strLocation))
@@ -56,7 +56,7 @@ namespace Mirle.ASRS
                                         if (funUpdateProdecu(prodecu.Prodecu_No, "1", strCommandID))
                                         {
                                             #region Create AGV StroreOut Command & Lock StroreOut Location Success
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
                                             strMsg = strCommandID + "|";
                                             strMsg += strLocation + "|";
                                             strMsg += prodecu.Item_No + "|";
@@ -88,7 +88,7 @@ namespace Mirle.ASRS
                                         else
                                         {
                                             #region Update Prodecu Fail
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                             strMsg = prodecu.Prodecu_No + "|";
                                             strMsg += prodecu.Item_No + "|";
                                             strMsg += strLocation + "|";
@@ -101,7 +101,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Lock AGV StroreOut PalletNo Fail
-                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                         strMsg = strCommandID + "|";
                                         strMsg += strLocation + "|";
                                         strMsg += prodecu.Item_No + "|";
@@ -114,7 +114,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Lock AGV StroreOut Location Fail
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                     strMsg = strCommandID + "|";
                                     strMsg += strLocation + "|";
                                     strMsg += prodecu.Item_No + "|";
@@ -126,7 +126,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Create AGV StoreOut Command Fail
-                                InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                 strMsg = prodecu.Prodecu_No + "|";
                                 strMsg += prodecu.Item_No + "|";
                                 strMsg += strLocation + "|";
@@ -258,7 +258,7 @@ namespace Mirle.ASRS
                                 strMsg += "StoreIn Request From AGV!";
                                 funWriteSysTraceLog(strMsg);
 
-                                InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
 
                                 #region Create StroreIn Command
                                 strCommandID = funGetCommandID();
@@ -269,7 +269,7 @@ namespace Mirle.ASRS
                                         if (funLockStoreInPalletNo(palletNo, "P"))
                                         {
                                             #region Create AGV StroreIn Command & Lock StroreIn Location Success
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
                                             strMsg = strCommandID + "|";
                                             strMsg += strLoaction + "|";
                                             strMsg += palletNo + "|";
@@ -293,7 +293,7 @@ namespace Mirle.ASRS
                                         else
                                         {
                                             #region Lock AGV StroreIn PalletNo Fail
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                             strMsg = strCommandID + "|";
                                             strMsg += strLoaction + "|";
                                             strMsg += palletNo + "|";
@@ -306,7 +306,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Create AGV StoreIn Command Fail
-                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                         strMsg = strCommandID + "|";
                                         strMsg += strLoaction + "|";
                                         strMsg += palletNo + "|";
@@ -318,7 +318,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Lock AGV StroreIn Location Fail
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                     strMsg = strCommandID + "|";
                                     strMsg += strLoaction + "|";
                                     strMsg += palletNo + "|";
@@ -337,14 +337,14 @@ namespace Mirle.ASRS
                                     bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._Mode == Buffer.StnMode.None &&
                                     bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On)
                                 {
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
                                     if (funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreIn_GetStoreInCommandAndWritePLC))
                                     {
                                         #region Write MPLC
                                         string[] strValues = new string[] { strCommandID, "1", "1" };
                                         if (InitSys._MPLC.funWriteMPLC(bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno, strValues))
                                         {
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Commit);
+                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
                                             strMsg = strCommandID + "|";
                                             strMsg += strLoaction + "|";
                                             strMsg += palletNo + "|";
@@ -365,7 +365,7 @@ namespace Mirle.ASRS
                                         else
                                         {
                                             #region Write MPLC Fail
-                                            InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                             strMsg = strCommandID + "|";
                                             strMsg += strLoaction + "|";
                                             strMsg += bufferData[InitSys._AGV_StoreIn_MPLCBufferIndex]._W_CmdSno + "|";
@@ -379,7 +379,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                        InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
+                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
                                         strMsg = strCommandID + "|";
                                         strMsg += strLoaction + "|";
                                         strMsg += palletNo + "|";
@@ -573,7 +573,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Write SPLC Fail
-                                    InitSys._DB.funCommitCtrl(DB.TransactionType.Begin);
+                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
                                     strMsg = palletNo + "|";
                                     strMsg += tag._ItemName + "|";
                                     strMsg += tag._ItemValue + "|";

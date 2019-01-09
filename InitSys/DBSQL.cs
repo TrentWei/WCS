@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Mirle.ASRS
 {
-    public class DB
+    public class DBSQL
     {
         public enum TransactionType
         {
@@ -36,11 +36,11 @@ namespace Mirle.ASRS
             }
         }
 
-        public DB()
+        public DBSQL()
         {
         }
 
-        public DB(string connectionString)
+        public DBSQL(string connectionString)
         {
             strConnectionString = connectionString;
         }
