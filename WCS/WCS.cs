@@ -150,13 +150,13 @@ namespace Mirle.ASRS
                         thdReconnection.IsBackground = true;
                         thdReconnection.Start();
                     }
-                    if (!InitSys._SPLC._IsConnection && !bolSPLC)
-                    {
-                        bolSPLC = true;
-                        thdReconnection = new Thread(funReconnectionSPLC);
-                        thdReconnection.IsBackground = true;
-                        thdReconnection.Start();
-                    }
+                    //if (!InitSys._SPLC._IsConnection && !bolSPLC)
+                    //{
+                    //    bolSPLC = true;
+                    //    thdReconnection = new Thread(funReconnectionSPLC);
+                    //    thdReconnection.IsBackground = true;
+                    //    thdReconnection.Start();
+                    //}
                     for (int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
                     {
                         if (!bCRData[intIndex]._IsOpen && !bolBCR)
@@ -194,7 +194,6 @@ namespace Mirle.ASRS
                             bufferMonitor._Auto = bufferData[intIndex]._EQUStatus.AutoMode;
                             bufferMonitor._Load = bufferData[intIndex]._EQUStatus.Load;
                             bufferMonitor._Error = bufferData[intIndex]._EQUAlarmStatus.Error ? Buffer.Signal.On : Buffer.Signal.Off;
-
                         }
                     }
                 }
@@ -228,28 +227,31 @@ namespace Mirle.ASRS
                             {
                                 bufferData[intIndex]._CommandID = intarResultData[(intIndex * 10)].ToString() == "0" ?
                                     string.Empty : intarResultData[(intIndex * 10)].ToString();
-                                bufferData[intIndex]._Destination = intarResultData[(intIndex * 10) + 1].ToString() == "0" ?
-                                    string.Empty : intarResultData[(intIndex * 10) + 1].ToString();
-                                bufferData[intIndex]._Mode = (Buffer.StnMode)intarResultData[(intIndex * 10) + 2];
-                                bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 3] == 1;
 
-                                bufferData[intIndex].W_Discharged = intarResultData[(intIndex * 10) + 4] == 1;
+                                bufferData[intIndex]._Mode = (Buffer.StnMode)intarResultData[(intIndex * 10) + 1];
 
-                                bufferData[intIndex]._APositioning = intarResultData[(intIndex * 10) + 5] == 1;
+                                bufferData[intIndex]._Destination = intarResultData[(intIndex * 10) + 2].ToString() == "0" ?
+                                    string.Empty : intarResultData[(intIndex * 10) + 2].ToString();
 
-                                bufferData[intIndex]._Clearnotice = intarResultData[(intIndex * 10) + 8] == 1;
-                               
                                 #region EQUStatus
-                                string strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 6], 2).PadLeft(16, '0');
+                                string strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 3], 2).PadLeft(16, '0');
                                 bufferData[intIndex]._EQUStatus.AutoMode =
                                     strTmp.Substring(15, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 bufferData[intIndex]._EQUStatus.Load =
                                     strTmp.Substring(14, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUStatus.FrontLocation =
+                                   strTmp.Substring(13, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUStatus.RearLocation =
+                                   strTmp.Substring(12, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUStatus.BelowLocation =
+                                 strTmp.Substring(11, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUStatus.Completion =
+                               strTmp.Substring(11, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 #endregion EQUStatus
 
                                 #region EQUAlarmStatus
-                                strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 7], 2).PadLeft(16, '0');
-                                bufferData[intIndex]._EQUAlarmStatus.Error = (intarResultData[(intIndex * 10) + 7] > 0);
+                                strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 5], 2).PadLeft(16, '0');
+                                bufferData[intIndex]._EQUAlarmStatus.Error = (intarResultData[(intIndex * 10) + 5] > 0);
                                 bufferData[intIndex]._EQUAlarmStatus.EMO =
                                     strTmp.Substring(15, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 bufferData[intIndex]._EQUAlarmStatus.TransportMotorOverLoad =
@@ -268,6 +270,16 @@ namespace Mirle.ASRS
                                     strTmp.Substring(8, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
 
                                 #endregion EQUAlarmStatus
+
+
+                                //bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 3] == 1;
+
+                                //bufferData[intIndex].W_Discharged = intarResultData[(intIndex * 10) + 4] == 1;
+
+                                //bufferData[intIndex]._APositioning = intarResultData[(intIndex * 10) + 5] == 1;
+
+                                //bufferData[intIndex]._Clearnotice = intarResultData[(intIndex * 10) + 8] == 1;
+
                             }
                         }
 

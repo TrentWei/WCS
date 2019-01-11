@@ -31,29 +31,49 @@ namespace Mirle.ASRS
         {
             get { return strBufferName; }
         }
-
+        /// <summary>
+        /// 命令号
+        /// </summary>
         public string _CommandID { get; set; }
+        /// <summary>
+        /// 目的站
+        /// </summary>
         public string _Destination { get; set; }
+        /// <summary>
+        /// 命令模式
+        /// </summary>
         public StnMode _Mode { get; set; }
+        /// <summary>
+        /// 退回请求
+        /// </summary>
         public bool _ReturnRequest { get; set; }
+        /// <summary>
+        /// 放行信号
+        /// </summary>
         public bool W_Discharged { get; set; }
+        /// <summary>
+        /// 读码通知
+        /// </summary>
         public bool _APositioning { get; set; }
+        /// <summary>
+        /// 站口看板清除
+        /// </summary>
         public bool _Clearnotice  { get; set; }
 
         /// <summary>
-        /// 设备状态信号
+        /// 设备信号状态
         /// </summary>
         public EQU_Status_Signal _EQUStatus { get; set; }
         /// <summary>
-        /// 设备报警状态信号
+        /// 设备报警信号状态
         /// </summary>
         public EQU_Alarm_Status_Signal _EQUAlarmStatus { get; set; }
         /// <summary>
-        /// 设备状态信号地址
+        /// 设备信号状态地址
         /// </summary>
         public EQU_Status_Signal_Address _EQUStatusAddress { get; set; }
         /// <summary>
-        /// 设备报警状态信号地址
+        /// 设备报警信号状态地址
         /// </summary>
         public EQU_Alarm_Status_Signal_Address _EQUAlarmStatusAddress { get; set; }
 
@@ -116,28 +136,79 @@ namespace Mirle.ASRS
         #region 結構
         public class EQU_Status_Signal
         {
+            /// <summary>
+            /// 自动/手动
+            /// </summary>
             public Signal AutoMode { get; set; }
+            /// <summary>
+            /// 荷有/荷无
+            /// </summary>
             public Signal Load { get; set; }
-            //public Signal APositioning { get; set; }
+        
+            /// <summary>
+            /// 前定位
+            /// </summary>
+            public Signal FrontLocation { get; set; }
+
+            /// <summary>
+            /// 后定位
+            /// </summary>
+            public Signal RearLocation { get; set; }
+            /// <summary>
+            /// 下定位
+            /// </summary>
+            public Signal BelowLocation { get; set; }
+
+            /// <summary>
+            /// 作业完了
+            /// </summary>
+            public Signal Completion { get; set; }
+
 
             public EQU_Status_Signal()
             {
                 AutoMode = Signal.Off;
                 Load = Signal.Off;
-                //APositioning= Signal.Off;
             }
         }
 
         public class EQU_Alarm_Status_Signal
         {
+            /// <summary>
+            /// 总异常
+            /// </summary>
             public bool Error { get; set; }
+            /// <summary>
+            /// 急停
+            /// </summary>
             public Signal EMO { get; set; }
+            /// <summary>
+            /// 输送马达过载
+            /// </summary>
             public Signal TransportMotorOverLoad { get; set; }
+            /// <summary>
+            /// 输送超时
+            /// </summary>
             public Signal TransportTimeout { get; set; }
+            /// <summary>
+            /// 升降马达过载
+            /// </summary>
             public Signal LiftMotorOverLoad { get; set; }
+            /// <summary>
+            /// 升降超时
+            /// </summary>
             public Signal LiftTimeout { get; set; }
+            /// <summary>
+            /// 超高
+            /// </summary>
             public Signal OverHigh { get; set; }
+            /// <summary>
+            /// 有值无物
+            /// </summary>
             public Signal DataNoLoad { get; set; }
+            /// <summary>
+            /// 有物无值
+            /// </summary>
             public Signal LoadNoData { get; set; }
 
             public EQU_Alarm_Status_Signal()
