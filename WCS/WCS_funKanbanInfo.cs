@@ -35,7 +35,7 @@ namespace Mirle.ASRS
                         string strCmdsno = bufferData[intBufferIndex]._CommandID;
                         strSQL = "select * from CMD_MST ";
                         strSQL += " where CMD_SNO='" + strCmdsno.PadLeft(5, '0') + "'";
-                        if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                        if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                         {
                             CommandInfo commandInfo = new CommandInfo();
                             commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
@@ -109,7 +109,7 @@ namespace Mirle.ASRS
                         string strCmdsno = bufferData[intBufferIndex]._CommandID;
                         strSQL = "select * from CMD_MST ";
                         strSQL += " where CMD_SNO='" + strCmdsno.PadLeft(5, '0') + "'";
-                        if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                        if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                         {
                             CommandInfo commandInfo = new CommandInfo();
                             commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
@@ -213,11 +213,11 @@ namespace Mirle.ASRS
                 strSQL = "INSERT INTO KanbanInfo_Log";
                 strSQL += " SELECT * FROM kanbaninfo";
                 strSQL += " WHERE STN_NO='" + stationNo + "'";
-                InitSys._DB.funExecSql(strSQL, ref strEM);
+                InitSys._DB.ExecuteSQL(strSQL, ref strEM);
 
                 strSQL = "DELETE FROM KanbanInfo";
                 strSQL += " WHERE STN_NO='" + stationNo + "'";
-                InitSys._DB.funExecSql(strSQL, ref strEM);
+                InitSys._DB.ExecuteSQL(strSQL, ref strEM);
 
                 strSQL = "INSERT INTO KanbanInfo (InfoType, KanbanType, Msg, DetailMsg, AllocateQty, PartNo, Qty,";
                 strSQL += " RemainQty, Title1, Title2, UpdatedDate, UpdatePerson, CreatedDate, CreatedPerson,";
@@ -256,7 +256,7 @@ namespace Mirle.ASRS
                 strSQL += " '',";
                 strSQL += " '',";
                 strSQL += " '')";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -287,11 +287,11 @@ namespace Mirle.ASRS
                 strSQL = "INSERT INTO KanbanInfo_Log";
                 strSQL += " SELECT * FROM kanbaninfo";
                 strSQL += " WHERE STN_NO='" + stationNo + "'";
-                InitSys._DB.funExecSql(strSQL, ref strEM);
+                InitSys._DB.ExecuteSQL(strSQL, ref strEM);
 
                 strSQL = "DELETE FROM KanbanInfo";
                 strSQL += " WHERE STN_NO='" + stationNo + "'";
-                InitSys._DB.funExecSql(strSQL, ref strEM);
+                InitSys._DB.ExecuteSQL(strSQL, ref strEM);
 
                 strSQL = "INSERT INTO KanbanInfo (InfoType, KanbanType, Msg, DetailMsg, AllocateQty, PartNo, Qty,";
                 strSQL += " RemainQty, Title1, Title2, UpdatedDate, UpdatePerson, CreatedDate, CreatedPerson,";
@@ -330,7 +330,7 @@ namespace Mirle.ASRS
                 strSQL += " '',";
                 strSQL += " '',";
                 strSQL += " '')";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -361,11 +361,11 @@ namespace Mirle.ASRS
                 strSQL = "INSERT INTO KanbanInfo_Log";
                 strSQL += " SELECT * FROM kanbaninfo";
                 strSQL += " WHERE STN_NO='" + stationNo + "'";
-                InitSys._DB.funExecSql(strSQL, ref strEM);
+                InitSys._DB.ExecuteSQL(strSQL, ref strEM);
 
                 strSQL = "DELETE FROM KanbanInfo";
                 strSQL += " WHERE STN_NO='" + stationNo + "'";
-                InitSys._DB.funExecSql(strSQL, ref strEM);
+                InitSys._DB.ExecuteSQL(strSQL, ref strEM);
 
                 strSQL = "INSERT INTO KanbanInfo (InfoType, KanbanType, Msg, DetailMsg, AllocateQty, PartNo, Qty,";
                 strSQL += " RemainQty, Title1, Title2, UpdatedDate, UpdatePerson, CreatedDate, CreatedPerson,";
@@ -391,7 +391,7 @@ namespace Mirle.ASRS
                 strSQL += " '',";
                 strSQL += " '',";
                 strSQL += " '')";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -423,11 +423,11 @@ namespace Mirle.ASRS
                 strSQL = "INSERT INTO KanbanInfo_Log";
                 strSQL += " SELECT * FROM kanbaninfo";
                 strSQL += " WHERE STN_NO='" + stationNo + "'";
-                InitSys._DB.funExecSql(strSQL, ref strEM);
+                InitSys._DB.ExecuteSQL(strSQL, ref strEM);
 
                 strSQL = "DELETE FROM KanbanInfo";
                 strSQL += " WHERE STN_NO='" + stationNo + "'";
-                InitSys._DB.funExecSql(strSQL, ref strEM);
+                InitSys._DB.ExecuteSQL(strSQL, ref strEM);
 
                 strSQL = "INSERT INTO KanbanInfo (InfoType, KanbanType, Msg, DetailMsg, AllocateQty, PartNo, Qty,";
                 strSQL += " RemainQty, Title1, Title2, UpdatedDate, UpdatePerson, CreatedDate, CreatedPerson,";
@@ -453,7 +453,7 @@ namespace Mirle.ASRS
                 strSQL += " '',";
                 strSQL += " '',";
                 strSQL += " '')";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -481,7 +481,7 @@ namespace Mirle.ASRS
                 {
                     strSQL += " and ITEM_TYPE='M'";
                 }
-                if (InitSys._DB.funGetDT(strSQL, ref dtGetPStnNo, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtGetPStnNo, ref strEM))
                 {
                     return dtGetPStnNo.Rows[0]["PStn_No"].ToString();
                 }

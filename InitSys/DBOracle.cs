@@ -5,15 +5,28 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Oracle.DataAccess.Client;
-using Mirle.ASRS;
+using Oracle.ManagedDataAccess.Client;
 
-namespace Mirle
+namespace Mirle.ASRS
 {
     public class DBOracle : IDisposable
     {
         public DBOracle()
         {
+        }
+
+
+        public DBOracle(DatabaseType dbType, string dbName, string dbServer, string FOdbServer, string dbUser, string dbPassword, string dbConnTimeOut, string dbPort, int dbCommandTimeOut)
+        {
+            this.DBType = dbType;
+            this.DBName = dbName;
+            this.DBServer = dbServer;
+            this.FODBerver = FOdbServer;
+            this.DBUser = dbUser;
+            this.DBPassword = dbPassword;
+            this.DBConnTimeOut = dbConnTimeOut;
+            this.DBPort = dbPort;
+            this.DBCommandTimeOut = dbCommandTimeOut;
         }
 
         public enum TransactionType
@@ -178,7 +191,6 @@ namespace Mirle
                 _ExceptMsg = ex;
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception:" + methodBase.DeclaringType.FullName + "|" + methodBase.Name, "|Code:" + ex.ErrorCode + "|Message:" + ex.Message + "|" + strConnectString);
-
             }
             catch (Exception ex)
             {

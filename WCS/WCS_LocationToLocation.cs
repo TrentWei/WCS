@@ -31,7 +31,7 @@ namespace Mirle.ASRS
                     strSQL += " AND Cmd_Sts='0'";
                     strSQL += " AND TRACE='0'";
                     strSQL += " ORDER BY Cmd_Sno, Loc, Prty, Crt_Dte DESC";
-                    if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                    if(InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                     {
                         CommandInfo commandInfo = new CommandInfo();
                         commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
@@ -48,14 +48,14 @@ namespace Mirle.ASRS
                         strMsg += "Transfer Command Initiated!";
                         funWriteSysTraceLog(strMsg);
 
-                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
+                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                         if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.LoactionToLoaction_CrateCraneCommand))
                         {
                             if(funCrateCraneCommand(commandInfo.CommandID, CraneMode.LoactionToLoaction,
                                 commandInfo.Loaction, commandInfo.NewLoaction, commandInfo.Priority))
                             {
                                 #region Update Command & Create Transfer Crane Command Success
-                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -74,7 +74,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Create Transfer Crane Command Fail
-                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += commandInfo.CommandMode + "|";
                                 strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -86,7 +86,7 @@ namespace Mirle.ASRS
                         else
                         {
                             #region Update Command Fail
-                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                             strMsg = commandInfo.CommandID + "|";
                             strMsg += commandInfo.CommandMode + "|";
                             strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -129,7 +129,7 @@ namespace Mirle.ASRS
                 strSQL += " AND Cmd_Mode='5'";
                 strSQL += " AND TRACE='" + Trace.LoactionToLoaction_CrateCraneCommand + "'";
                 strSQL += " ORDER BY LOC DESC";
-                if(InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                if(InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                 {
                     for(int intCmdSno = 0; intCmdSno < dtCmdSno.Rows.Count; intCmdSno++)
                     {
@@ -147,7 +147,7 @@ namespace Mirle.ASRS
                         strSQL += " AND RENEWFLAG<>'F'";
                         strSQL += " AND CMDMODE='1'";
                         strSQL += " AND CMDSTS='9'";
-                        if(InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
+                        if(InitSys._DB.GetDataTable(strSQL, ref dtEquCmd, ref strEM))
                         {
                             string strCmdSts = dtEquCmd.Rows[0]["CmdSts"].ToString();
                             string strCompleteCode = dtEquCmd.Rows[0]["CompleteCode"].ToString();
@@ -155,7 +155,7 @@ namespace Mirle.ASRS
                             if(strCmdSts == CommandState.Completed && strCompleteCode.Substring(0, 1) == "W")
                             {
                                 strSQL = "UPDATE EQUCMD SET CMDSTS='0' WHERE CMDSNO='" + commandInfo.CommandID + "'";
-                                if(InitSys._DB.funExecSql(strSQL, ref strEM))
+                                if(InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                                 {
                                     #region Retry Transfer Crane Command Success
                                     strMsg = commandInfo.CommandID + "|";
@@ -219,13 +219,13 @@ namespace Mirle.ASRS
                             }
                             else if(strCmdSts == CommandState.Completed && strCompleteCode == "92")
                             {
-                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                                 if(funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.LoactionToLoaction_CraneCommandFinish))
                                 {
                                     if(funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                     {
                                         #region Transfer Crane Command Finish & Update Command Success
-                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -245,7 +245,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Delete Transfer Crane Command Fail
-                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CommandMode + "|";
                                         strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";
@@ -258,7 +258,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Command Fail
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CommandMode + "|";
                                     strMsg += commandInfo.Loaction + "->" + commandInfo.NewLoaction + "|";

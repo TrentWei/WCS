@@ -36,7 +36,7 @@ namespace Mirle.ASRS
                     strSQL += " AND Cmd_Mode IN('2', '3')";
                     strSQL += " AND Stn_No='" + strBufferName + "'";
                     strSQL += " ORDER BY Prty, Crt_Dte, Cmd_Sno";
-                    if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                    if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                     {
                         if (string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID) &&
                             string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination) &&
@@ -67,14 +67,14 @@ namespace Mirle.ASRS
                             strMsg += "StoreOut Command Initiated!";
                             funWriteSysTraceLog(strMsg);
                             #endregion StoreOut Command Initiated
-                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
+                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.StoreOut_GetStoreOutCommandAndWritePLC))
                             {
                                 string[] strValues = new string[] { commandInfo.CommandID, "1", commandInfo.CommandMode.ToString() };
                                 if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
                                 {
                                     #region Update Command & Write MPLC Success
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -101,7 +101,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Command Success But Write MPLC Fail
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -118,7 +118,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Update Command Fail
-                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += commandInfo.CycleNo + "|";
                                 strMsg += commandInfo.CommandMode + "|";
@@ -178,7 +178,7 @@ namespace Mirle.ASRS
                         strSQL += " AND Cmd_Mode IN('2', '3')";
                         strSQL += " AND Stn_No=''";
                         strSQL += " ORDER BY Prty, Crt_Dte, Cmd_Sno";
-                        if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                        if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                         {
                             CommandInfo commandInfo = new CommandInfo();
                             commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
@@ -266,7 +266,7 @@ namespace Mirle.ASRS
                         strSQL += " AND CMD_MODE IN ('2', '3')";
                         strSQL += " AND TRACE='" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "'";
                         strSQL += " ORDER BY LOC DESC";
-                        if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                        if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                         {
                             CommandInfo commandInfo = new CommandInfo();
                             commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
@@ -283,14 +283,14 @@ namespace Mirle.ASRS
                             {
                                 if (!funCheckCraneExistsCommand(CraneMode.StoreOut, stnDef.StationIndex.ToString()))
                                 {
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                                     if (funCrateCraneCommand(commandInfo.CommandID, CraneMode.StoreOut,
                                         commandInfo.Loaction, stnDef.StationIndex.ToString(), commandInfo.Priority))
                                     {
                                         if (funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreOut_CrateCraneCommand))
                                         {
                                             #region Update Command & Create StoreOut Crane Command Success
-                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                              InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                             strMsg = strCommandID + "|";
                                             strMsg += commandInfo.CycleNo + "|";
                                             strMsg += commandInfo.CommandMode + "|";
@@ -316,7 +316,7 @@ namespace Mirle.ASRS
                                         else
                                         {
                                             #region Update Command Fail
-                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                             strMsg = commandInfo.CommandID + "|";
                                             strMsg += commandInfo.CycleNo + "|";
                                             strMsg += commandInfo.CommandMode + "|";
@@ -333,7 +333,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Create StoreOut Crane Command Fail
-                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = strCommandID + "|";
                                         strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
@@ -380,7 +380,7 @@ namespace Mirle.ASRS
                 strSQL += " AND CMD_MODE IN ('2', '3')";
                 strSQL += " AND TRACE='" + Trace.StoreOut_CrateCraneCommand + "'";
                 strSQL += " order by Crt_Dte";
-                if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                 {
                     CommandInfo commandInfo = new CommandInfo();
                     commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
@@ -397,24 +397,24 @@ namespace Mirle.ASRS
                     strSQL += " AND RENEWFLAG<>'F'";
                     strSQL += " AND CMDMODE='2'";
                     strSQL += " AND CMDSTS in ('8','9')";
-                    if (InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
+                    if (InitSys._DB.GetDataTable(strSQL, ref dtEquCmd, ref strEM))
                     {
                         string strCmdSts = dtEquCmd.Rows[0]["CmdSts"].ToString();
                         string strCompleteCode = dtEquCmd.Rows[0]["CompleteCode"].ToString();
 
                         if (strCmdSts == CommandState.Completed && strCompleteCode.Substring(0, 1) == "W")
                         {
-                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
+                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
 
                             strSQL = "UPDATE CMD_MST";
                             strSQL += " SET CMD_STS='0',TRACE='" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "'";
                             strSQL += " WHERE CMD_STS='1' and CMD_SNO='" + commandInfo.CommandID + "'";
-                            if (InitSys._DB.funExecSql(strSQL, ref strEM))
+                            if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                             {
                                 strSQL = "DELETE FROM EQUCMD where CMDSNO='" + commandInfo.CommandID + "'";
-                                if (InitSys._DB.funExecSql(strSQL, ref strEM))
+                                if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                                 {
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                      InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                     #region Retry StoreOut DELETE EQUCMD Success
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
@@ -431,7 +431,7 @@ namespace Mirle.ASRS
                                 }
                                 else
                                 {
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     #region DELETE EQUCMD Fail
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
@@ -449,7 +449,7 @@ namespace Mirle.ASRS
                             }
                             else
                             {
-                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 #region Retry StoreOut Crane Command Fail
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += commandInfo.CycleNo + "|";
@@ -471,7 +471,7 @@ namespace Mirle.ASRS
                             strSQL += " CMDSTS='0',";
                             strSQL += " CompleteCode=''";
                             strSQL += " WHERE CMDSNO='" + commandInfo.CommandID + "'";
-                            if (InitSys._DB.funExecSql(strSQL, ref strEM))
+                            if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                             {
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += strCompleteCode + "|";
@@ -493,7 +493,7 @@ namespace Mirle.ASRS
                                 if (funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                 {
                                     #region StoreOut Crane Command Finish & Update Command Success
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                      InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -519,7 +519,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Delete StoreOut Crane Command Fail
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -554,7 +554,7 @@ namespace Mirle.ASRS
                             if (commandInfo.CommandMode.ToString() == CMDMode.Picking)
                             {
                                 #region Picking
-                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
+                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                                 if (funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.StoreOut_CraneCommandFinish))
                                 {
                                     if (funUpdateCYCLE(commandInfo.CycleNo, commandInfo.PalletNo))
@@ -562,7 +562,7 @@ namespace Mirle.ASRS
                                         if (funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                         {
                                             #region StoreOut Crane Command Finish & Update Command Success & Update Cycle
-                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                              InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                             strMsg = commandInfo.CommandID + "|";
                                             strMsg += commandInfo.CycleNo + "|";
                                             strMsg += commandInfo.CommandMode + "|";
@@ -574,7 +574,7 @@ namespace Mirle.ASRS
                                             strMsg += "StoreOut Command Update Success!";
                                             funWriteSysTraceLog(strMsg);
 
-                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                             strMsg = commandInfo.CommandID + "|";
                                             strMsg += commandInfo.CycleNo + "|";
                                             strMsg += commandInfo.CommandMode + "|";
@@ -600,7 +600,7 @@ namespace Mirle.ASRS
                                         else
                                         {
                                             #region Delete StoreOut Crane Command Fail
-                                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                             strMsg = commandInfo.CommandID + "|";
                                             strMsg += commandInfo.CycleNo + "|";
                                             strMsg += commandInfo.CommandMode + "|";
@@ -616,7 +616,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Cycle Update Fail
-                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
@@ -633,7 +633,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Command Fail
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -654,13 +654,13 @@ namespace Mirle.ASRS
                                 //if(lstStoreOutAGV.Exists(stnDef => stnDef.BufferName != commandInfo.StationNo))
                                 //{
                                 //    #region Normal
-                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
+                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                                 if (funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.StoreOut_CraneCommandFinish))
                                 {
                                     if (funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
                                     {
                                         #region StoreOut Crane Command Finish & Update Command Success
-                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
@@ -686,7 +686,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Delete StoreOut Crane Command Fail
-                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = commandInfo.CommandID + "|";
                                         strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
@@ -702,7 +702,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Command Fail
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -830,7 +830,7 @@ namespace Mirle.ASRS
                 strSQL += " AND Wh_NO='A'";
                 strSQL += " AND TIME <='" + DateTime.Now.ToString("HH:mm") + "'";
                 strSQL += " ORDER BY PRODUCE_NO";
-                if (InitSys._DB.funGetDT(strSQL, ref dtProduce, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtProduce, ref strEM))
                 {
                     Prodecu prodecu = new Prodecu();
                     prodecu.Prodecu_No = dtProduce.Rows[0]["PRODUCE_No"].ToString();
@@ -846,7 +846,7 @@ namespace Mirle.ASRS
                     {
                         string strCommandID = funGetCommandID();
                         string strStnNo = "";
-                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Begin);
+                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                         if (bolChkStn)
                         {
                             strStnNo = "B07";
@@ -866,7 +866,7 @@ namespace Mirle.ASRS
                                     if (funUpdateProdecu(prodecu.Prodecu_No, "2", strCommandID))
                                     {
                                         #region Create AGV StroreOut Command & Lock StroreOut Location Success
-                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Commit);
+                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = strCommandID + "|";
                                         strMsg += strLocation + "|";
                                         strMsg += prodecu.Item_No + "|";
@@ -898,7 +898,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Prodecu Fail
-                                        InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = prodecu.Prodecu_No + "|";
                                         strMsg += prodecu.Item_No + "|";
                                         strMsg += strLocation + "|";
@@ -911,7 +911,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Lock AGV StroreOut PalletNo Fail
-                                    InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = strCommandID + "|";
                                     strMsg += strLocation + "|";
                                     strMsg += prodecu.Item_No + "|";
@@ -924,7 +924,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Lock  StroreOut Location Fail
-                                InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = strCommandID + "|";
                                 strMsg += strLocation + "|";
                                 strMsg += prodecu.Item_No + "|";
@@ -936,7 +936,7 @@ namespace Mirle.ASRS
                         else
                         {
                             #region Create AGV StoreOut Command Fail
-                            InitSys._DB.funCommitCtrl(DBSQL.TransactionType.Rollback);
+                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                             strMsg = prodecu.Prodecu_No + "|";
                             strMsg += prodecu.Item_No + "|";
                             strMsg += strLocation + "|";

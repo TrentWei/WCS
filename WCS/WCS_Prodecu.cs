@@ -21,7 +21,7 @@ namespace Mirle.ASRS
                 strSQL += " WHERE STATUS='1'";
                 strSQL += " AND Wh_NO='A'";
                 strSQL += " ORDER BY PRODUCE_NO";
-                if(InitSys._DB.funGetDT(strSQL, ref dtProduce, ref strEM))
+                if(InitSys._DB.GetDataTable(strSQL, ref dtProduce, ref strEM))
                     return true;
                 else
                     return false;
@@ -55,7 +55,7 @@ namespace Mirle.ASRS
                 strSQL += " WHERE STATUS='1'";
                 strSQL += " AND Cmd_Sno='"+ intCmdSno.ToString("00000") + "'";
                 strSQL += " ORDER BY PRODUCE_NO";
-                if (InitSys._DB.funGetDT(strSQL, ref dtProduce, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtProduce, ref strEM))
                     return true;
                 else
                     return false;
@@ -87,7 +87,7 @@ namespace Mirle.ASRS
                 strSQL = "UPDATE PRODUCE ";
                 strSQL += " SET STATUS='" + status + "'";
                 strSQL += " WHERE Cmd_Sno='" + comsno.ToString("00000") + "'";
-                if(InitSys._DB.funExecSql(strSQL, ref strEM))
+                if(InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                     return true;
                 else
                     return false;
@@ -111,7 +111,7 @@ namespace Mirle.ASRS
                 strSQL += " SET STATUS='" + status + "',";
                 strSQL += " Cmd_Sno='" + commandID + "'";
                 strSQL += " WHERE PRODUCE_NO='" + prodecuNo + "'";
-                if(InitSys._DB.funExecSql(strSQL, ref strEM))
+                if(InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                     return true;
                 else
                     return false;

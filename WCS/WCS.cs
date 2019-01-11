@@ -44,7 +44,6 @@ namespace Mirle.ASRS
         public WCS()
         {
             InitializeComponent();
-
         }
 
         #region Event Function
@@ -53,7 +52,7 @@ namespace Mirle.ASRS
             InitSys.funItialSys();
 
             if (string.IsNullOrWhiteSpace(InitSys._APName))
-                this.Text = "盟立自动仓控制系统,鲁达一期" + " (V." + Application.ProductVersion + ")";
+                this.Text = "盟立自动仓控制系统,厦门长塑实业" + " (V." + Application.ProductVersion + ")";
             else
                 this.Text = InitSys._APName + " (V." + Application.ProductVersion + ")";
 
@@ -63,11 +62,7 @@ namespace Mirle.ASRS
             if (!funLoda())
             {
                 MessageBox.Show("网络内已有程式运行！");
-                string strEM = string.Empty;
-                string strMsg = string.Empty;
-                string strSql = "";
-                strSql = string.Format("update CtrlHs set Hs='0' where EquNo='{0}'", "A1");
-                InitSys._DB.funExecSql(strSql, ref strEM);
+                funRef();
                 funClose();
             }
         }
@@ -92,11 +87,7 @@ namespace Mirle.ASRS
         private void btnExit_Click(object sender, EventArgs e)
         {
             funWriteSysTraceLog(this.Text + " Program Stop!");
-            string strEM = string.Empty;
-            string strMsg = string.Empty;
-            string strSql = "";
-            strSql = string.Format("update CtrlHs set Hs='0' where EquNo='{0}'", "A1");
-            InitSys._DB.funExecSql(strSql, ref strEM);
+            funRef();
             funClose();
         }
         #endregion Close
@@ -147,7 +138,7 @@ namespace Mirle.ASRS
                 funShowAutoPause(bolAuto);
                 funShowConnect(InitSys._MPLC._IsConnection, lblMPLCSts);
                 funShowConnect(InitSys._SPLC._IsConnection, lblSPLCSts);
-                funShowConnect(InitSys._DB._IsConnection, lblDBSts);
+                funShowConnect(InitSys._DB.ConnFlag, lblDBSts);
 
                 #region Auto Reconnect
                 if (chkAutoReconnect.Checked && !bolAuto)
@@ -176,7 +167,7 @@ namespace Mirle.ASRS
                             thdReconnection.Start();
                         }
                     }
-                    if (!InitSys._DB._IsConnection && !bolDB)
+                    if (!InitSys._DB.ConnFlag && !bolDB)
                     {
                         bolDB = true;
                         thdReconnection = new Thread(funReconnectionDB);
@@ -208,7 +199,7 @@ namespace Mirle.ASRS
                     }
                 }
 
-                if (InitSys._DB._IsConnection)
+                if (InitSys._DB.ConnFlag)
                     funRefreshCrane();
             }
             catch (Exception ex)
@@ -227,7 +218,7 @@ namespace Mirle.ASRS
             timProgram.Stop();
             try
             {
-                if (InitSys._DB._IsConnection)
+                if (InitSys._DB.ConnFlag)
                 {
                     if (InitSys._MPLC._IsConnection)
                     {
@@ -597,10 +588,10 @@ namespace Mirle.ASRS
             else
                 funWriteSysTraceLog("Connection MPLC Fail!");
 
-            if (InitSys.funOpendSPLC())
-                funWriteSysTraceLog("Connection SPLC Success!");
-            else
-                funWriteSysTraceLog("Connection SPLC Fail!");
+            //if (InitSys.funOpendSPLC())
+            //    funWriteSysTraceLog("Connection SPLC Success!");
+            //else
+            //    funWriteSysTraceLog("Connection SPLC Fail!");
 
             if (InitSys.funOpendDB())
                 funWriteSysTraceLog("Connection DB Success!");
@@ -622,9 +613,9 @@ namespace Mirle.ASRS
                 string strEM = string.Empty;
                 if (InitSys._DB != null)
                 {
-                    InitSys._DB.funClose();
+                    InitSys._DB.Close();
 
-                    if (InitSys._DB.funOpenDB(ref strEM))
+                    if (InitSys._DB.Open(ref strEM))
                         funWriteSysTraceLog("Try Reconnection DB Success!");
                     else
                         funWriteSysTraceLog("Try Reconnection DB Fail!");
@@ -845,7 +836,7 @@ namespace Mirle.ASRS
             {
                 strSQL = "SELECT * FROM EQUMODELOG";
                 strSQL += " WHERE ENDDT IN ('', ' ')";
-                if (InitSys._DB.funGetDT(strSQL, ref dtCraneMode, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtCraneMode, ref strEM))
                 {
                     for (int intCount = 0; intCount < dtCraneMode.Rows.Count; intCount++)
                     {
@@ -863,7 +854,7 @@ namespace Mirle.ASRS
                 }
                 strSQL = "SELECT * FROM EQUSTSLOG";
                 strSQL += " WHERE ENDDT IN ('', ' ')";
-                if (InitSys._DB.funGetDT(strSQL, ref dtCraneState, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtCraneState, ref strEM))
                 {
                     for (int intCount = 0; intCount < dtCraneState.Rows.Count; intCount++)
                     {
@@ -884,7 +875,7 @@ namespace Mirle.ASRS
                     strSQL = "SELECT * FROM EQUCMD";
                     strSQL += " WHERE CMDSTS ='1'";
                     strSQL += " AND EQUNO='" + intCraneNo + "'";
-                    if (InitSys._DB.funGetDT(strSQL, ref dtCmdSno, ref strEM))
+                    if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                         dicCraneMap[intCraneNo]._CommandID = dtCmdSno.Rows[0]["CmdSno"].ToString();
                     else
                         dicCraneMap[intCraneNo]._CommandID = string.Empty;
@@ -963,7 +954,7 @@ namespace Mirle.ASRS
             timRefresh.Stop();
             timProgram.Stop();
             //timUpdate.Stop();
-            InitSys._DB.funClose();
+            InitSys._DB.Close();
             InitSys._MPLC.funClose();
             InitSys._SPLC.funClose();
             for (int intIndex = 0; intIndex < bCRData._BCRCount; intIndex++)
@@ -988,7 +979,7 @@ namespace Mirle.ASRS
             string strMsg = string.Empty;
             DataTable dtCmdSno = new DataTable();
             string strSql = string.Format("select * from equcmd");
-            if (InitSys._DB.funGetDT(strSql, ref dtCmdSno, ref strEM))
+            if (InitSys._DB.GetDataTable(strSql, ref dtCmdSno, ref strEM))
             {
                 dgvCmdMst.DataSource = dtCmdSno;
             }
@@ -1004,10 +995,10 @@ namespace Mirle.ASRS
             int row = dgvCmdMst.CurrentCell.RowIndex;
             string strCmdSno = dgvCmdMst.Rows[row].Cells[1].Value.ToString();
             string strSql = string.Format("insert into EquCmdHis select '{1}' as HISDT,* from EquCmd where EquNo = 'R1' and CmdSno = '{0}'", strCmdSno, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            if (InitSys._DB.funExecSql(strSql, ref strEM))
+            if (InitSys._DB.ExecuteSQL(strSql, ref strEM))
             {
                 strSql = string.Format("delete from equcmd where cmdsno='{0}'", strCmdSno);
-                if (InitSys._DB.funExecSql(strSql, ref strEM))
+                if (InitSys._DB.ExecuteSQL(strSql, ref strEM))
                 {
                     Query();
                     funWriteSysTraceLog(strCmdSno + "清除成功!");

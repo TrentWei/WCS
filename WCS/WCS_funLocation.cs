@@ -32,7 +32,7 @@ namespace Mirle.ASRS
                 strSQL += " Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
                 strSQL += " Trn_Tim='" + DateTime.Now.ToString("HH:mm:ss") + "'";
                 strSQL += " WHERE Loc='" + location + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -56,7 +56,7 @@ namespace Mirle.ASRS
                 strSQL += " AND Loc_Type='"+ Loc_Type + "'";
                 strSQL += " ORDER BY LVL_Z, BAY_Y, ROW_X";
 
-                if (InitSys._DB.funGetDT(strSQL, ref dtLocation, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtLocation, ref strEM))
                 {
                     strLoaction=dtLocation.Rows[0]["LOC"].ToString();
 
@@ -66,7 +66,7 @@ namespace Mirle.ASRS
                     strSQL += " Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
                     strSQL += " Trn_Tim='" + DateTime.Now.ToString("HH:mm:ss") + "'";
                     strSQL += " WHERE Loc='" + strLoaction + "'";
-                    if (InitSys._DB.funExecSql(strSQL, ref strEM))
+                    if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                     {
                         return true;
                     }
@@ -111,7 +111,7 @@ namespace Mirle.ASRS
                 strSQL += " Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
                 strSQL += " Trn_Tim='" + DateTime.Now.ToString("HH:mm:ss") + "'";
                 strSQL += " WHERE Loc='" + strLoaction + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -134,7 +134,7 @@ namespace Mirle.ASRS
                 strSQL += " Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
                 strSQL += " Trn_Tim='" + DateTime.Now.ToString("HH:mm:ss") + "'";
                 strSQL += " WHERE Loc='" + strLoaction + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -152,7 +152,7 @@ namespace Mirle.ASRS
             try
             {
                 strSQL = "SELECT * from LOC_MST where loc='"+loc+"' ";
-                if (InitSys._DB.funGetDT(strSQL, ref dtLoc, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtLoc, ref strEM))
                 {
                     Type = dtLoc.Rows[0]["LOC_TYPE"].ToString();
                     return true;
@@ -193,7 +193,7 @@ namespace Mirle.ASRS
                 strSQL += " AND A.LOC=B.loc";
                 strSQL += " AND B.Item_Type='"+ Item_Type.Trim()+ "'";
                 strSQL += " AND A.Plt_No='" + palletNo + "'";
-                if(InitSys._DB.funGetDT(strSQL, ref dtLoc, ref strEM))
+                if(InitSys._DB.GetDataTable(strSQL, ref dtLoc, ref strEM))
                 {
                     if(dtLoc.Rows.Count == 1)
                     {

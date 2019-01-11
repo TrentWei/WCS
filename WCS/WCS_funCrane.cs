@@ -37,7 +37,7 @@ namespace Mirle.ASRS
                     default:
                         break;
                 }
-                if (InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtEquCmd, ref strEM))
                     return int.Parse(dtEquCmd.Rows[0]["ICOUNT"].ToString()) > 0;
                 else
                     return false;
@@ -85,7 +85,7 @@ namespace Mirle.ASRS
                 strSQL += "'0', ";
                 strSQL += "'" + priority + "', ";
                 strSQL += "'" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") + "')";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch (Exception ex)
             {
@@ -103,7 +103,7 @@ namespace Mirle.ASRS
             {
                 strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
                 strSQL += " WHERE CMDMODE='" + craneMode + "'";
-                if (InitSys._DB.funGetDT(strSQL, ref dtEquCmd, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtEquCmd, ref strEM))
                     return int.Parse(dtEquCmd.Rows[0]["ICOUNT"].ToString()) == 0;
                 else
                     return false;
@@ -136,7 +136,7 @@ namespace Mirle.ASRS
                 strSQL += " AND RENEWFLAG='Y'";
                 strSQL += " AND CMDSNO='" + commandID + "'";
                 strSQL += " AND CmdMode='" + craneMode + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch (Exception ex)
             {
@@ -146,48 +146,6 @@ namespace Mirle.ASRS
             }
         }
 
-        public bool funLoda()
-        {
-            string strEM = string.Empty;
-            string strMsg = string.Empty;
-            DataTable dtCmdSno = new DataTable();
-            try
-            {
-                string strSql = string.Format("select * from CtrlHs where EquNo='{0}'", "A1");
-                if (InitSys._DB.funGetDT(strSql, ref dtCmdSno, ref strEM))
-                {
-                    if (dtCmdSno.Rows[0]["HS"].ToString() == "0")
-                    {
-                        strSql = string.Format("update CtrlHs set Hs='1' where EquNo='{0}'", "A1");
-                        return InitSys._DB.funExecSql(strSql, ref strEM);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-
-                }
-                else
-                {
-                    strSql = string.Format("insert into ctrlhs(HS,EquNo,trndt) values ('1','{0}','2015-10-10 12:00:00')", "A1");
-                   return InitSys._DB.funExecSql(strSql, ref strEM);
-                }
-            }
-            catch (Exception ex)
-            {
-                MethodBase methodBase = MethodBase.GetCurrentMethod();
-                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
-                return false;
-            }
-            finally
-            {
-                if (dtCmdSno != null)
-                {
-                    dtCmdSno.Clear();
-                    dtCmdSno.Dispose();
-                    dtCmdSno = null;
-                }
-            }
-        }
+       
     }
 }

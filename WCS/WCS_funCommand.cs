@@ -23,7 +23,7 @@ namespace Mirle.ASRS
                 strSQL += " TRACE='" + setTrace + "'";
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
                 strSQL += " AND CMD_STS<='1'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -46,7 +46,7 @@ namespace Mirle.ASRS
                 strSQL += " STN_NO='" + setStn_No + "'";
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
                 strSQL += " AND CMD_STS<='1'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch (Exception ex)
             {
@@ -69,7 +69,7 @@ namespace Mirle.ASRS
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
                 strSQL += " AND Plt_No='" + palletNo + "'";
                 strSQL += " AND TRACE='" + trace + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -92,7 +92,7 @@ namespace Mirle.ASRS
             try
             {
                 strSQL = "SELECT * FROM CMD_MST  where PLT_NO='"+palletNo+"' and cmd_STS in ('0','1') and cmd_Mode='1' ";
-                if (InitSys._DB.funGetDT(strSQL, ref dtProduce, ref strEM))
+                if (InitSys._DB.GetDataTable(strSQL, ref dtProduce, ref strEM))
                     return true;
                 else
                     return false;
@@ -135,7 +135,7 @@ namespace Mirle.ASRS
                 strSQL += "'WCS', ";
                 strSQL += "'0', ";
                 strSQL += "'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "')";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -167,7 +167,7 @@ namespace Mirle.ASRS
                 strSQL += "'WCS', ";
                 strSQL += "'0', ";
                 strSQL += "'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "')";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -192,7 +192,7 @@ namespace Mirle.ASRS
                     intTimes++;
                     strSQL = "SELECT * FROM SNO_CTL";
                     strSQL += " WHERE Sno_Type='CF'";
-                    if(InitSys._DB.funGetDT(strSQL, ref dtCommandID, ref strEM))
+                    if(InitSys._DB.GetDataTable(strSQL, ref dtCommandID, ref strEM))
                     {
                         string strCmdSno = dtCommandID.Rows[0]["Sno"].ToString();
                         string strCmdSnoNew = "";
@@ -208,7 +208,7 @@ namespace Mirle.ASRS
                         strSQL += " SET Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
                         strSQL += " SNO='" + strCmdSnoNew + "'";
                         strSQL += " WHERE Sno_Type='CF'";
-                        if (InitSys._DB.funExecSql(strSQL, ref strEM))
+                        if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                             return strCmdSno.PadLeft(5, '0');
                     }
                     else
@@ -217,7 +217,7 @@ namespace Mirle.ASRS
                         strSQL += "'" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
                         strSQL += "'CF',";
                         strSQL += "'1')";
-                        if(InitSys._DB.funExecSql(strSQL, ref strEM))
+                        if(InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                             return "1";
                     }
                 }
@@ -256,7 +256,7 @@ namespace Mirle.ASRS
                 strSQL += " AND l.LOC_STS in ('I')";
                 strSQL += " AND Cmd_Mode='1'";
                 strSQL += " AND Io_Type='12'";
-                if(InitSys._DB.funGetDT(strSQL, ref dtCommand, ref strEM))
+                if(InitSys._DB.GetDataTable(strSQL, ref dtCommand, ref strEM))
                 {
                     if(dtCommand.Rows.Count == 1)
                     {

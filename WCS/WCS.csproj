@@ -64,6 +64,9 @@
     <Compile Include="WCS_funKanbanInfo.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="WCS_funLoad.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="WCS_funLocation.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -23,7 +23,7 @@ namespace Mirle.ASRS
                 strSQL += " Trn_Dte='"+DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") +"'";
                 strSQL += " WHERE Plt_No='" + palletNo + "'";
                 strSQL += " and Item_Type='" + Item_Type + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -45,7 +45,7 @@ namespace Mirle.ASRS
                 strSQL += " SET Status='1'";
                 strSQL += " WHERE Plt_No='" + palletNo + "'";
                 strSQL += " AND Cyc_No='" + cycleNo + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -67,7 +67,7 @@ namespace Mirle.ASRS
                 strSQL += " Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'";
                 strSQL += " WHERE Plt_No='" + palletNo + "'";
                 strSQL += " and Item_Type='" + Item_type + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {
@@ -91,7 +91,7 @@ namespace Mirle.ASRS
                 strSQL += " Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'";
                 strSQL += " WHERE Plt_No='" + palletNo + "'";
                 strSQL += " and ITEM_Type='"+ Item_Type + "'";
-                return InitSys._DB.funExecSql(strSQL, ref strEM);
+                return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
             {

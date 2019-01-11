@@ -58,6 +58,7 @@
             this.lsbUpdate = new System.Windows.Forms.ListBox();
             this.tbpSingelMonitor = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox42 = new System.Windows.Forms.PictureBox();
             this.pictureBox41 = new System.Windows.Forms.PictureBox();
             this.pictureBox40 = new System.Windows.Forms.PictureBox();
             this.pictureBox39 = new System.Windows.Forms.PictureBox();
@@ -210,7 +211,6 @@
             this.A118 = new Mirle.ASRS.BufferMonitor();
             this.A117 = new Mirle.ASRS.BufferMonitor();
             this.craneMonitor1 = new Mirle.ASRS.CraneMonitor();
-            this.pictureBox42 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.sctMain1)).BeginInit();
             this.sctMain1.Panel1.SuspendLayout();
             this.sctMain1.Panel2.SuspendLayout();
@@ -225,6 +225,7 @@
             this.tbpUpdatePosted.SuspendLayout();
             this.tbpSingelMonitor.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox42)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox41)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox40)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox39)).BeginInit();
@@ -269,7 +270,6 @@
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCmdMst)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox42)).BeginInit();
             this.SuspendLayout();
             // 
             // sctMain1
@@ -827,6 +827,16 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1828, 735);
             this.panel1.TabIndex = 0;
+            // 
+            // pictureBox42
+            // 
+            this.pictureBox42.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox42.BackgroundImage")));
+            this.pictureBox42.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox42.Location = new System.Drawing.Point(16, 45);
+            this.pictureBox42.Name = "pictureBox42";
+            this.pictureBox42.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox42.TabIndex = 612;
+            this.pictureBox42.TabStop = false;
             // 
             // pictureBox41
             // 
@@ -3167,16 +3177,6 @@
             this.craneMonitor1.Size = new System.Drawing.Size(103, 90);
             this.craneMonitor1.TabIndex = 168;
             // 
-            // pictureBox42
-            // 
-            this.pictureBox42.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox42.BackgroundImage")));
-            this.pictureBox42.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox42.Location = new System.Drawing.Point(16, 45);
-            this.pictureBox42.Name = "pictureBox42";
-            this.pictureBox42.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox42.TabIndex = 612;
-            this.pictureBox42.TabStop = false;
-            // 
             // WCS
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -3210,6 +3210,7 @@
             this.tbpUpdatePosted.ResumeLayout(false);
             this.tbpSingelMonitor.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox42)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox41)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox40)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox39)).EndInit();
@@ -3254,7 +3255,6 @@
             this.tabPage1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCmdMst)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox42)).EndInit();
             this.ResumeLayout(false);
 
         }

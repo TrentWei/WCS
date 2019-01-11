@@ -14,13 +14,26 @@ namespace Mirle.ASRS
         #region 變數
         private static string strAPName = string.Empty;
         private static string strStartAddress = string.Empty;
+        private static int intTotalAddress = 0;
+
+        private static string strDBName = string.Empty;
+        private static string strDBServer = string.Empty;
+        private static string strDBPort = string.Empty;
+        private static string strFODBerver = string.Empty;
+        private static string strDBUser = string.Empty;
+        private static string strDBPassword = string.Empty;
+        private static string strDBConnTimeOut = string.Empty;
+        private static int intDBCommandTimeOut = 0;
+
         private static string strAGV_StoreIn_SPLCAddress = string.Empty;
         private static string strAGV_StoreOut_SPLCAddress = string.Empty;
-        private static int intTotalAddress = 0;
         private static int intAGV_StoreIn_MPLCBufferIndex = 0;
         private static int intAGV_StoreOut_MPLCBufferIndex = 0;
         private static int intAGV_GetWirteSPLCStartIndex = 0;
-        private static DBSQL dBServer = new DBSQL();
+
+
+        private static DBOracle dBServer = new DBOracle();
+
         private static MPLC mPLC = new MPLC();
         private static SPLC sPLC = new SPLC();
         private static Archive archive = new Archive();
@@ -67,7 +80,7 @@ namespace Mirle.ASRS
             get { return intTotalAddress; }
         }
 
-        public static DBSQL _DB
+        public static DBOracle _DB
         {
             get { return dBServer; }
         }
@@ -90,16 +103,32 @@ namespace Mirle.ASRS
             {
                 strAPName = ConfigurationManager.AppSettings["APName"];
                 strStartAddress = ConfigurationManager.AppSettings["StartAddress"];
-                strAGV_StoreIn_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreIn_SPLCAddress"];
-                strAGV_StoreOut_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreOut_SPLCAddress"];
                 intTotalAddress = int.Parse(ConfigurationManager.AppSettings["TotalAddress"]);
-                intAGV_StoreIn_MPLCBufferIndex = int.Parse(ConfigurationManager.AppSettings["AGV_StoreIn_MPLCBufferIndex"]);
-                intAGV_StoreOut_MPLCBufferIndex = int.Parse(ConfigurationManager.AppSettings["AGV_StoreOut_MPLCBufferIndex"]);
-                intAGV_GetWirteSPLCStartIndex = int.Parse(ConfigurationManager.AppSettings["AGV_GetWirteSPLCStartIndex"]);
+
+
+                strDBName = ConfigurationManager.AppSettings["DBName"];
+                strDBServer = ConfigurationManager.AppSettings["DBServer"];
+                strDBPort = ConfigurationManager.AppSettings["DBPort"];
+                strFODBerver = ConfigurationManager.AppSettings["FODBerver"];
+                strDBUser = ConfigurationManager.AppSettings["DBUser"];
+                strDBPassword = ConfigurationManager.AppSettings["DBPassword"];
+                strDBConnTimeOut = ConfigurationManager.AppSettings["DBConnTimeOut"];
+                intDBCommandTimeOut = int.Parse(ConfigurationManager.AppSettings["DBCommandTimeOut"]);
+
+
+                #region 鲁达AGV部分
+                //strAGV_StoreIn_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreIn_SPLCAddress"];
+                //strAGV_StoreOut_SPLCAddress = ConfigurationManager.AppSettings["AGV_StoreOut_SPLCAddress"];
+                //intAGV_StoreIn_MPLCBufferIndex = int.Parse(ConfigurationManager.AppSettings["AGV_StoreIn_MPLCBufferIndex"]);
+                //intAGV_StoreOut_MPLCBufferIndex = int.Parse(ConfigurationManager.AppSettings["AGV_StoreOut_MPLCBufferIndex"]);
+                //intAGV_GetWirteSPLCStartIndex = int.Parse(ConfigurationManager.AppSettings["AGV_GetWirteSPLCStartIndex"]);
+                #endregion
+
+
                 archive = new Archive(Application.StartupPath + @"\LOG\", 10000, Application.StartupPath + @"\LOG\", 7, 90);
                 archive.funStart();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.StackTrace);
@@ -111,13 +140,21 @@ namespace Mirle.ASRS
             try
             {
                 string strEM = string.Empty;
-                dBServer = new DBSQL(ConfigurationManager.ConnectionStrings["ASRS"].ConnectionString);
-                if(dBServer.funOpenDB(ref strEM))
+                dBServer = new DBOracle(DBOracle.DatabaseType.Oracle_OracleClient
+                    , strDBName
+                    , strDBServer
+                    , strFODBerver
+                    , strDBUser
+                    , strDBPassword
+                    , strDBConnTimeOut
+                    , strDBPort
+                    , intDBCommandTimeOut);
+                if (dBServer.Open(ref strEM))
                     return true;
                 else
                     return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -131,12 +168,12 @@ namespace Mirle.ASRS
             {
                 string strEM = string.Empty;
                 mPLC = new MPLC(int.Parse(ConfigurationManager.AppSettings["StationNumber"]));
-                if(mPLC.funOpenMPLC(ref strEM))
+                if (mPLC.funOpenMPLC(ref strEM))
                     return true;
                 else
                     return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -154,12 +191,12 @@ namespace Mirle.ASRS
                 short intSlot = short.Parse(ConfigurationManager.AppSettings["AGV_Connection_Slot"]);
                 int intDB = int.Parse(ConfigurationManager.AppSettings["AGV_Connection_DB"]);
                 sPLC = new SPLC(S7.Net.CpuType.S7300, strIP, intRack, intSlot, intDB);
-                if(sPLC.funOpenSPLC(ref strEM))
+                if (sPLC.funOpenSPLC(ref strEM))
                     return true;
                 else
                     return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -174,13 +211,13 @@ namespace Mirle.ASRS
                 string strFile = fileName + ".log";
                 string strFilePath = Application.StartupPath + @"\LOG\" + DateTime.Now.ToString("yyyy-MM-dd");
 
-                if(!Directory.Exists(strFilePath))
+                if (!Directory.Exists(strFilePath))
                     Directory.CreateDirectory(strFilePath);
 
                 logMsg = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " " + logMsg;
-                if(!File.Exists(strFilePath + @"\" + strFile))
+                if (!File.Exists(strFilePath + @"\" + strFile))
                 {
-                    using(StreamWriter swrWriter = File.CreateText(strFilePath + @"\" + strFile))
+                    using (StreamWriter swrWriter = File.CreateText(strFilePath + @"\" + strFile))
                     {
                         swrWriter.WriteLine(logMsg);
                         swrWriter.Flush();
@@ -189,7 +226,7 @@ namespace Mirle.ASRS
                 }
                 else
                 {
-                    using(StreamWriter swrWriter = File.AppendText(strFilePath + @"\" + strFile))
+                    using (StreamWriter swrWriter = File.AppendText(strFilePath + @"\" + strFile))
                     {
                         swrWriter.WriteLine(logMsg);
                         swrWriter.Flush();
@@ -197,7 +234,7 @@ namespace Mirle.ASRS
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 string strErrMsg = ex.Message;
             }

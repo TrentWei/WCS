@@ -79,7 +79,7 @@ namespace Mirle.ASRS
             }
         }
 
-        public bool funGetDT(string sQL, ref DataTable dtData, ref string errMsg)
+        public bool GetDataTable(string sQL, ref DataTable dtData, ref string errMsg)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace Mirle.ASRS
             }
         }
 
-        public bool funExecSql(string sQL, ref string errMsg)
+        public bool ExecuteSQL(string sQL, ref string errMsg)
         {
             try
             {
