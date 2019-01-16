@@ -184,6 +184,12 @@ namespace Mirle.ASRS
                 return bolIsConnection = false;
             }
         }
+
+        public void funClearMPLC(string deviceBlockAddress)
+        {
+            string[] strValues = new string[] { "0", "0", "0" };
+            funWriteMPLC(deviceBlockAddress, strValues);
+        }
         #endregion Write
 
         #endregion Function

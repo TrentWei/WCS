@@ -50,7 +50,7 @@ namespace Mirle.ASRS
         /// <summary>
         /// 放行信号
         /// </summary>
-        public bool W_Discharged { get; set; }
+        public bool _Discharged { get; set; }
         /// <summary>
         /// 读码通知
         /// </summary>
@@ -58,7 +58,7 @@ namespace Mirle.ASRS
         /// <summary>
         /// 站口看板清除
         /// </summary>
-        public bool _Clearnotice  { get; set; }
+        public bool _Clearnotice { get; set; }
 
         /// <summary>
         /// 设备信号状态
@@ -144,7 +144,7 @@ namespace Mirle.ASRS
             /// 荷有/荷无
             /// </summary>
             public Signal Load { get; set; }
-        
+
             /// <summary>
             /// 前定位
             /// </summary>
@@ -154,6 +154,11 @@ namespace Mirle.ASRS
             /// 后定位
             /// </summary>
             public Signal RearLocation { get; set; }
+
+            /// <summary>
+            /// 上定位
+            /// </summary>
+            public Signal UpLocation { get; set; }
             /// <summary>
             /// 下定位
             /// </summary>
@@ -191,6 +196,10 @@ namespace Mirle.ASRS
             /// </summary>
             public Signal TransportTimeout { get; set; }
             /// <summary>
+            /// 输送变频器异常
+            /// </summary>
+            public Signal TransportTransducerERROR { get; set; }
+            /// <summary>
             /// 升降马达过载
             /// </summary>
             public Signal LiftMotorOverLoad { get; set; }
@@ -199,9 +208,41 @@ namespace Mirle.ASRS
             /// </summary>
             public Signal LiftTimeout { get; set; }
             /// <summary>
-            /// 超高
+            /// 升降变频器异常
+            /// </summary>
+            public Signal LiftTransducerERROR{ get; set; }
+            /// <summary>
+            /// 升降上极限异常
+            /// </summary>
+            public Signal LiftUpERROR { get; set; }
+            /// <summary>
+            /// 升降下极限异常
+            /// </summary>
+            public Signal LiftBelowERROR { get; set; }
+            /// <summary>
+            /// 突出异常
+            /// </summary>
+            public Signal ExtrudeERROR { get; set; }
+            /// <summary>
+            /// 超长异常
+            /// </summary>
+            public Signal OverLength { get; set; }
+            /// <summary>
+            /// 超宽异常
+            /// </summary>
+            public Signal OverWidth { get; set; }
+            /// <summary>
+            /// 超高异常
             /// </summary>
             public Signal OverHigh { get; set; }
+            /// <summary>
+            /// 超重异常
+            /// </summary>
+            public Signal OverWeight { get; set; }
+            /// <summary>
+            /// 通讯异常
+            /// </summary>
+            public Signal CommunicationERROR { get; set; }
             /// <summary>
             /// 有值无物
             /// </summary>
@@ -216,11 +257,22 @@ namespace Mirle.ASRS
                 EMO = Signal.Off;
                 TransportMotorOverLoad = Signal.Off;
                 TransportTimeout = Signal.Off;
+                TransportTransducerERROR = Signal.Off;
+
                 LiftMotorOverLoad = Signal.Off;
                 LiftTimeout = Signal.Off;
+                LiftTransducerERROR = Signal.Off;
+                LiftUpERROR = Signal.Off;
+                LiftBelowERROR = Signal.Off;
+                ExtrudeERROR = Signal.Off;
+                OverLength = Signal.Off;
+                OverWidth = Signal.Off;
                 OverHigh = Signal.Off;
-                DataNoLoad = Signal.Off;
-                LoadNoData = Signal.Off;
+                OverWeight = Signal.Off;
+                CommunicationERROR = Signal.Off;
+
+                //DataNoLoad = Signal.Off;
+                //LoadNoData = Signal.Off;
             }
         }
 
@@ -229,20 +281,28 @@ namespace Mirle.ASRS
         {
             private string strAutoMode = string.Empty;
             private string strLoad = string.Empty;
+            private string strFrontLocation = string.Empty;
+            private string strRearLocation = string.Empty;
+            private string strUpLocation = string.Empty;
+            private string strBelowLocation = string.Empty;
+            private string strCompletion = string.Empty;
 
             //private string strAPositioning = string.Empty;
 
             public string B_AutoMode { get { return strAutoMode; } }
             public string B_Load { get { return strLoad; } }
 
-            //public string B_APositioning { get { return strAPositioning; } }
 
             public EQU_Status_Signal_Address(string address)
             {
                 int intAddress = int.Parse(address.Remove(0, 1)) + 7;
                 strAutoMode = "D" + intAddress.ToString() + ".0";
                 strLoad = "D" + intAddress.ToString() + ".1";
-                //strAPositioning= "D" + intAddress.ToString() + ".2";
+                strFrontLocation = "D" + intAddress.ToString() + ".2";
+                strRearLocation = "D" + intAddress.ToString() + ".3";
+                strUpLocation = "D" + intAddress.ToString() + ".4";
+                strBelowLocation = "D" + intAddress.ToString() + ".5";
+                strCompletion = "D" + intAddress.ToString() + ".6";
             }
         }
 
@@ -251,11 +311,18 @@ namespace Mirle.ASRS
             private string strEMO = string.Empty;
             private string strTransportMotorOverLoad = string.Empty;
             private string strTransportTimeout = string.Empty;
+            private string strTransportTransducerERROR = string.Empty;
             private string strLiftMotorOverLoad = string.Empty;
             private string strLiftTimeout = string.Empty;
+            private string strLiftTransducerERROR = string.Empty;
+            private string strLiftUpERROR = string.Empty;
+            private string strLiftBelowERROR = string.Empty;
+            private string strExtrudeERROR = string.Empty;
+            private string strOverLength = string.Empty;
+            private string strOverWidth = string.Empty;
             private string strOverHigh = string.Empty;
-            private string strDataNoLoad = string.Empty;
-            private string strLoadNoData = string.Empty;
+            private string strOverWeight = string.Empty;
+            private string strCommunicationERROR = string.Empty;
 
             public string B_EMO { get { return strEMO; } }
             public string B_TransportMotorOverLoad { get { return strTransportMotorOverLoad; } }
@@ -263,20 +330,27 @@ namespace Mirle.ASRS
             public string B_LiftMotorOverLoad { get { return strLiftMotorOverLoad; } }
             public string B_LiftTimeout { get { return strLiftTimeout; } }
             public string B_OverHigh { get { return strOverHigh; } }
-            public string B_DataNoLoad { get { return strDataNoLoad; } }
-            public string B_LoadNoData { get { return strLoadNoData; } }
+            //public string B_DataNoLoad { get { return strDataNoLoad; } }
+            //public string B_LoadNoData { get { return strLoadNoData; } }
 
             public EQU_Alarm_Status_Signal_Address(string address)
             {
                 int intAddress = int.Parse(address.Remove(0, 1)) + 8;
-                strEMO = "D" + intAddress.ToString() + ".0";
-                strTransportMotorOverLoad = "D" + intAddress.ToString() + ".1";
-                strTransportTimeout = "D" + intAddress.ToString() + ".2";
-                strLiftMotorOverLoad = "D" + intAddress.ToString() + ".3";
-                strLiftTimeout = "D" + intAddress.ToString() + ".4";
-                strOverHigh = "D" + intAddress.ToString() + ".5";
-                strDataNoLoad = "D" + intAddress.ToString() + ".6";
-                strLoadNoData = "D" + intAddress.ToString() + ".7";
+                strEMO = "D" + intAddress.ToString() + ".1";
+                strTransportMotorOverLoad = "D" + intAddress.ToString() + ".2";
+                strTransportTimeout = "D" + intAddress.ToString() + ".3";
+                strTransportTransducerERROR = "D" + intAddress.ToString() + ".4";
+                strLiftMotorOverLoad = "D" + intAddress.ToString() + ".5";
+                strLiftTimeout = "D" + intAddress.ToString() + ".6";
+                strLiftTransducerERROR= "D" + intAddress.ToString() + ".7";
+                strLiftUpERROR = "D" + intAddress.ToString() + ".8";
+                strLiftBelowERROR = "D" + intAddress.ToString() + ".9";
+                strExtrudeERROR = "D" + intAddress.ToString() + ".A";
+                strOverLength = "D" + intAddress.ToString() + ".B";
+                strOverWidth = "D" + intAddress.ToString() + ".C";
+                strOverHigh = "D" + intAddress.ToString() + ".D";
+                strOverWeight = "D" + intAddress.ToString() + ".E";
+                strCommunicationERROR = "D" + intAddress.ToString() + ".F";
             }
         }
         #endregion PLC位址

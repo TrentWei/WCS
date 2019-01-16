@@ -38,7 +38,7 @@ namespace Mirle.ASRS
                         cmd_Mst.Io_Type = dtCmdSno.Rows[intRow]["Io_Type"].ToString();
                         cmd_Mst.Loc = dtCmdSno.Rows[intRow]["Loc"].ToString();
                         cmd_Mst.New_Loc = dtCmdSno.Rows[intRow]["New_Loc"].ToString();
-                        cmd_Mst.Height = dtCmdSno.Rows[intRow]["Height"].ToString();
+                        cmd_Mst.Loc_Size = dtCmdSno.Rows[intRow]["Height"].ToString();
                         cmd_Mst.Stn_No = dtCmdSno.Rows[intRow]["Stn_No"].ToString();
                         cmd_Mst.Plt_No = dtCmdSno.Rows[intRow]["Plt_No"].ToString();
                         cmd_Mst.Cyc_No = dtCmdSno.Rows[intRow]["Cyc_No"].ToString();
@@ -92,7 +92,7 @@ namespace Mirle.ASRS
                         cmd_Mst.Io_Type = dtCmdSno.Rows[intRow]["Io_Type"].ToString();
                         cmd_Mst.Loc = dtCmdSno.Rows[intRow]["Loc"].ToString();
                         cmd_Mst.New_Loc = dtCmdSno.Rows[intRow]["New_Loc"].ToString();
-                        cmd_Mst.Height = dtCmdSno.Rows[intRow]["Height"].ToString();
+                        cmd_Mst.Loc_Size = dtCmdSno.Rows[intRow]["Height"].ToString();
                         cmd_Mst.Stn_No = dtCmdSno.Rows[intRow]["Stn_No"].ToString();
                         cmd_Mst.Plt_No = dtCmdSno.Rows[intRow]["Plt_No"].ToString();
                         cmd_Mst.Cyc_No = dtCmdSno.Rows[intRow]["Cyc_No"].ToString();

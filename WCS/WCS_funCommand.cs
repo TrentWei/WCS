@@ -41,7 +41,6 @@ namespace Mirle.ASRS
             {
                 if (string.IsNullOrWhiteSpace(commandID) || string.IsNullOrWhiteSpace(setStn_No))
                     return false;
-
                 strSQL = "UPDATE CMD_MST SET";
                 strSQL += " STN_NO='" + setStn_No + "'";
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
@@ -113,7 +112,8 @@ namespace Mirle.ASRS
                 }
             }
         }
-        private bool funCreateAGVStoreInCommand(string commandID, string location, string palletNo,string Stn_No)
+
+        private bool funCreateStoreInCommand(string commandID, string location, string palletNo,string Stn_No)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -124,8 +124,8 @@ namespace Mirle.ASRS
                 strSQL = "INSERT INTO CMD_MST(Cmd_Sno, Cmd_Mode, Cmd_Sts, Io_Type, Plt_No,";
                 strSQL += " Stn_No, Loc, Prty, Prog_Id, User_Id, TRACE, Crt_Dte) Values (";
                 strSQL += "'" + commandID + "', ";
-                strSQL += "'1', ";
-                strSQL += "'0', ";
+                strSQL += "'"+ CMDMode.StoreIn+ "', ";
+                strSQL += "'"+ CommandState.Inital+ "', ";
                 strSQL += "'12', ";
                 strSQL += "'" + palletNo + "', ";
                 strSQL += "'" + Stn_No + "', ";

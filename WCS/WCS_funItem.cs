@@ -55,18 +55,17 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funLockStoreInPalletNo(string palletNo,string Item_type)
+        private bool funLockStoreInBox(string BOX_ID)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
             string strMsg = string.Empty;
             try
             {
-                strSQL = "UPDATE ITEM_MST";
+                strSQL = "UPDATE BOX";
                 strSQL += " SET Status='I',";
                 strSQL += " Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'";
-                strSQL += " WHERE Plt_No='" + palletNo + "'";
-                strSQL += " and Item_Type='" + Item_type + "'";
+                strSQL += " WHERE BOX_ID='" + BOX_ID + "'";
                 return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)

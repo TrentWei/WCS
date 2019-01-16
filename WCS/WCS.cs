@@ -37,6 +37,9 @@ namespace Mirle.ASRS
         private SMPLCData_1 sMPLCData_1 = new SMPLCData_1();
         private SMPLCData_2 sMPLCData_2 = new SMPLCData_2();
         private List<StationInfo> lstClearKanbanInfo = new List<StationInfo>();
+        private string[] sStoreInStnNo = new string[] {STN_NO.StoreInA01, STN_NO.StoreInA10, STN_NO.StoreInA18, STN_NO.StoreInA26, STN_NO.StoreInA34 };
+        private int inStoreInStnNoIndex = 0;
+
 
         private delegate void ShowMessage_EventHandler(string Message);
         private delegate void ButtonEnable_EventHandler(Button button, bool enable);
@@ -179,7 +182,7 @@ namespace Mirle.ASRS
 
                 if (InitSys._MPLC._IsConnection)
                 {
-                    InitSys._MPLC.funWriteMPLC("D11", "1");
+                    InitSys._MPLC.funWriteMPLC("D30", "1");
 
                     for (int intIndex = 0; intIndex < bufferData._BufferCount; intIndex++)
                     {
@@ -243,32 +246,47 @@ namespace Mirle.ASRS
                                    strTmp.Substring(13, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 bufferData[intIndex]._EQUStatus.RearLocation =
                                    strTmp.Substring(12, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUStatus.UpLocation =
+                                   strTmp.Substring(11, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 bufferData[intIndex]._EQUStatus.BelowLocation =
-                                 strTmp.Substring(11, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                   strTmp.Substring(10, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 bufferData[intIndex]._EQUStatus.Completion =
-                               strTmp.Substring(11, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                   strTmp.Substring(9, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 #endregion EQUStatus
 
                                 #region EQUAlarmStatus
                                 strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 5], 2).PadLeft(16, '0');
                                 bufferData[intIndex]._EQUAlarmStatus.Error = (intarResultData[(intIndex * 10) + 5] > 0);
                                 bufferData[intIndex]._EQUAlarmStatus.EMO =
-                                    strTmp.Substring(15, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                                bufferData[intIndex]._EQUAlarmStatus.TransportMotorOverLoad =
                                     strTmp.Substring(14, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                                bufferData[intIndex]._EQUAlarmStatus.TransportTimeout =
+                                bufferData[intIndex]._EQUAlarmStatus.TransportMotorOverLoad =
                                     strTmp.Substring(13, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                                bufferData[intIndex]._EQUAlarmStatus.LiftMotorOverLoad =
+                                bufferData[intIndex]._EQUAlarmStatus.TransportTimeout =
                                     strTmp.Substring(12, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                                bufferData[intIndex]._EQUAlarmStatus.LiftTimeout =
+                                bufferData[intIndex]._EQUAlarmStatus.TransportTimeout =
                                     strTmp.Substring(11, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                                bufferData[intIndex]._EQUAlarmStatus.OverHigh =
+                                bufferData[intIndex]._EQUAlarmStatus.LiftMotorOverLoad =
                                     strTmp.Substring(10, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                                bufferData[intIndex]._EQUAlarmStatus.LoadNoData =
+                                bufferData[intIndex]._EQUAlarmStatus.LiftTimeout =
                                     strTmp.Substring(9, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-                                bufferData[intIndex]._EQUAlarmStatus.DataNoLoad =
+                                bufferData[intIndex]._EQUAlarmStatus.LiftTransducerERROR =
                                     strTmp.Substring(8, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
-
+                                bufferData[intIndex]._EQUAlarmStatus.LiftUpERROR =
+                                    strTmp.Substring(7, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.LiftBelowERROR =
+                                    strTmp.Substring(6, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.ExtrudeERROR =
+                                    strTmp.Substring(5, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.OverLength =
+                                    strTmp.Substring(4, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.OverWidth =
+                                    strTmp.Substring(3, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.OverHigh =
+                                    strTmp.Substring(2, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.OverWeight =
+                                    strTmp.Substring(1, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUAlarmStatus.CommunicationERROR =
+                                    strTmp.Substring(0, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 #endregion EQUAlarmStatus
 
 
@@ -319,7 +337,9 @@ namespace Mirle.ASRS
                     //    }
                     //}
                     #endregion
-                    funUpdatePosted();
+                    #region 过账注释
+                    //funUpdatePosted();
+                    #endregion
                 }
             }
             catch (Exception ex)
@@ -333,7 +353,7 @@ namespace Mirle.ASRS
             }
         }
 
-     
+
         #endregion Time
 
         #endregion Event Function

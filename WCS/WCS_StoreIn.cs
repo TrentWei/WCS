@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using static Mirle.ASRS.Buffer;
 
 namespace Mirle.ASRS
 {
@@ -15,6 +16,8 @@ namespace Mirle.ASRS
             funStoreIn_CrateCraneCommand();
             funStoreIn_CraneCommandFinish();
         }
+
+
         /// <summary>
         /// 读取状态0的入库命名，修改状态=1，同时写入PLC;
         /// </summary>
@@ -30,702 +33,15 @@ namespace Mirle.ASRS
                 {
                     string strBufferName = bCRData[intIndex]._BufferName;
                     int intBufferIndex = bCRData[intIndex]._BufferIndex;
-                    //命令不为空、目的站不为空、自动、无退回请求、站口模式；
-                    #region 入库1
-                    if (string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID) &&
-                        string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination) &&
-                        bufferData[intBufferIndex]._Mode == Buffer.StnMode.None &&
-                        !bufferData[intBufferIndex]._ReturnRequest &&
-                        intBufferIndex != 13 &&
-                        bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On &&
-                        bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On &&
-                        (strBufferName != "A12" || strBufferName != "B01"))
-                    {
-                        if (bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrWhiteSpace(bCRData[intIndex]._ResultID))
-                        {
-                            #region Pallet On Station && BCR Trigger On
-                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                            strMsg += "Pallet On Station!---1";
-                            funWriteSysTraceLog(strMsg);
 
-                            if (bCRData[intIndex].funTriggerBCROn(ref strEM))
-                            {
-                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                strMsg += "BCR Trigger On Success!---1";
-                                funWriteSysTraceLog(strMsg);
-                            }
-                            else
-                            {
-                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                strMsg += "BCR Trigger On Fail!---1";
-                                funWriteSysTraceLog(strMsg);
-                            }
-                            #endregion Pallet On Station && BCR Trigger On
-                        }
-                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID == "ERROR")
-                        {
-                            #region Read Error
-                            string[] strValues = new string[] { "1" };
-                            if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
-                            {
-                                #region BCR Read Fail & Write MPLC Success & BCR Clear
-                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                strMsg += bCRData[intIndex]._ResultID + "|";
-                                strMsg += "BCR Read Fail!";
-                                funWriteSysTraceLog(strMsg);
-
-                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                strMsg += string.Join(",", strValues) + "|";
-                                strMsg += "Write MPLC Success!";
-                                funWriteSysTraceLog(strMsg);
-
-                                bCRData[intIndex].funClear();
-                                strMsg = bCRData[intIndex]._BufferName + "|";
-                                strMsg += "2->0|";
-                                strMsg += "ERROR|";
-                                strMsg += "BCR Clear!";
-                                funWriteSysTraceLog(strMsg);
-                                #endregion BCR Read Fail & Write MPLC Success & BCR Clear
-
-                                //#region Set KanbanInfo
-                                //if (funSetKanbanInfo("B01", strCommandID, 1, strBCR, strLoaction, " "))
-                                //{
-                                //    strMsg = strCommandID + "|";
-                                //    strMsg += strLoaction + "|";
-                                //    strMsg += strBCR + "|";
-                                //    strMsg += "Set KanbanInfo Success!";
-                                //    funWriteSysTraceLog(strMsg);
-                                //}
-                                //else
-                                //{
-                                //    strMsg = strCommandID + "|";
-                                //    strMsg += strLoaction + "|";
-                                //    strMsg += strBCR + "|";
-                                //    strMsg += "Set KanbanInfo Fail!";
-                                //    funWriteSysTraceLog(strMsg);
-                                //}
-                                //#endregion Set KanbanInfo
-                            }
-                            else
-                            {
-                                #region BCR Read Fail But Write MPLC Fail
-                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                strMsg += string.Join(",", strValues) + "|";
-                                strMsg += "Write MPLC Fail!";
-                                funWriteSysTraceLog(strMsg);
-                                #endregion BCR Read Fail But Write MPLC Fail
-                            }
-                            #endregion Read Error
-                        }
-                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR" && strBufferName == "A02")
-                        {
-                            #region Read OK
-                            string strBCR = bCRData[intIndex]._ResultID;
-                            strSQL = "SELECT * FROM CMD_MST";
-                            strSQL += " WHERE Plt_No='" + strBCR + "'";
-                            strSQL += " AND Cmd_Sts='0'";
-                            strSQL += " AND CMD_MODE='1'";
-                            strSQL += " AND TRACE='0'";
-                            strSQL += " ORDER BY LOC DESC";
-                            if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
-                            {
-                                if (dtCmdSno.Rows.Count == 1)
-                                {
-                                    #region StoreIn Command = 1
-                                    CommandInfo commandInfo = new CommandInfo();
-                                    commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
-                                    commandInfo.CycleNo = dtCmdSno.Rows[0]["Cyc_No"].ToString();
-                                    commandInfo.PalletNo = dtCmdSno.Rows[0]["Plt_No"].ToString();
-                                    commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
-                                    commandInfo.IOType = dtCmdSno.Rows[0]["Io_Type"].ToString();
-                                    commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
-                                    commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
-                                    commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
-
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
-                                    if (funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.StoreIn_GetStoreInCommandAndWritePLC))
-                                    {
-                                        string[] strValues = new string[] { commandInfo.CommandID, "1", commandInfo.CommandMode.ToString() };
-                                        if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
-                                        {
-                                            #region Update Command & Write MPLC Success
-                                              InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CycleNo + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.PalletNo + "|";
-                                            strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
-                                            strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                            strMsg += "StroreIn Command Update Success!";
-                                            funWriteSysTraceLog(strMsg);
-
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CycleNo + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.PalletNo + "|";
-                                            strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                            strMsg += string.Join(",", strValues) + "|";
-                                            strMsg += "Write MPLC Success!";
-                                            funWriteSysTraceLog(strMsg);
-
-                                            bCRData[intIndex].funClear();
-                                            strMsg = bCRData[intIndex]._BufferName + "|";
-                                            strMsg += "2->0|";
-                                            strMsg += strBCR + "|";
-                                            strMsg += "BCR Clear!";
-                                            funWriteSysTraceLog(strMsg);
-                                            #endregion Update Command & Write MPLC Success
-
-                                            #region Set KanbanInfo
-                                            if (funSetKanbanInfo(commandInfo.StationNo, commandInfo.CommandID, commandInfo.CommandMode,
-                                                commandInfo.PalletNo, commandInfo.Loaction, commandInfo.CycleNo))
-                                            {
-                                                strMsg = commandInfo.CommandID + "|";
-                                                strMsg += commandInfo.CycleNo + "|";
-                                                strMsg += commandInfo.CommandMode + "|";
-                                                strMsg += commandInfo.StationNo + "|";
-                                                strMsg += commandInfo.Loaction + "|";
-                                                strMsg += commandInfo.PalletNo + "|";
-                                                strMsg += "Set KanbanInfo Success!";
-                                                funWriteSysTraceLog(strMsg);
-                                            }
-                                            else
-                                            {
-                                                strMsg = commandInfo.CommandID + "|";
-                                                strMsg += commandInfo.CycleNo + "|";
-                                                strMsg += commandInfo.CommandMode + "|";
-                                                strMsg += commandInfo.StationNo + "|";
-                                                strMsg += commandInfo.Loaction + "|";
-                                                strMsg += commandInfo.PalletNo + "|";
-                                                strMsg += "Set KanbanInfo Fail!";
-                                                funWriteSysTraceLog(strMsg);
-                                            }
-                                            #endregion Set KanbanInfo
-                                        }
-                                        else
-                                        {
-                                            #region Update Command Success But Write MPLC Fail
-                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CycleNo + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.PalletNo + "|";
-                                            strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                            strMsg += string.Join(",", strValues) + "|";
-                                            strMsg += "Write MPLC Fail!";
-                                            funWriteSysTraceLog(strMsg);
-                                            #endregion Update Command Success But Write MPLC Fail
-                                        }
-                                    }
-                                    else
-                                    {
-                                        #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CycleNo + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.PalletNo + "|";
-                                        strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
-                                        strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                        strMsg += "StroreIn Command Update Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Update Command Fail
-                                    }
-                                    #endregion StoreIn Command = 1
-                                }
-                                else
-                                {
-                                    #region StoreIn Command > 1
-                                    string[] strValues = new string[] { "2" };
-                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
-                                    {
-                                        #region Exists Multiple StroreIn Command & Write MPLC Success & BCR Clear
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "Exists Multiple StroreIn Command!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Success!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        bCRData[intIndex].funClear();
-                                        strMsg = bCRData[intIndex]._BufferName + "|";
-                                        strMsg += "2->0|";
-                                        strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "BCR Clear!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Exists Multiple StroreIn Command & Write MPLC Success & BCR Clear
-
-                                        #region Set KanbanInfo
-                                        if (funSetKanbanInfo(bCRData[intIndex]._BufferName, bCRData[intIndex]._ResultID, "找到多笔入库命令"))
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Success!";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                        else
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Fail!";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                        #endregion Set KanbanInfo
-                                    }
-                                    else
-                                    {
-                                        #region Can't Find Command But Write MPLC Fail
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Can't Find Command But Write MPLC Fail
-                                    }
-                                    #endregion StoreIn Command > 1
-                                }
-                            }
-                            else
-                            {
-                                #region 查询不到命令,根据条码值,产生新的入库命令
-                                strSQL = "SELECT * FROM ITEM_MST";
-                                strSQL += " WHERE Plt_No='" + strBCR + "'";
-                                if (strBufferName == "B01")
-                                {
-                                    strSQL += " AND ITEM_TYPE='M'";
-                                }
-                                else
-                                {
-                                    strSQL += " AND ITEM_TYPE='P'";
-                                }
-                                strSQL += " AND ITEM_NO='" + strBCR + "'";
-                                strSQL += " AND WH_NO='A'";
-                                strSQL += " AND ITEM_STS='Q'";
-                                strSQL += " AND STATUS='N'";
-                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
-                                {
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
-                                    #region StoreIn ITEM_NO
-                                    string strLoaction = "";
-                                    string Item_type = "P";
-                                    #region
-                                    string strCommandID = funGetCommandID();
-                                    if (funGetEmptyLocation("L", "P", ref strLoaction))
-                                    {
-                                        if (funCreateAGVStoreInCommand(strCommandID, strLoaction, strBCR, strBufferName))
-                                        {
-
-                                            if (funLockStoreInPalletNo(strBCR, Item_type))
-                                            {
-                                                #region 201803021 没有命令产生新命令之后不清除条码 下次循环直接使用该条码
-                                                //string[] strValues = new string[] { strCommandID, "1", "1" };
-                                                //if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
-                                                //{
-                                                //    #region InSert Command & Write MPLC Success
-                                                  InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
-                                                //    strMsg = strCommandID + "|";
-                                                //    strMsg += strLoaction + "|";
-                                                //    strMsg += strBCR + "|";
-                                                //    strMsg += "StroreIn Command Insert Success!";
-                                                //    funWriteSysTraceLog(strMsg);
-
-                                                //    strMsg = strCommandID + "|";
-                                                //    strMsg += strLoaction + "|";
-                                                //    strMsg += strBCR + "|";
-                                                //    strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                                //    strMsg += string.Join(",", strValues) + "|";
-                                                //    strMsg += "Write MPLC Success!";
-                                                //    funWriteSysTraceLog(strMsg);
-
-                                                //    bCRData[intIndex].funClear();
-                                                //    strMsg = bCRData[intIndex]._BufferName + "|";
-                                                //    strMsg += "2->0|";
-                                                //    strMsg += strBCR + "|";
-                                                //    strMsg += "BCR Clear!";
-                                                //    funWriteSysTraceLog(strMsg);
-                                                //    #endregion Insert Command & Write MPLC Success
-
-                                                #region Set KanbanInfo
-                                                //    if (funSetKanbanInfo("B01", strCommandID, 1, strBCR, strLoaction, " "))
-                                                //    {
-                                                //        strMsg = strCommandID + "|";
-                                                //        strMsg += strLoaction + "|";
-                                                //        strMsg += strBCR + "|";
-                                                //        strMsg += "Set KanbanInfo Success!";
-                                                //        funWriteSysTraceLog(strMsg);
-                                                //    }
-                                                //    else
-                                                //    {
-                                                //        strMsg = strCommandID + "|";
-                                                //        strMsg += strLoaction + "|";
-                                                //        strMsg += strBCR + "|";
-                                                //        strMsg += "Set KanbanInfo Fail!";
-                                                //        funWriteSysTraceLog(strMsg);
-                                                //    }
-                                                #endregion Set KanbanInfo
-                                                //}
-                                                //else
-                                                //{
-                                                #region Insert Command Success But Write MPLC Fail
-                                                //    InitSys._DB.funCommitCtrl(DB.TransactionType.Rollback);
-                                                //    strMsg = strCommandID + "|";
-                                                //    strMsg += strLoaction + "|";
-                                                //    strMsg += strBCR + "|";
-                                                //    strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                                //    strMsg += string.Join(",", strValues) + "|";
-                                                //    strMsg += "Write MPLC Fail!";
-                                                //    funWriteSysTraceLog(strMsg);
-                                                #endregion Insert Command Success But Write MPLC Fail
-                                                //}
-                                                #endregion
-                                            }
-                                            else
-                                            {
-                                                #region Update StoreIn PalletNo Fail
-
-                                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                                strMsg = strCommandID + "|";
-                                                strMsg += strLoaction + "|";
-                                                strMsg += strBCR + "|";
-                                                strMsg += "|";
-                                                strMsg += "Update StoreIn PalletNo Fail!";
-                                                funWriteSysTraceLog(strMsg);
-
-                                                #endregion Update StoreIn PalletNo Fail
-                                            }
-
-                                        }
-                                        else
-                                        {
-                                            #region Insert Command Fail
-                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                            strMsg = strCommandID + "|";
-                                            strMsg += strLoaction + "|";
-                                            strMsg += strBCR + "|";
-                                            strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
-                                            strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                            strMsg += "StroreIn Command Insert Fail!";
-                                            funWriteSysTraceLog(strMsg);
-                                            #endregion Insert Command Fail
-                                        }
-                                    }
-                                    else
-                                    {
-                                        #region Update StoreInLocation Fail
-
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                        strMsg = strCommandID + "|";
-                                        strMsg += strLoaction + "|";
-                                        strMsg += strBCR + "|";
-                                        strMsg += "Update StoreInLocation Fail!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        #endregion StoreInLocation
-                                    }
-                                    #endregion
-                                    #endregion StoreIn Command = 1
-                                }
-                                else
-                                {
-                                    string[] strValues = new string[] { "1" };
-                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
-                                    {
-                                        #region Can't Find StroreIn ITEM_NO & Write MPLC Success & BCR Clear
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "Can't Find StroreIn ITEM_NO!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Success!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        bCRData[intIndex].funClear();
-                                        strMsg = bCRData[intIndex]._BufferName + "|";
-                                        strMsg += "2->0|";
-                                        strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "BCR Clear!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Can't Find StroreIn Command & Write MPLC Success & BCR Clear
-
-                                        #region Set KanbanInfo
-                                        if (funSetKanbanInfo(bCRData[intIndex]._BufferName, bCRData[intIndex]._ResultID, "找不到该物料基本信息"))
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Success!";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                        else
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Fail!";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                        #endregion Set KanbanInfo
-                                    }
-                                    else
-                                    {
-                                        #region Can't Find Command But Write MPLC Fail
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Can't Find Command But Write MPLC Fail
-                                    }
-                                }
-                                #endregion 查询不到命令,根据条码值,产生新的入库命令
-                            }
-                            #endregion Read OK
-                        }
-                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR")
-                        {
-                            #region Read OK
-                            string strBCR = bCRData[intIndex]._ResultID;
-                            strSQL = "SELECT * FROM CMD_MST";
-                            strSQL += " WHERE Plt_No='" + strBCR + "'";
-                            strSQL += "AND STN_NO='" + strBufferName + "'";
-                            strSQL += " AND Cmd_Sts='0'";
-                            strSQL += " AND CMD_MODE='1'";
-                            strSQL += " AND TRACE='0'";
-                            strSQL += " ORDER BY LOC DESC";
-                            if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
-                            {
-                                if (dtCmdSno.Rows.Count == 1)
-                                {
-                                    #region StoreIn Command = 1
-                                    CommandInfo commandInfo = new CommandInfo();
-                                    commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
-                                    commandInfo.CycleNo = dtCmdSno.Rows[0]["Cyc_No"].ToString();
-                                    commandInfo.PalletNo = dtCmdSno.Rows[0]["Plt_No"].ToString();
-                                    commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
-                                    commandInfo.IOType = dtCmdSno.Rows[0]["Io_Type"].ToString();
-                                    commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
-                                    commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
-                                    commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
-
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
-                                    if (funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.StoreIn_GetStoreInCommandAndWritePLC))
-                                    {
-                                        string[] strValues = new string[] { commandInfo.CommandID, "1", commandInfo.CommandMode.ToString() };
-                                        if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
-                                        {
-                                            #region Update Command & Write MPLC Success
-                                              InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CycleNo + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.PalletNo + "|";
-                                            strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
-                                            strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                            strMsg += "StroreIn Command Update Success!";
-                                            funWriteSysTraceLog(strMsg);
-
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CycleNo + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.PalletNo + "|";
-                                            strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                            strMsg += string.Join(",", strValues) + "|";
-                                            strMsg += "Write MPLC Success!";
-                                            funWriteSysTraceLog(strMsg);
-
-                                            bCRData[intIndex].funClear();
-                                            strMsg = bCRData[intIndex]._BufferName + "|";
-                                            strMsg += "2->0|";
-                                            strMsg += strBCR + "|";
-                                            strMsg += "BCR Clear!";
-                                            funWriteSysTraceLog(strMsg);
-                                            #endregion Update Command & Write MPLC Success
-
-                                            #region Set KanbanInfo
-                                            if (funSetKanbanInfo(commandInfo.StationNo, commandInfo.CommandID, commandInfo.CommandMode,
-                                                commandInfo.PalletNo, commandInfo.Loaction, commandInfo.CycleNo))
-                                            {
-                                                strMsg = commandInfo.CommandID + "|";
-                                                strMsg += commandInfo.CycleNo + "|";
-                                                strMsg += commandInfo.CommandMode + "|";
-                                                strMsg += commandInfo.StationNo + "|";
-                                                strMsg += commandInfo.Loaction + "|";
-                                                strMsg += commandInfo.PalletNo + "|";
-                                                strMsg += "Set KanbanInfo Success!";
-                                                funWriteSysTraceLog(strMsg);
-                                            }
-                                            else
-                                            {
-                                                strMsg = commandInfo.CommandID + "|";
-                                                strMsg += commandInfo.CycleNo + "|";
-                                                strMsg += commandInfo.CommandMode + "|";
-                                                strMsg += commandInfo.StationNo + "|";
-                                                strMsg += commandInfo.Loaction + "|";
-                                                strMsg += commandInfo.PalletNo + "|";
-                                                strMsg += "Set KanbanInfo Fail!";
-                                                funWriteSysTraceLog(strMsg);
-                                            }
-                                            #endregion Set KanbanInfo
-                                        }
-                                        else
-                                        {
-                                            #region Update Command Success But Write MPLC Fail
-                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CycleNo + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.PalletNo + "|";
-                                            strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                            strMsg += string.Join(",", strValues) + "|";
-                                            strMsg += "Write MPLC Fail!";
-                                            funWriteSysTraceLog(strMsg);
-                                            #endregion Update Command Success But Write MPLC Fail
-                                        }
-                                    }
-                                    else
-                                    {
-                                        #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CycleNo + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.PalletNo + "|";
-                                        strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
-                                        strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                        strMsg += "StroreIn Command Update Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Update Command Fail
-                                    }
-                                    #endregion StoreIn Command = 1
-                                }
-                                else
-                                {
-                                    #region StoreIn Command > 1
-                                    string[] strValues = new string[] { "2" };
-                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
-                                    {
-                                        #region Exists Multiple StroreIn Command & Write MPLC Success & BCR Clear
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "Exists Multiple StroreIn Command!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Success!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        bCRData[intIndex].funClear();
-                                        strMsg = bCRData[intIndex]._BufferName + "|";
-                                        strMsg += "2->0|";
-                                        strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "BCR Clear!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Exists Multiple StroreIn Command & Write MPLC Success & BCR Clear
-
-                                        #region Set KanbanInfo
-                                        if (funSetKanbanInfo(bCRData[intIndex]._BufferName, bCRData[intIndex]._ResultID, "找到多笔入库命令"))
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Success!";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                        else
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Fail!";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                        #endregion Set KanbanInfo
-                                    }
-                                    else
-                                    {
-                                        #region Can't Find Command But Write MPLC Fail
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Can't Find Command But Write MPLC Fail
-                                    }
-                                    #endregion StoreIn Command > 1
-                                }
-                            }
-                            else
-                            {
-                                string[] strValues = new string[] { "2" };
-                                if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
-                                {
-                                    #region Can't Find StroreIn Command & Write MPLC Success & BCR Clear
-                                    strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                    strMsg += bCRData[intIndex]._ResultID + "|";
-                                    strMsg += "Can't Find StroreIn Command!";
-                                    funWriteSysTraceLog(strMsg);
-
-                                    strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                    strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                    strMsg += string.Join(",", strValues) + "|";
-                                    strMsg += "Write MPLC Success!";
-                                    funWriteSysTraceLog(strMsg);
-
-                                    bCRData[intIndex].funClear();
-                                    strMsg = bCRData[intIndex]._BufferName + "|";
-                                    strMsg += "2->0|";
-                                    strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
-                                    strMsg += "BCR Clear!";
-                                    funWriteSysTraceLog(strMsg);
-                                    #endregion Can't Find StroreIn Command & Write MPLC Success & BCR Clear
-
-                                }
-                                else
-                                {
-                                    #region Can't Find Command But Write MPLC Fail
-                                    strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                    strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                    strMsg += string.Join(",", strValues) + "|";
-                                    strMsg += "Write MPLC Fail!";
-                                    funWriteSysTraceLog(strMsg);
-                                    #endregion Can't Find Command But Write MPLC Fail
-                                }
-                            }
-                            #endregion Read OK
-                        }
-                    }
-                    #endregion
-
-                    #region 入库2
-
-                    if (!bufferData[intBufferIndex]._ReturnRequest &&
-                    bufferData[intBufferIndex]._APositioning &&
-                    intBufferIndex == 13 &&
-                    bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On &&
-                    strBufferName == "B01")
+                    #region 码头站口入库
+                    //命令为空、目的站为空、模式0、自动、荷有、
+                    if (bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On
+                        && bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On
+                        && string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID)
+                        && string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination)
+                        && bufferData[intBufferIndex]._Mode == StnMode.None
+                        && strBufferName == STN_NO.StoreInA53)
                     {
                         if (bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrEmpty(bCRData[intIndex]._ResultID))
                         {
@@ -786,303 +102,210 @@ namespace Mirle.ASRS
                             }
                             #endregion Read Error
                         }
-                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR" && strBufferName == "B01")
+                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR")
                         {
                             #region Read OK
                             string strBCR = bCRData[intIndex]._ResultID;
                             strSQL = "SELECT * FROM CMD_MST";
                             strSQL += " WHERE Plt_No='" + strBCR + "'";
-                            strSQL += "AND STN_NO='" + strBufferName + "'";
-                            strSQL += " AND Cmd_Sts='0'";
-                            strSQL += " AND CMD_MODE='1'";
-                            strSQL += " AND TRACE='0'";
-                            strSQL += " ORDER BY LOC DESC";
                             if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                             {
-                                if (dtCmdSno.Rows.Count == 1)
+                                #region 删除已存在命令
+                                strMsg = strBufferName + "|";
+                                strMsg += strBCR + "|";
+                                strMsg += "存在未执行命令！";
+                                funWriteSysTraceLog(strMsg);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                                try
                                 {
-                                    #region StoreIn Command = 1
-                                    CommandInfo commandInfo = new CommandInfo();
-                                    commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
-                                    commandInfo.CycleNo = dtCmdSno.Rows[0]["Cyc_No"].ToString();
-                                    commandInfo.PalletNo = dtCmdSno.Rows[0]["Plt_No"].ToString();
-                                    commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
-                                    commandInfo.IOType = dtCmdSno.Rows[0]["Io_Type"].ToString();
-                                    commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
-                                    commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
-                                    commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
-
-                                    string[] strValues = new string[] { commandInfo.CommandID, "1", commandInfo.CommandMode.ToString() };
-                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
+                                    strSQL = "INSERT INTO CMD_MST_HIS SELECT * FROM CMD_MST WHERE PLT_NO='" + strBCR + "'";
+                                    if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                                     {
-                                        #region  Write MPLC Success
-
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CycleNo + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.PalletNo + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Success!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        bCRData[intIndex].funClear();
-                                        strMsg = bCRData[intIndex]._BufferName + "|";
-                                        strMsg += "2->0|";
+                                        strMsg = strBufferName + "|";
                                         strMsg += strBCR + "|";
-                                        strMsg += "BCR Clear!";
+                                        strMsg += "成功备份未执行命令！";
                                         funWriteSysTraceLog(strMsg);
-                                        #endregion Update Command & Write MPLC Success
-
-                                        strValues = new string[] { "2" };
-                                        if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_APositioning, strValues))
+                                        strSQL = "DELETE FROM CMD_MST WHERE  PLT_NO='" + strBCR + "'";
+                                        if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                                         {
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CycleNo + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.PalletNo + "|";
-                                            strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                            strMsg += string.Join(",", strValues) + "|";
-                                            strMsg += "B01站口已识别条码，PLC修改触发条件1~2 成功";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        #region  Write MPLC Fail
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CycleNo + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.PalletNo + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Update Command Success But Write MPLC Fail
-                                    }
-
-                                    #endregion StoreIn Command = 1
-                                }
-                                else
-                                {
-                                    #region StoreIn Command > 1
-                                    string[] strValues = new string[] { "2" };
-                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
-                                    {
-                                        #region Exists Multiple StroreIn Command & Write MPLC Success & BCR Clear
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "Exists Multiple StroreIn Command!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Success!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        bCRData[intIndex].funClear();
-                                        strMsg = bCRData[intIndex]._BufferName + "|";
-                                        strMsg += "2->0|";
-                                        strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "BCR Clear!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Exists Multiple StroreIn Command & Write MPLC Success & BCR Clear
-
-                                        #region Set KanbanInfo
-                                        if (funSetKanbanInfo(bCRData[intIndex]._BufferName, bCRData[intIndex]._ResultID, "找到多笔入库命令"))
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Success!";
-                                            funWriteSysTraceLog(strMsg);
+                                            if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit))
+                                            {
+                                                strMsg = strBufferName + "|";
+                                                strMsg += strBCR + "|";
+                                                strMsg += "成功删除未完成命令！";
+                                                funWriteSysTraceLog(strMsg);
+                                            }
                                         }
                                         else
                                         {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Fail!";
-                                            funWriteSysTraceLog(strMsg);
+                                            if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback))
+                                            {
+                                                strMsg = strBufferName + "|";
+                                                strMsg += strBCR + "|";
+                                                strMsg += "删除未完成命令失败！";
+                                                funWriteSysTraceLog(strMsg);
+                                            }
                                         }
-                                        #endregion Set KanbanInfo
                                     }
                                     else
                                     {
-                                        #region Can't Find Command But Write MPLC Fail
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Can't Find Command But Write MPLC Fail
-                                    }
-                                    #endregion StoreIn Command > 1
-                                }
-                            }
-                            else
-                            {
-                                #region 查询不到命令,根据条码值,产生新的入库命令
-                                strSQL = "SELECT * FROM ITEM_MST";
-                                strSQL += " WHERE Plt_No='" + strBCR + "'";
-                                if (strBufferName == "B01")
-                                {
-                                    strSQL += " AND ITEM_TYPE='M'";
-                                }
-                                else
-                                {
-                                    strSQL += " AND ITEM_TYPE='P'";
-                                }
-                                strSQL += " AND ITEM_NO='" + strBCR + "'";
-                                strSQL += " AND WH_NO='A'";
-                                strSQL += " AND ITEM_STS='Q'";
-                                strSQL += " AND STATUS='N'";
-                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
-                                {
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
-                                    #region StoreIn ITEM_NO
-                                    string strLoaction = "";
-                                    string Item_type = "M";
-                                    #region
-                                    string strCommandID = funGetCommandID();
-                                    if (funGetEmptyLocation("H", "M", ref strLoaction))
-                                    {
-                                        if (funCreateAGVStoreInCommand(strCommandID, strLoaction, strBCR, strBufferName))
+                                        if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback))
                                         {
-                                            if (funLockStoreInPalletNo(strBCR, Item_type))
+                                            strMsg = strBufferName + "|";
+                                            strMsg += strBCR + "|";
+                                            strMsg += "备份未执行命令失败！|";
+                                            funWriteSysTraceLog(strMsg);
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback))
+                                    {
+                                        strMsg = strBufferName + "|";
+                                        strMsg += strBCR + "|";
+                                        strMsg += "备份删除未执行命令时发生异常！|";
+                                        strMsg += ex.ToString();
+                                        funWriteSysTraceLog(strMsg);
+                                    }
+                                }
+                                #endregion
+                            }
+                            strSQL = " SELECT * FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO  ";
+                            strSQL += " WHERE B.STATUS IN ('0','W') ";
+                            strSQL += " AND LOC='' AND P.PLT_NO='" + strBCR + "'";
+                            if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                            {
+                                #region 产生新的入库命令
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                                try
+                                {
+                                    string strLoaction = "";
+                                    string strBOX_ID = dtCmdSno.Rows[0]["BOX_ID"].ToString();
+                                    string strCommandID = funGetCommandID();
+                                    if (funCreateStoreInCommand(strCommandID, strLoaction, strBCR, strBufferName))
+                                    {
+                                        if (funLockStoreInBox(strBOX_ID))
+                                        {
+                                            string[] strValues = new string[] { strCommandID, "1", CMDMode.StoreIn };
+                                            if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
                                             {
-                                                  InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                                if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit))
+                                                {
+                                                    strMsg = strBufferName + "|";
+                                                    strMsg += strBCR + "|";
+                                                    strMsg += strCommandID + "|";
+                                                    strMsg += "|";
+                                                    strMsg += "StoreIn Command And WritePLC Success";
+                                                    funWriteSysTraceLog(strMsg);
+                                                }
+                                                else
+                                                {
+                                                    #region StoreInAndTransactionCommit Fail
+                                                    InitSys._MPLC.funClearMPLC(bufferData[intBufferIndex]._W_CmdSno);
+                                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                                    strMsg = strBufferName + "|";
+                                                    strMsg += strBCR + "|";
+                                                    strMsg += strCommandID + "|";
+                                                    strMsg += "|";
+                                                    strMsg += "StoreIn And TransactionCommit Fail!";
+                                                    funWriteSysTraceLog(strMsg);
+                                                    #endregion StoreInAndTransactionCommit Fail
+                                                }
                                             }
                                             else
                                             {
-                                                #region Update StoreIn PalletNo Fail
-                                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                                strMsg = strCommandID + "|";
-                                                strMsg += strLoaction + "|";
+                                                #region StoreInAndWriteMPLC Fail
+                                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                                strMsg = strBufferName + "|";
                                                 strMsg += strBCR + "|";
+                                                strMsg += strCommandID + "|";
                                                 strMsg += "|";
-                                                strMsg += "Update StoreIn PalletNo Fail!";
+                                                strMsg += "StoreInAndWriteMPLC Fail!";
                                                 funWriteSysTraceLog(strMsg);
-                                                #endregion Update StoreIn PalletNo Fail
+                                                #endregion StoreInAndWriteMPLC Fail
                                             }
                                         }
                                         else
                                         {
-                                            #region Insert Command Fail
-                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                            strMsg = strCommandID + "|";
-                                            strMsg += strLoaction + "|";
+                                            #region Update StoreIn BOX_ID Fail
+                                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                            strMsg = strBufferName + "|";
                                             strMsg += strBCR + "|";
-                                            strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
-                                            strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                            strMsg += "StroreIn Command Insert Fail!";
+                                            strMsg += strCommandID + "|";
+                                            strMsg += "|";
+                                            strMsg += "Update StoreIn BOX_ID Fail!";
                                             funWriteSysTraceLog(strMsg);
-                                            #endregion Insert Command Fail
+                                            #endregion Update StoreIn PalletNo Fail
                                         }
                                     }
                                     else
                                     {
-                                        #region Update StoreInLocation Fail
-
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        #region Insert Command Fail
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = strCommandID + "|";
                                         strMsg += strLoaction + "|";
                                         strMsg += strBCR + "|";
-                                        strMsg += "Update StoreInLocation Fail!";
+                                        strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
+                                        strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
+                                        strMsg += "StroreIn Command Insert Fail!";
                                         funWriteSysTraceLog(strMsg);
-
-                                        #endregion StoreInLocation
+                                        #endregion Insert Command Fail
                                     }
-                                    #endregion
-                                    #endregion StoreIn Command = 1
                                 }
-                                else
+                                catch (Exception ex)
                                 {
-                                    string[] strValues = new string[] { "1" };
-                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
-                                    {
-                                        #region Can't Find StroreIn ITEM_NO & Write MPLC Success & BCR Clear
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "Can't Find StroreIn ITEM_NO!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Success!";
-                                        funWriteSysTraceLog(strMsg);
-
-                                        bCRData[intIndex].funClear();
-                                        strMsg = bCRData[intIndex]._BufferName + "|";
-                                        strMsg += "2->0|";
-                                        strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "BCR Clear!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Can't Find StroreIn Command & Write MPLC Success & BCR Clear
-
-                                        #region Set KanbanInfo
-                                        if (funSetKanbanInfo(bCRData[intIndex]._BufferName, bCRData[intIndex]._ResultID, "找不到该物料基本信息"))
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Success!";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                        else
-                                        {
-                                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                            strMsg += bCRData[intIndex]._ResultID + "|";
-                                            strMsg += "Set KanbanInfo Fail!";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
-                                        #endregion Set KanbanInfo
-                                    }
-                                    else
-                                    {
-                                        #region Can't Find Command But Write MPLC Fail
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Can't Find Command But Write MPLC Fail
-                                    }
+                                    strMsg = strBufferName + "|";
+                                    strMsg += strBCR + "|";
+                                    strMsg += "|";
+                                    strMsg += "产生命令入库出现异常！";
+                                    funWriteSysTraceLog(strMsg);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 }
-                                #endregion 查询不到命令,根据条码值,产生新的入库命令
+                                #endregion 
                             }
+                            else
+                            {
+                                #region Can't Find StroreIn PLT_MST&BOX
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += bCRData[intIndex]._ResultID + "|";
+                                strMsg += "Can't Find StroreIn PLT_MST&BOX!";
+                                funWriteSysTraceLog(strMsg);
+
+                                bCRData[intIndex].funClear();
+                                strMsg = bCRData[intIndex]._BufferName + "|";
+                                strMsg += "2->0|";
+                                strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
+                                strMsg += "BCR Clear!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion Can't Find StroreIn PLT_MST&BOX
+                            }
+
                             #endregion Read OK
                         }
                     }
-
                     #endregion
 
-                    #region 入库3
+                    #region A90扫码主机站口分配
 
-                    if (!string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID) &&
-                    !string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination) &&
-                    !bufferData[intBufferIndex]._ReturnRequest &&
-                    !bufferData[intBufferIndex].W_Discharged &&
-                    bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On &&
-                    bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On &&
-                    strBufferName == "A12")
+                    if (bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On
+                        && bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On
+                        && !string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID)
+                        && !string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination)
+                        && bufferData[intBufferIndex]._Mode == StnMode.StoreIn
+                        && strBufferName == STN_NO.StoreInA90)
                     {
-                        if (bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrWhiteSpace(bCRData[intIndex]._ResultID))
+                        if (bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrEmpty(bCRData[intIndex]._ResultID))
                         {
                             #region Pallet On Station && BCR Trigger On
                             strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                            strMsg += "Pallet On Station!---3";
+                            strMsg += "Pallet On Station!";
                             funWriteSysTraceLog(strMsg);
 
                             if (bCRData[intIndex].funTriggerBCROn(ref strEM))
                             {
                                 strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                strMsg += "BCR Trigger On Success!---3";
+                                strMsg += "BCR Trigger On Success!";
                                 funWriteSysTraceLog(strMsg);
                             }
                             else
@@ -1096,26 +319,26 @@ namespace Mirle.ASRS
                         else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID == "ERROR")
                         {
                             #region Read Error
-                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                            strMsg += bCRData[intIndex]._ResultID + "|";
-                            strMsg += "BCR Read Fail!";
-                            funWriteSysTraceLog(strMsg);
-
-                            bCRData[intIndex].funClear();
-                            strMsg = bCRData[intIndex]._BufferName + "|";
-                            strMsg += "2->0|";
-                            strMsg += "ERROR|";
-                            strMsg += "BCR Clear!";
-                            funWriteSysTraceLog(strMsg);
-
                             string[] strValues = new string[] { "1" };
-                            if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_Discharged, strValues))
+                            if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
                             {
                                 #region BCR Read Fail & Write MPLC Success & BCR Clear
                                 strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += bCRData[intIndex]._ResultID + "|";
+                                strMsg += "BCR Read Fail!";
+                                funWriteSysTraceLog(strMsg);
+
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
                                 strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
                                 strMsg += string.Join(",", strValues) + "|";
-                                strMsg += "扫码失败PC放行!";
+                                strMsg += "Write MPLC Success!";
+                                funWriteSysTraceLog(strMsg);
+
+                                bCRData[intIndex].funClear();
+                                strMsg = bCRData[intIndex]._BufferName + "|";
+                                strMsg += "2->0|";
+                                strMsg += "ERROR|";
+                                strMsg += "BCR Clear!";
                                 funWriteSysTraceLog(strMsg);
                                 #endregion BCR Read Fail & Write MPLC Success & BCR Clear
                             }
@@ -1131,101 +354,195 @@ namespace Mirle.ASRS
                             }
                             #endregion Read Error
                         }
-                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR" && strBufferName == "A12")
+                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR")
                         {
                             #region Read OK
                             string strBCR = bCRData[intIndex]._ResultID;
-                            strSQL = "SELECT * FROM CMD_MST";
-                            strSQL += " WHERE Plt_No='" + strBCR + "'";
-                            strSQL += "AND STN_NO='" + strBufferName + "'";
-                            strSQL += " AND Cmd_Sts<='1'";
-                            strSQL += " AND CMD_MODE='1'";
-                            strSQL += " AND TRACE in ('0','11')";
-                            strSQL += " ORDER BY LOC DESC";
+                            if (inStoreInStnNoIndex > CraneNo.Crane5 - 1) inStoreInStnNoIndex = CraneNo.Crane1 - 1;
+                            strSQL = "SELECT * FROM CMD_MST ";
+                            strSQL += "WHERE PLT_NO='" + strBCR + "' ";
+                            strSQL += "AND LOC='' AND CMD_STS='0'";
                             if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                             {
-                                if (dtCmdSno.Rows.Count == 1)
+                                string strCommandID = dtCmdSno.Rows[0]["CMD_MST"].ToString();
+                                strSQL = "UPDATE CMD_MSY ";
+                                strSQL += "SET STN_NO='"+sStoreInStnNo[inStoreInStnNoIndex] +"'";
+                                strSQL += "WHERE CMD_MST='" + strCommandID + "' ";
+                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                                 {
-                                    CommandInfo commandInfo = new CommandInfo();
-                                    commandInfo.CommandID = dtCmdSno.Rows[0]["Cmd_Sno"].ToString();
-                                    commandInfo.CycleNo = dtCmdSno.Rows[0]["Cyc_No"].ToString();
-                                    commandInfo.PalletNo = dtCmdSno.Rows[0]["Plt_No"].ToString();
-                                    commandInfo.CommandMode = int.Parse(dtCmdSno.Rows[0]["Cmd_Mode"].ToString());
-                                    commandInfo.IOType = dtCmdSno.Rows[0]["Io_Type"].ToString();
-                                    commandInfo.Loaction = dtCmdSno.Rows[0]["Loc"].ToString();
-                                    commandInfo.StationNo = dtCmdSno.Rows[0]["Stn_No"].ToString();
-                                    commandInfo.Priority = dtCmdSno.Rows[0]["Prty"].ToString();
-                                    commandInfo.Cmd_Sts = dtCmdSno.Rows[0]["Cmd_Sts"].ToString();
-                                    string[] strValues = new string[] { commandInfo.CommandID, "1", commandInfo.CommandMode.ToString() };
+                                    
+                                    string[] strValues = new string[] { strCommandID, (inStoreInStnNoIndex+1).ToString(), CMDMode.StoreIn };
                                     if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
                                     {
-                                        #region  Write MPLC Success
-
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CycleNo + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.PalletNo + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Success!";
+                                        strMsg = strBufferName + "|";
+                                        strMsg += strBCR+ "|";
+                                        strMsg += strCommandID + "|";
+                                        strMsg += sStoreInStnNo[inStoreInStnNoIndex] + "|";
+                                        strMsg += (inStoreInStnNoIndex + 1).ToString() + "|";
+                                        strMsg += "命令站口分配成功!";
                                         funWriteSysTraceLog(strMsg);
 
                                         bCRData[intIndex].funClear();
                                         strMsg = bCRData[intIndex]._BufferName + "|";
                                         strMsg += "2->0|";
-                                        strMsg += strBCR + "|";
+                                        strMsg += "ERROR|";
                                         strMsg += "BCR Clear!";
                                         funWriteSysTraceLog(strMsg);
-                                        #endregion Update Command & Write MPLC Success
 
-                                        strValues = new string[] { "1" };
-                                        if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_Discharged, strValues))
-                                        {
-                                            strMsg = commandInfo.CommandID + "|";
-                                            strMsg += commandInfo.CycleNo + "|";
-                                            strMsg += commandInfo.CommandMode + "|";
-                                            strMsg += commandInfo.StationNo + "|";
-                                            strMsg += commandInfo.Loaction + "|";
-                                            strMsg += commandInfo.PalletNo + "|";
-                                            strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                            strMsg += string.Join(",", strValues) + "|";
-                                            strMsg += "A012站口已识别条码，PLC写入成功";
-                                            funWriteSysTraceLog(strMsg);
-                                        }
+                                        inStoreInStnNoIndex += 1;
                                     }
-                                    else
-                                    {
-                                        #region  Write MPLC Fail
-                                        strMsg = commandInfo.CommandID + "|";
-                                        strMsg += commandInfo.CycleNo + "|";
-                                        strMsg += commandInfo.CommandMode + "|";
-                                        strMsg += commandInfo.StationNo + "|";
-                                        strMsg += commandInfo.Loaction + "|";
-                                        strMsg += commandInfo.PalletNo + "|";
-                                        strMsg += bufferData[intBufferIndex]._W_CmdSno + "|";
-                                        strMsg += string.Join(",", strValues) + "|";
-                                        strMsg += "Write MPLC Fail!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Update Command Success But Write MPLC Fail
-                                    }
+                                }
+                                else
+                                {
+                                    strMsg = strBufferName + "|";
+                                    strMsg += strBCR + "|";
+                                    strMsg += strCommandID + "|";
+                                    strMsg += "命令站口分配跟新失败!";
+                                    funWriteSysTraceLog(strMsg);
                                 }
                             }
                             else
                             {
+                                strMsg = strBufferName + "|";
+                                strMsg += strBCR + "|";
+                                strMsg += "命令站口分配时托盘未查询到对应命令信息!";
+                                funWriteSysTraceLog(strMsg);
+                            }
+                            #endregion
+                        }
+                    }
+                    #endregion
+
+                    #region A83称重机称重
+                    if (bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On
+                      && bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On
+                      && !string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID)
+                      && !string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination)
+                      && bufferData[intBufferIndex]._Mode == StnMode.StoreIn
+                      && strBufferName == STN_NO.StoreInA83)
+                    {
+                        if (bCRData[intIndex]._BCRSts == BCR.BCRSts.None && string.IsNullOrEmpty(bCRData[intIndex]._ResultID))
+                        {
+                            #region Pallet On Station && BCR Trigger On
+                            strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                            strMsg += "Pallet On Station!";
+                            funWriteSysTraceLog(strMsg);
+
+                            if (bCRData[intIndex].funTriggerBCROn(ref strEM))
+                            {
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += "BCR Trigger On Success!";
+                                funWriteSysTraceLog(strMsg);
+                            }
+                            else
+                            {
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += "BCR Trigger On Fail!";
+                                funWriteSysTraceLog(strMsg);
+                            }
+                            #endregion Pallet On Station && BCR Trigger On
+                        }
+                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID == "ERROR")
+                        {
+                            #region Read Error
+                            string[] strValues = new string[] { "1" };
+                            if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues))
+                            {
+                                #region BCR Read Fail & Write MPLC Success & BCR Clear
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += bCRData[intIndex]._ResultID + "|";
+                                strMsg += "BCR Read Fail!";
+                                funWriteSysTraceLog(strMsg);
+
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
+                                strMsg += string.Join(",", strValues) + "|";
+                                strMsg += "Write MPLC Success!";
+                                funWriteSysTraceLog(strMsg);
+
                                 bCRData[intIndex].funClear();
                                 strMsg = bCRData[intIndex]._BufferName + "|";
                                 strMsg += "2->0|";
-                                strMsg += strBCR + "|";
+                                strMsg += "ERROR|";
                                 strMsg += "BCR Clear!";
                                 funWriteSysTraceLog(strMsg);
-                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_Discharged, "1");
+                                #endregion BCR Read Fail & Write MPLC Success & BCR Clear
                             }
-                            #endregion 入库3
+                            else
+                            {
+                                #region BCR Read Fail But Write MPLC Fail
+                                strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                strMsg += bufferData[intBufferIndex]._W_ReturnRequest + "|";
+                                strMsg += string.Join(",", strValues) + "|";
+                                strMsg += "Write MPLC Fail!";
+                                funWriteSysTraceLog(strMsg);
+                                #endregion BCR Read Fail But Write MPLC Fail
+                            }
+                            #endregion Read Error
                         }
-                    #endregion
+                        else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR")
+                        {
+                            #region Read OK
+                            string strBCR = bCRData[intIndex]._ResultID;
+                            if (inStoreInStnNoIndex > CraneNo.Crane5 - 1) inStoreInStnNoIndex = CraneNo.Crane1 - 1;
+                            strSQL = "SELECT * FROM CMD_MST ";
+                            strSQL += "WHERE PLT_NO='" + strBCR + "' ";
+                            strSQL += "AND LOC='' AND CMD_STS='0'";
+                            if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                            {
+                                string strCommandID = dtCmdSno.Rows[0]["CMD_MST"].ToString();
+                                strSQL = "UPDATE CMD_MSY ";
+                                strSQL += "SET STN_NO='" + sStoreInStnNo[inStoreInStnNoIndex] + "'";
+                                strSQL += "WHERE CMD_MST='" + strCommandID + "' ";
+                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                {
+
+                                    string[] strValues = new string[] { strCommandID, (inStoreInStnNoIndex + 1).ToString(), CMDMode.StoreIn };
+                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
+                                    {
+                                        strMsg = strBufferName + "|";
+                                        strMsg += strBCR + "|";
+                                        strMsg += strCommandID + "|";
+                                        strMsg += sStoreInStnNo[inStoreInStnNoIndex] + "|";
+                                        strMsg += (inStoreInStnNoIndex + 1).ToString() + "|";
+                                        strMsg += "命令站口分配成功!";
+                                        funWriteSysTraceLog(strMsg);
+
+                                        bCRData[intIndex].funClear();
+                                        strMsg = bCRData[intIndex]._BufferName + "|";
+                                        strMsg += "2->0|";
+                                        strMsg += "ERROR|";
+                                        strMsg += "BCR Clear!";
+                                        funWriteSysTraceLog(strMsg);
+
+                                        inStoreInStnNoIndex += 1;
+                                    }
+                                }
+                                else
+                                {
+                                    strMsg = strBufferName + "|";
+                                    strMsg += strBCR + "|";
+                                    strMsg += strCommandID + "|";
+                                    strMsg += "命令站口分配跟新失败!";
+                                    funWriteSysTraceLog(strMsg);
+                                }
+                            }
+                            else
+                            {
+                                strMsg = strBufferName + "|";
+                                strMsg += strBCR + "|";
+                                strMsg += "命令站口分配时托盘未查询到对应命令信息!";
+                                funWriteSysTraceLog(strMsg);
+                            }
+                            #endregion
+                        }
                     }
+                    #endregion
+
+                    #region 主机站口处理
+
+                    #endregion
+
                 }
             }
             catch (Exception ex)
@@ -1244,7 +561,7 @@ namespace Mirle.ASRS
             }
         }
         /// <summary>
-        /// 创建equ命令
+        /// 创建EQU_CMD命令
         /// </summary>
         private void funStoreIn_CrateCraneCommand()
         {
@@ -1291,13 +608,13 @@ namespace Mirle.ASRS
                             {
                                 if (!funCheckCraneExistsCommand(CraneMode.StoreIn, stnDef.StationIndex.ToString()))
                                 {
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                                     if (funCrateCraneCommand(strCommandID, CraneMode.StoreIn, stnDef.StationIndex.ToString(), commandInfo.Loaction, commandInfo.Priority))
                                     {
                                         if (funUpdateCommand(strCommandID, CommandState.Start, Trace.StoreIn_CrateCraneCommand))
                                         {
                                             #region Update Command & Create StoreIn Crane Command Success
-                                              InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                             strMsg = strCommandID + "|";
                                             strMsg += commandInfo.CommandMode + "|";
                                             strMsg += commandInfo.CycleNo + "|";
@@ -1325,7 +642,7 @@ namespace Mirle.ASRS
                                         else
                                         {
                                             #region Update Command Fail
-                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                             strMsg = commandInfo.CommandID + "|";
                                             strMsg += commandInfo.CycleNo + "|";
                                             strMsg += commandInfo.CommandMode + "|";
@@ -1345,7 +662,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Create StoreIn Crane Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = strCommandID + "|";
                                         strMsg += commandInfo.CycleNo + "|";
                                         strMsg += commandInfo.CommandMode + "|";
@@ -1378,6 +695,9 @@ namespace Mirle.ASRS
             }
         }
 
+        /// <summary>
+        /// EQU_CMD命令完成
+        /// </summary>
         private void funStoreIn_CraneCommandFinish()
         {
             string strSQL = string.Empty;
@@ -1416,7 +736,7 @@ namespace Mirle.ASRS
 
                         if (strCmdSts == CommandState.Completed && strCompleteCode.Substring(0, 1) == "W")
                         {
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
 
                             strSQL = "UPDATE CMD_MST";
                             strSQL += " SET CMD_STS='0',TRACE='" + Trace.StoreIn_GetStoreInCommandAndWritePLC + "'";
@@ -1426,7 +746,7 @@ namespace Mirle.ASRS
                                 strSQL = "DELETE FROM EQUCMD where CMDSNO='" + commandInfo.CommandID + "'";
                                 if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                                 {
-                                      InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                     #region Retry StoreOut DELETE EQUCMD Success
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
@@ -1443,7 +763,7 @@ namespace Mirle.ASRS
                                 }
                                 else
                                 {
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     #region DELETE EQUCMD Fail
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
@@ -1461,7 +781,7 @@ namespace Mirle.ASRS
                             }
                             else
                             {
-                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 #region Retry StoreOut Crane Command Fail
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += commandInfo.CycleNo + "|";
@@ -1484,7 +804,7 @@ namespace Mirle.ASRS
                                 if (funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreIn).ToString()))
                                 {
                                     #region StoreOut Crane Command Finish & Update Command Success
-                                      InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -1510,7 +830,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Delete StoreOut Crane Command Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -1563,13 +883,13 @@ namespace Mirle.ASRS
                         }
                         else if (strCmdSts == CommandState.Completed && (strCompleteCode == "92" || strCompleteCode == "FF"))
                         {
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.StoreIn_CraneCommandFinish))
                             {
                                 if (funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreIn).ToString()))
                                 {
                                     #region StoreIn Crane Command Finish & Update Command Success
-                                      InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -1595,7 +915,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Delete StoreIn Crane Command Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = commandInfo.CommandID + "|";
                                     strMsg += commandInfo.CycleNo + "|";
                                     strMsg += commandInfo.CommandMode + "|";
@@ -1611,7 +931,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Update Command Fail
-                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = commandInfo.CommandID + "|";
                                 strMsg += commandInfo.CycleNo + "|";
                                 strMsg += commandInfo.CommandMode + "|";

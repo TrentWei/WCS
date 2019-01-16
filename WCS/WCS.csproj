@@ -49,9 +49,6 @@
     <Compile Include="WCS_Define.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="WCS_funAGV.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="WCS_funCommand.cs">
       <SubType>Form</SubType>
     </Compile>
