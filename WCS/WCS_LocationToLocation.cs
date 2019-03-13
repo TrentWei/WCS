@@ -51,8 +51,7 @@ namespace Mirle.ASRS
                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                         if(funUpdateCommand(commandInfo.CommandID, CommandState.Start, Trace.LoactionToLoaction_CrateCraneCommand))
                         {
-                            if(funCrateCraneCommand(commandInfo.CommandID, CraneMode.LoactionToLoaction,
-                                commandInfo.Loaction, commandInfo.NewLoaction, commandInfo.Priority))
+                            if(funCrateCraneCommand(commandInfo.CommandID, funGetEquFLoc(commandInfo.Loaction).ToString(), CraneMode.LoactionToLoaction, funGetCrnLoc(commandInfo.NewLoaction), funGetCrnLoc(commandInfo.NewLoaction), commandInfo.Priority))
                             {
                                 #region Update Command & Create Transfer Crane Command Success
                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
@@ -222,7 +221,7 @@ namespace Mirle.ASRS
                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                                 if(funUpdateCommand(commandInfo.CommandID, CommandState.CompletedWaitPost, Trace.LoactionToLoaction_CraneCommandFinish))
                                 {
-                                    if(funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.StoreOut).ToString()))
+                                    if(funDeleteEquCmd(commandInfo.CommandID, ((int)Buffer.StnMode.L2L).ToString()))
                                     {
                                         #region Transfer Crane Command Finish & Update Command Success
                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);

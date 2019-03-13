@@ -61,7 +61,7 @@
             this.lblCraneState.BackColor = System.Drawing.Color.Red;
             this.lblCraneState.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblCraneState.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCraneState.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblCraneState.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblCraneState.Location = new System.Drawing.Point(0, 40);
             this.lblCraneState.Margin = new System.Windows.Forms.Padding(0);
             this.lblCraneState.Name = "lblCraneState";
@@ -75,7 +75,7 @@
             this.lblCraneNo.BackColor = System.Drawing.Color.DimGray;
             this.lblCraneNo.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblCraneNo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCraneNo.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblCraneNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblCraneNo.ForeColor = System.Drawing.Color.White;
             this.lblCraneNo.Location = new System.Drawing.Point(0, 0);
             this.lblCraneNo.Margin = new System.Windows.Forms.Padding(0);
@@ -90,7 +90,7 @@
             this.lblCommandID.BackColor = System.Drawing.Color.White;
             this.lblCommandID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblCommandID.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCommandID.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblCommandID.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblCommandID.Location = new System.Drawing.Point(0, 60);
             this.lblCommandID.Margin = new System.Windows.Forms.Padding(0);
             this.lblCommandID.Name = "lblCommandID";
@@ -103,7 +103,7 @@
             this.lblCraneMode.BackColor = System.Drawing.Color.Red;
             this.lblCraneMode.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblCraneMode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblCraneMode.Font = new System.Drawing.Font("新細明體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblCraneMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblCraneMode.Location = new System.Drawing.Point(0, 20);
             this.lblCraneMode.Margin = new System.Windows.Forms.Padding(0);
             this.lblCraneMode.Name = "lblCraneMode";

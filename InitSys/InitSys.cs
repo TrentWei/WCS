@@ -239,6 +239,43 @@ namespace Mirle.ASRS
                 string strErrMsg = ex.Message;
             }
         }
+
+        public static void funWriteHtml(string sSTN_NO, string sHTML)
+        {
+            try
+            {
+                string sFileName = null;
+                sFileName = @"C:\inetpub\wwwroot\TV_WS";
+                if (System.IO.Directory.Exists(sFileName) == false)
+                {
+                    System.IO.Directory.CreateDirectory(sFileName);
+                }
+                string sFile = "";
+                sFile = sSTN_NO + ".html";
+                sFileName = sFileName + "\\" + sFile;
+                if (System.IO.File.Exists(sFileName) == false)
+                {
+                    using (System.IO.StreamWriter sw = System.IO.File.CreateText(sFileName))
+                    {
+                        sw.WriteLine(sHTML);
+                        sw.Close();
+                    }
+                }
+                else
+                {
+                    using (System.IO.StreamWriter sw = System.IO.File.CreateText(sFileName))
+                    {
+                        sw.WriteLine(sHTML);
+                        sw.Flush();
+                        sw.Close();
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+        }
         #endregion Function
     }
 }

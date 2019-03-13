@@ -16,27 +16,9 @@ namespace Mirle.ASRS
             DataTable dtEquCmd = new DataTable();
             try
             {
-                switch (craneMode)
-                {
-                    case CraneMode.StoreOut:
-                        strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
-                        strSQL += " WHERE CmdSts IN ('0', '1')";
-                        strSQL += " AND DESTINATION='" + stnIndex + "'";
-                        break;
-                    case CraneMode.StoreIn:
-                        strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
-                        strSQL += " WHERE CmdSts IN ('0', '1')";
-                        strSQL += " AND SOURCE='" + stnIndex + "'";
-                        break;
-                    case CraneMode.StationToStation:
-                    case CraneMode.LoactionToLoaction:
-                        strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
-                        strSQL += " WHERE CMDMODE='" + craneMode + "'";
-                        strSQL += " AND CmdSts IN ('0', '1')";
-                        break;
-                    default:
-                        break;
-                }
+
+                strSQL = "SELECT COUNT (*) AS ICOUNT FROM EQUCMD";
+                strSQL += " WHERE EQUNO='" + stnIndex + "'";
                 if (InitSys._DB.GetDataTable(strSQL, ref dtEquCmd, ref strEM))
                     return int.Parse(dtEquCmd.Rows[0]["ICOUNT"].ToString()) > 0;
                 else
@@ -59,7 +41,7 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funCrateCraneCommand(string commandID, string craneMode, string source, string destination, string priority)
+        private bool funCrateCraneCommand(string commandID,string equNo, string craneMode, string source, string destination, string priority)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -77,7 +59,7 @@ namespace Mirle.ASRS
 
                 strSQL = "INSERT INTO EquCmd(CmdSno, EquNo, CmdMode, CmdSts, Source, Destination, LocSize, Priority, RCVDT) Values (";
                 strSQL += "'" + commandID + "', ";
-                strSQL += "'1', ";
+                strSQL += "'" + equNo + "', ";
                 strSQL += "'" + craneMode + "', ";
                 strSQL += "'0', ";
                 strSQL += "'" + source + "', ";
@@ -146,6 +128,6 @@ namespace Mirle.ASRS
             }
         }
 
-       
+
     }
 }

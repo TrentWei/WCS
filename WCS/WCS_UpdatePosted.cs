@@ -13,7 +13,7 @@ namespace Mirle.ASRS
         {
             funCommandFinish();
             funCommandCancel();
-            funDeleteCommandToHistory();
+            //funDeleteCommandToHistory();
         }
 
         private void funCommandFinish()
@@ -21,11 +21,13 @@ namespace Mirle.ASRS
             string strSQL = string.Empty;
             string strEM = string.Empty;
             string strMsg = string.Empty;
+            string strSubNo = string.Empty;
             DataTable dtCmdSno = new DataTable();
             try
             {
                 strSQL = "SELECT * FROM CMD_MST";
-                strSQL += " WHERE Cmd_Sts='7'";
+                strSQL += " WHERE Cmd_Sts in('3','5')";
+                strSQL += " AND CMD_MODE='5' ";
                 strSQL += " ORDER BY Cmd_Sno";
                 if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                 {
@@ -38,7 +40,7 @@ namespace Mirle.ASRS
                         cmd_Mst.Io_Type = dtCmdSno.Rows[intRow]["Io_Type"].ToString();
                         cmd_Mst.Loc = dtCmdSno.Rows[intRow]["Loc"].ToString();
                         cmd_Mst.New_Loc = dtCmdSno.Rows[intRow]["New_Loc"].ToString();
-                        cmd_Mst.Loc_Size = dtCmdSno.Rows[intRow]["Height"].ToString();
+                        cmd_Mst.Loc_Size = dtCmdSno.Rows[intRow]["LOC_SIZE"].ToString();
                         cmd_Mst.Stn_No = dtCmdSno.Rows[intRow]["Stn_No"].ToString();
                         cmd_Mst.Plt_No = dtCmdSno.Rows[intRow]["Plt_No"].ToString();
                         cmd_Mst.Cyc_No = dtCmdSno.Rows[intRow]["Cyc_No"].ToString();
@@ -50,7 +52,40 @@ namespace Mirle.ASRS
                         cmd_Mst.User_Id = dtCmdSno.Rows[intRow]["User_Id"].ToString();
                         cmd_Mst.Remark = dtCmdSno.Rows[intRow]["Remark"].ToString();
 
-                        funUpdateCMD(cmd_Mst, false);
+                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                        try
+                        {
+                            if (!funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No)) throw new Exception("命令完成失败！");
+                            if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                            {
+                                strSQL = " SELECT * FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO";
+                                strSQL = " WHERE P.PLT_NO='" + cmd_Mst.Plt_No + "'";
+                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                {
+                                    strSubNo = dtCmdSno.Rows[intRow]["SUB_NO"].ToString();
+                                }
+                            }
+                            if (!funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty)) throw new Exception("原储位跟新失败！");
+                            if (!funUpdateLocationMaster(cmd_Mst.New_Loc, "S", cmd_Mst.Plt_No)) throw new Exception("新储位跟新失败！");
+                            if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                            {
+                                if (!funLockStoreInBox(strSubNo, LoactionState.S, cmd_Mst.New_Loc)) throw new Exception("子托盘跟新失败！");
+                                if (!funUpdateLocationDtl(cmd_Mst.Loc,cmd_Mst.New_Loc)) throw new Exception("储位明细跟新失败！");
+                            }
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                        }
+                        catch (Exception ex)
+                        {
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                            strMsg = cmd_Mst.Cmd_Sno + "|";
+                            strMsg += cmd_Mst.Cyc_No + "|";
+                            strMsg += cmd_Mst.Cmd_Mode + "|";
+                            strMsg += cmd_Mst.Loc + "|";
+                            strMsg += cmd_Mst.New_Loc + "|";
+                            strMsg += cmd_Mst.Plt_No + "|";
+                            strMsg += ex.ToString();
+                            funWriteSysTraceLog(strMsg);
+                        }
                     }
                 }
             }
@@ -75,11 +110,13 @@ namespace Mirle.ASRS
             string strSQL = string.Empty;
             string strEM = string.Empty;
             string strMsg = string.Empty;
+            string strSubNo = string.Empty;
             DataTable dtCmdSno = new DataTable();
             try
             {
                 strSQL = "SELECT * FROM CMD_MST";
-                strSQL += " WHERE Cmd_Sts='6'";
+                strSQL += " WHERE Cmd_Sts in ('4','6')";
+                strSQL += " AND CMD_MODE='5'";
                 strSQL += " ORDER BY Cmd_Sno";
                 if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                 {
@@ -92,7 +129,7 @@ namespace Mirle.ASRS
                         cmd_Mst.Io_Type = dtCmdSno.Rows[intRow]["Io_Type"].ToString();
                         cmd_Mst.Loc = dtCmdSno.Rows[intRow]["Loc"].ToString();
                         cmd_Mst.New_Loc = dtCmdSno.Rows[intRow]["New_Loc"].ToString();
-                        cmd_Mst.Loc_Size = dtCmdSno.Rows[intRow]["Height"].ToString();
+                        cmd_Mst.Loc_Size = dtCmdSno.Rows[intRow]["LOC_SIZE"].ToString();
                         cmd_Mst.Stn_No = dtCmdSno.Rows[intRow]["Stn_No"].ToString();
                         cmd_Mst.Plt_No = dtCmdSno.Rows[intRow]["Plt_No"].ToString();
                         cmd_Mst.Cyc_No = dtCmdSno.Rows[intRow]["Cyc_No"].ToString();
@@ -103,8 +140,39 @@ namespace Mirle.ASRS
                         cmd_Mst.Trace = dtCmdSno.Rows[intRow]["Trace"].ToString();
                         cmd_Mst.User_Id = dtCmdSno.Rows[intRow]["User_Id"].ToString();
                         cmd_Mst.Remark = dtCmdSno.Rows[intRow]["Remark"].ToString();
-
-                        funUpdateCMD(cmd_Mst, true);
+                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                        try
+                        {
+                            if (!funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No)) throw new Exception("命令取消失败！");
+                            if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                            {
+                                strSQL = " SELECT * FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO";
+                                strSQL = " WHERE P.PLT_NO='" + cmd_Mst.Plt_No + "'";
+                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                {
+                                    strSubNo = dtCmdSno.Rows[intRow]["SUB_NO"].ToString();
+                                }
+                            }
+                            if (!funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No)) throw new Exception("原储位还原失败！");
+                            if (!funUpdateLocationMaster(cmd_Mst.New_Loc, "N", string.Empty)) throw new Exception("新储位还原失败！");
+                            if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                            {
+                                if (!funLockStoreInBox(strSubNo, LoactionState.S)) throw new Exception("子托盘还原失败！");
+                            }
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                        }
+                        catch (Exception ex)
+                        {
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                            strMsg = cmd_Mst.Cmd_Sno + "|";
+                            strMsg += cmd_Mst.Cyc_No + "|";
+                            strMsg += cmd_Mst.Cmd_Mode + "|";
+                            strMsg += cmd_Mst.Loc + "|";
+                            strMsg += cmd_Mst.New_Loc + "|";
+                            strMsg += cmd_Mst.Plt_No + "|";
+                            strMsg += ex.ToString();
+                            funWriteSysTraceLog(strMsg);
+                        }
                     }
                 }
             }
@@ -123,7 +191,6 @@ namespace Mirle.ASRS
                 }
             }
         }
-
         private void funUpdateCMD(Cmd_Mst cmd_Mst, bool cancel)
         {
             string strSQL = string.Empty;
@@ -140,7 +207,7 @@ namespace Mirle.ASRS
                         if (cmd_Mst.Cmd_Mode == CMDMode.StoreIn)
                         {
                             #region StoreIn
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateItemMaster(cmd_Mst.Plt_No, "N", string.Empty, true, strType))
                             {
                                 if (funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty))
@@ -148,7 +215,7 @@ namespace Mirle.ASRS
                                     if (funUpdateCommand(cmd_Mst.Cmd_Sno, "D", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                     {
                                         #region Update Success
-                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -162,7 +229,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -178,7 +245,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Location Master Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
                                     strMsg += cmd_Mst.Plt_No + "|";
                                     strMsg += cmd_Mst.Loc + "|";
@@ -193,7 +260,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Update Item Master Fail
-                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
@@ -209,7 +276,7 @@ namespace Mirle.ASRS
                         else if (cmd_Mst.Cmd_Mode == CMDMode.StoreOut)
                         {
                             #region StoreOut
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true, strType))
                             {
                                 if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
@@ -217,7 +284,7 @@ namespace Mirle.ASRS
                                     if (funUpdateCommand(cmd_Mst.Cmd_Sno, "D", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                     {
                                         #region Update Success
-                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -231,7 +298,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -247,7 +314,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Location Master Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
                                     strMsg += cmd_Mst.Plt_No + "|";
                                     strMsg += cmd_Mst.Loc + "|";
@@ -262,7 +329,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Update Item Master Fail
-                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
@@ -278,7 +345,7 @@ namespace Mirle.ASRS
                         else if (cmd_Mst.Cmd_Mode == CMDMode.Picking)
                         {
                             #region Picking
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true, strType))
                             {
                                 if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
@@ -286,7 +353,7 @@ namespace Mirle.ASRS
                                     if (funUpdateCommand(cmd_Mst.Cmd_Sno, "D", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                     {
                                         #region Update Success
-                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -300,7 +367,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -316,7 +383,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Location Master Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
                                     strMsg += cmd_Mst.Plt_No + "|";
                                     strMsg += cmd_Mst.Loc + "|";
@@ -346,7 +413,7 @@ namespace Mirle.ASRS
                         else if (cmd_Mst.Cmd_Mode == CMDMode.LoactionToLoaction)
                         {
                             #region LoactionToLoaction
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, false, strType))
                             {
                                 if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No) &&
@@ -355,7 +422,7 @@ namespace Mirle.ASRS
                                     if (funUpdateCommand(cmd_Mst.Cmd_Sno, "D", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                     {
                                         #region Update Success
-                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -369,7 +436,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -385,7 +452,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Location Master Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
                                     strMsg += cmd_Mst.Plt_No + "|";
                                     strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
@@ -400,7 +467,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Update Item Master Fail
-                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
@@ -431,7 +498,7 @@ namespace Mirle.ASRS
                         if (cmd_Mst.Cmd_Mode == CMDMode.StoreIn)
                         {
                             #region StoreIn
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true, strType))
                             {
                                 if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
@@ -439,7 +506,7 @@ namespace Mirle.ASRS
                                     if (funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                     {
                                         #region Update Success
-                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -453,7 +520,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Stn_No + "->" + cmd_Mst.Loc + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -469,7 +536,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Location Master Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
                                     strMsg += cmd_Mst.Plt_No + "|";
                                     strMsg += cmd_Mst.Loc + "|";
@@ -484,7 +551,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Update Item Master Fail
-                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
@@ -500,7 +567,7 @@ namespace Mirle.ASRS
                         else if (cmd_Mst.Cmd_Mode == CMDMode.StoreOut)
                         {
                             #region StoreOut
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateItemMaster(cmd_Mst.Plt_No, "N", string.Empty, false, strType))
                             {
                                 if (funUpdateLocationMaster(cmd_Mst.Loc, "N", cmd_Mst.Plt_No))
@@ -508,7 +575,7 @@ namespace Mirle.ASRS
                                     if (funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                     {
                                         #region Update Success
-                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -522,7 +589,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "->" + cmd_Mst.Stn_No + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -538,7 +605,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Location Master Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
                                     strMsg += cmd_Mst.Plt_No + "|";
                                     strMsg += cmd_Mst.Loc + "|";
@@ -553,7 +620,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Update Item Master Fail
-                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "|";
@@ -569,7 +636,7 @@ namespace Mirle.ASRS
                         else if (cmd_Mst.Cmd_Mode == CMDMode.Picking)
                         {
                             #region Picking
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.Loc, true, strType))
                             {
                                 if (funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No))
@@ -577,7 +644,7 @@ namespace Mirle.ASRS
                                     if (funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                     {
                                         #region Update Success
-                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -591,7 +658,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "<->" + cmd_Mst.Stn_No + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -607,7 +674,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Location Master Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
                                     strMsg += cmd_Mst.Plt_No + "|";
                                     strMsg += cmd_Mst.Loc + "|";
@@ -637,7 +704,7 @@ namespace Mirle.ASRS
                         else if (cmd_Mst.Cmd_Mode == CMDMode.LoactionToLoaction)
                         {
                             #region LoactionToLoaction
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                             if (funUpdateItemMaster(cmd_Mst.Plt_No, "S", cmd_Mst.New_Loc, false, strType))
                             {
                                 if (funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty) && funUpdateLocationMaster(cmd_Mst.New_Loc, "S", cmd_Mst.Plt_No))
@@ -645,7 +712,7 @@ namespace Mirle.ASRS
                                     if (funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No))
                                     {
                                         #region Update Success
-                                          InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -659,7 +726,7 @@ namespace Mirle.ASRS
                                     else
                                     {
                                         #region Update Command Fail
-                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                         strMsg = cmd_Mst.Cmd_Sno + "|";
                                         strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
                                         strMsg += cmd_Mst.Trace + "|";
@@ -675,7 +742,7 @@ namespace Mirle.ASRS
                                 else
                                 {
                                     #region Update Location Master Fail
-                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     strMsg = cmd_Mst.Cmd_Sno + "|";
                                     strMsg += cmd_Mst.Plt_No + "|";
                                     strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
@@ -690,7 +757,7 @@ namespace Mirle.ASRS
                             else
                             {
                                 #region Update Item Master Fail
-                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                 strMsg = cmd_Mst.Cmd_Sno + "|";
                                 strMsg += cmd_Mst.Plt_No + "|";
                                 strMsg += cmd_Mst.Loc + "->" + cmd_Mst.New_Loc + "|";
@@ -738,7 +805,7 @@ namespace Mirle.ASRS
                     strSQL += " SELECT * FROM CMD_MST";
                     strSQL += " WHERE Cmd_Sts='9'";
                     strSQL += " AND SUBSTRING(End_Dte,1,10)='" + DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd") + "'";
-                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                     if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                     {
                         strSQL = " DELETE CMD_MST";
@@ -746,14 +813,14 @@ namespace Mirle.ASRS
                         strSQL += " AND SUBSTRING(End_Dte,1,10)='" + DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd") + "'";
                         if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                         {
-                              InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                             strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
                             strMsg += "Delete Command To History Success!";
                             funWriteUpdateLog(strMsg);
                         }
                         else
                         {
-                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                             strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
                             strMsg += "DELETE CMD_MST Fail!";
                             funWriteUpdateLog(strMsg);
@@ -761,7 +828,7 @@ namespace Mirle.ASRS
                     }
                     else
                     {
-                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                         strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
                         strMsg += "Insert CMD_MST To CMD_MST_HIS Fail!";
                         funWriteUpdateLog(strMsg);

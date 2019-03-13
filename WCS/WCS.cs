@@ -34,11 +34,13 @@ namespace Mirle.ASRS
         private Dictionary<int, CraneMonitor> dicCraneMap = new Dictionary<int, CraneMonitor>();
         private List<StationInfo> lstStoreIn = new List<StationInfo>();
         private List<StationInfo> lstStoreOut = new List<StationInfo>();
+        private List<StationInfo> lstStoreOutIn = new List<StationInfo>();
         private SMPLCData_1 sMPLCData_1 = new SMPLCData_1();
         private SMPLCData_2 sMPLCData_2 = new SMPLCData_2();
         private List<StationInfo> lstClearKanbanInfo = new List<StationInfo>();
-        private string[] sStoreInStnNo = new string[] {STN_NO.StoreInA01, STN_NO.StoreInA10, STN_NO.StoreInA18, STN_NO.StoreInA26, STN_NO.StoreInA34 };
-        private int inStoreInStnNoIndex = 0;
+        private List<StationInfo> lstAllotCrane = new List<StationInfo>();
+        private string[] sStoreInStnNo = new string[] { STN_NO.StoreOutA01, STN_NO.StoreOutA10, STN_NO.StoreOutA18, STN_NO.StoreOutA26, STN_NO.StoreOutA34 };
+        private int inStoreInStnNoIndex = 4;
 
 
         private delegate void ShowMessage_EventHandler(string Message);
@@ -60,7 +62,7 @@ namespace Mirle.ASRS
                 this.Text = InitSys._APName + " (V." + Application.ProductVersion + ")";
 
             funWriteSysTraceLog(this.Text + " Program Start!");
-
+           
             funInital();
             if (!funLoda())
             {
@@ -190,10 +192,10 @@ namespace Mirle.ASRS
                         {
                             //界面控件赋值
                             BufferMonitor bufferMonitor = dicBufferMap[intIndex];
-                            bufferMonitor._CommandID = bufferData[intIndex]._CommandID;
+                            bufferMonitor._CommandID = string.IsNullOrEmpty(bufferData[intIndex]._CommandID) ? bufferData[intIndex]._CommandID : bufferData[intIndex]._CommandID.PadLeft(5, '0');
                             bufferMonitor._Destination = bufferData[intIndex]._Destination;
                             bufferMonitor._Mode = bufferData[intIndex]._Mode;
-                            bufferMonitor._ReturnRequest = bufferData[intIndex]._ReturnRequest;
+                            bufferMonitor._ReturnRequest = bufferData[intIndex]._ReturnRequest.ToString();
                             bufferMonitor._Auto = bufferData[intIndex]._EQUStatus.AutoMode;
                             bufferMonitor._Load = bufferData[intIndex]._EQUStatus.Load;
                             bufferMonitor._Error = bufferData[intIndex]._EQUAlarmStatus.Error ? Buffer.Signal.On : Buffer.Signal.Off;
@@ -252,8 +254,12 @@ namespace Mirle.ASRS
                                    strTmp.Substring(10, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 bufferData[intIndex]._EQUStatus.Completion =
                                    strTmp.Substring(9, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUStatus.Siez =
+                                strTmp.Substring(8, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
+                                bufferData[intIndex]._EQUStatus.CycIn =
+                                strTmp.Substring(7, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 #endregion EQUStatus
-
+                                bufferData[intIndex]._Discharged = intarResultData[(intIndex * 10) + 4] == 1;
                                 #region EQUAlarmStatus
                                 strTmp = Convert.ToString(intarResultData[(intIndex * 10) + 5], 2).PadLeft(16, '0');
                                 bufferData[intIndex]._EQUAlarmStatus.Error = (intarResultData[(intIndex * 10) + 5] > 0);
@@ -289,21 +295,18 @@ namespace Mirle.ASRS
                                     strTmp.Substring(0, 1) == "1" ? Buffer.Signal.On : Buffer.Signal.Off;
                                 #endregion EQUAlarmStatus
 
+                                bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 6].ToString();
+                                bufferData[intIndex]._PalletNo = intarResultData[(intIndex * 10) + 7].ToString();
 
-                                //bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 3] == 1;
-
-                                //bufferData[intIndex].W_Discharged = intarResultData[(intIndex * 10) + 4] == 1;
-
-                                //bufferData[intIndex]._APositioning = intarResultData[(intIndex * 10) + 5] == 1;
-
-                                //bufferData[intIndex]._Clearnotice = intarResultData[(intIndex * 10) + 8] == 1;
+                                bufferData[intIndex]._Clearnotice = intarResultData[(intIndex * 10) + 9] == 1;
 
                             }
                         }
 
                         if (bolAuto)
                         {
-                            funKanbanInfo();
+                            funUpdatePosted();
+                            //funKanbanInfo();
                             funStoreOut();
                             funStroreIn();
                             funLocationToLocation();
@@ -371,6 +374,7 @@ namespace Mirle.ASRS
             funInitalStoreIn();
             funInitalStoreOut();
             funinitalKanbanInfo();
+            funinitalAllotCrane();
             funinitalCrane();
             funinitalBCR();
             funStart();
@@ -414,10 +418,10 @@ namespace Mirle.ASRS
                     {
                         dicPLCMap.Add(strTmp[0], strTmp[1]);
                         lstBuffer.Add(strTmp[0]);
-                        if (sctMain1.Panel2.Controls.ContainsKey(strTmp[0]))
+                        if (panel1.Controls.ContainsKey(strTmp[0]))
                         {
-                            if (sctMain1.Panel1.Controls[strTmp[0]] is BufferMonitor)
-                                dicBufferMap.Add(int.Parse(strTmp[2]), (BufferMonitor)sctMain1.Panel2.Controls[strTmp[0]]);
+                            if (panel1.Controls[strTmp[0]] is BufferMonitor)
+                                dicBufferMap.Add(int.Parse(strTmp[2]), (BufferMonitor)panel1.Controls[strTmp[0]]);
                         }
                     }
                     catch (Exception ex)
@@ -514,6 +518,43 @@ namespace Mirle.ASRS
             }
         }
 
+        private void funInitalStoreOutIn()
+        {
+            try
+            {
+                lstStoreOutIn.Clear();
+                lstStoreOutIn = new List<StationInfo>();
+                string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\StoreOutIn.txt");
+                foreach (string strValues in strarStroreInines)
+                {
+                    if (strValues.Contains("#"))
+                        continue;
+
+                    string[] strTmp = strValues.Split(',');
+                    StationInfo stnDef = new StationInfo();
+                    try
+                    {
+                        stnDef.BufferName = strTmp[0];
+                        stnDef.BufferIndex = int.Parse(strTmp[1]);
+                        stnDef.StationName = strTmp[2];
+                        stnDef.StationIndex = int.Parse(strTmp[3]);
+                        lstStoreOutIn.Add(stnDef);
+                    }
+                    catch (Exception ex)
+                    {
+                        MethodBase methodBase = MethodBase.GetCurrentMethod();
+                        InitSys.funWriteLog("Exception",
+                            methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + strTmp[0] + "|" + ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+
         private void funinitalKanbanInfo()
         {
             try
@@ -533,6 +574,43 @@ namespace Mirle.ASRS
                         stnKanbanInfo.BufferName = strTmp[0];
                         stnKanbanInfo.BufferIndex = int.Parse(strTmp[1]);
                         lstClearKanbanInfo.Add(stnKanbanInfo);
+                    }
+                    catch (Exception ex)
+                    {
+                        MethodBase methodBase = MethodBase.GetCurrentMethod();
+                        InitSys.funWriteLog("Exception",
+                            methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + strTmp[0] + "|" + ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+        }
+
+        private void funinitalAllotCrane()
+        {
+            try
+            {
+                lstAllotCrane.Clear();
+                lstAllotCrane = new List<StationInfo>();
+                string[] strarStroreInines = System.IO.File.ReadAllLines(Application.StartupPath + @"\Config\AllotCrane.txt");
+                foreach (string strValues in strarStroreInines)
+                {
+                    if (strValues.Contains("#"))
+                        continue;
+
+                    string[] strTmp = strValues.Split(',');
+                    StationInfo stnAllitCrane = new StationInfo();
+                    try
+                    {
+                        stnAllitCrane.BufferName = strTmp[0];
+                        stnAllitCrane.BufferIndex = int.Parse(strTmp[1]);
+                        stnAllitCrane.StationName = strTmp[2];
+                        stnAllitCrane.StationIndex = int.Parse(strTmp[3]);
+                        lstAllotCrane.Add(stnAllitCrane);
                     }
                     catch (Exception ex)
                     {

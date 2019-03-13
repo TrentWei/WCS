@@ -58,6 +58,7 @@
             this.lsbUpdate = new System.Windows.Forms.ListBox();
             this.tbpSingelMonitor = new System.Windows.Forms.TabPage();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.pictureBox26 = new System.Windows.Forms.PictureBox();
             this.pictureBox42 = new System.Windows.Forms.PictureBox();
             this.pictureBox41 = new System.Windows.Forms.PictureBox();
             this.pictureBox40 = new System.Windows.Forms.PictureBox();
@@ -66,13 +67,8 @@
             this.pictureBox37 = new System.Windows.Forms.PictureBox();
             this.pictureBox34 = new System.Windows.Forms.PictureBox();
             this.pictureBox33 = new System.Windows.Forms.PictureBox();
-            this.pictureBox32 = new System.Windows.Forms.PictureBox();
-            this.pictureBox36 = new System.Windows.Forms.PictureBox();
             this.pictureBox30 = new System.Windows.Forms.PictureBox();
-            this.pictureBox31 = new System.Windows.Forms.PictureBox();
-            this.pictureBox28 = new System.Windows.Forms.PictureBox();
             this.pictureBox29 = new System.Windows.Forms.PictureBox();
-            this.pictureBox26 = new System.Windows.Forms.PictureBox();
             this.pictureBox27 = new System.Windows.Forms.PictureBox();
             this.pictureBox24 = new System.Windows.Forms.PictureBox();
             this.pictureBox25 = new System.Windows.Forms.PictureBox();
@@ -100,11 +96,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox35 = new System.Windows.Forms.PictureBox();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.dgvCmdMst = new System.Windows.Forms.DataGridView();
-            this.btn_Delete = new System.Windows.Forms.Button();
-            this.btn_Query = new System.Windows.Forms.Button();
             this.A66 = new Mirle.ASRS.BufferMonitor();
             this.A65 = new Mirle.ASRS.BufferMonitor();
             this.A79 = new Mirle.ASRS.BufferMonitor();
@@ -136,7 +127,7 @@
             this.A78 = new Mirle.ASRS.BufferMonitor();
             this.A61 = new Mirle.ASRS.BufferMonitor();
             this.A54 = new Mirle.ASRS.BufferMonitor();
-            this.D51 = new Mirle.ASRS.BufferMonitor();
+            this.A51 = new Mirle.ASRS.BufferMonitor();
             this.A50 = new Mirle.ASRS.BufferMonitor();
             this.A46 = new Mirle.ASRS.BufferMonitor();
             this.A45 = new Mirle.ASRS.BufferMonitor();
@@ -211,6 +202,11 @@
             this.A118 = new Mirle.ASRS.BufferMonitor();
             this.A117 = new Mirle.ASRS.BufferMonitor();
             this.craneMonitor1 = new Mirle.ASRS.CraneMonitor();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.dgvCmdMst = new System.Windows.Forms.DataGridView();
+            this.btn_Delete = new System.Windows.Forms.Button();
+            this.btn_Query = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sctMain1)).BeginInit();
             this.sctMain1.Panel1.SuspendLayout();
             this.sctMain1.Panel2.SuspendLayout();
@@ -225,6 +221,7 @@
             this.tbpUpdatePosted.SuspendLayout();
             this.tbpSingelMonitor.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox26)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox42)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox41)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox40)).BeginInit();
@@ -233,13 +230,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox37)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox34)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox33)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox32)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox36)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox30)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox31)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox28)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox29)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox26)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox27)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox24)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox25)).BeginInit();
@@ -460,6 +452,7 @@
             this.lblSPLCSts.TabIndex = 24;
             this.lblSPLCSts.Text = "未连线";
             this.lblSPLCSts.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSPLCSts.Visible = false;
             // 
             // lblSPLCStsLabel
             // 
@@ -474,6 +467,7 @@
             this.lblSPLCStsLabel.TabIndex = 23;
             this.lblSPLCStsLabel.Text = "SPLC状态";
             this.lblSPLCStsLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSPLCStsLabel.Visible = false;
             // 
             // lblMPLCSts
             // 
@@ -675,6 +669,7 @@
             // panel1
             // 
             this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.pictureBox26);
             this.panel1.Controls.Add(this.pictureBox42);
             this.panel1.Controls.Add(this.pictureBox41);
             this.panel1.Controls.Add(this.pictureBox40);
@@ -683,13 +678,8 @@
             this.panel1.Controls.Add(this.pictureBox37);
             this.panel1.Controls.Add(this.pictureBox34);
             this.panel1.Controls.Add(this.pictureBox33);
-            this.panel1.Controls.Add(this.pictureBox32);
-            this.panel1.Controls.Add(this.pictureBox36);
             this.panel1.Controls.Add(this.pictureBox30);
-            this.panel1.Controls.Add(this.pictureBox31);
-            this.panel1.Controls.Add(this.pictureBox28);
             this.panel1.Controls.Add(this.pictureBox29);
-            this.panel1.Controls.Add(this.pictureBox26);
             this.panel1.Controls.Add(this.pictureBox27);
             this.panel1.Controls.Add(this.pictureBox24);
             this.panel1.Controls.Add(this.pictureBox25);
@@ -748,7 +738,7 @@
             this.panel1.Controls.Add(this.A78);
             this.panel1.Controls.Add(this.A61);
             this.panel1.Controls.Add(this.A54);
-            this.panel1.Controls.Add(this.D51);
+            this.panel1.Controls.Add(this.A51);
             this.panel1.Controls.Add(this.A50);
             this.panel1.Controls.Add(this.A46);
             this.panel1.Controls.Add(this.A45);
@@ -825,8 +815,18 @@
             this.panel1.Controls.Add(this.craneMonitor1);
             this.panel1.Location = new System.Drawing.Point(8, 8);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1828, 735);
+            this.panel1.Size = new System.Drawing.Size(1824, 735);
             this.panel1.TabIndex = 0;
+            // 
+            // pictureBox26
+            // 
+            this.pictureBox26.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox26.BackgroundImage")));
+            this.pictureBox26.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox26.Location = new System.Drawing.Point(1317, 341);
+            this.pictureBox26.Name = "pictureBox26";
+            this.pictureBox26.Size = new System.Drawing.Size(24, 24);
+            this.pictureBox26.TabIndex = 613;
+            this.pictureBox26.TabStop = false;
             // 
             // pictureBox42
             // 
@@ -886,6 +886,7 @@
             this.pictureBox37.Size = new System.Drawing.Size(25, 23);
             this.pictureBox37.TabIndex = 607;
             this.pictureBox37.TabStop = false;
+            this.pictureBox37.Visible = false;
             // 
             // pictureBox34
             // 
@@ -896,6 +897,7 @@
             this.pictureBox34.Size = new System.Drawing.Size(24, 24);
             this.pictureBox34.TabIndex = 606;
             this.pictureBox34.TabStop = false;
+            this.pictureBox34.Visible = false;
             // 
             // pictureBox33
             // 
@@ -906,25 +908,7 @@
             this.pictureBox33.Size = new System.Drawing.Size(24, 24);
             this.pictureBox33.TabIndex = 605;
             this.pictureBox33.TabStop = false;
-            // 
-            // pictureBox32
-            // 
-            this.pictureBox32.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox32.Image")));
-            this.pictureBox32.Location = new System.Drawing.Point(1369, 294);
-            this.pictureBox32.Name = "pictureBox32";
-            this.pictureBox32.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox32.TabIndex = 604;
-            this.pictureBox32.TabStop = false;
-            // 
-            // pictureBox36
-            // 
-            this.pictureBox36.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox36.BackgroundImage")));
-            this.pictureBox36.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox36.Location = new System.Drawing.Point(1421, 341);
-            this.pictureBox36.Name = "pictureBox36";
-            this.pictureBox36.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox36.TabIndex = 603;
-            this.pictureBox36.TabStop = false;
+            this.pictureBox33.Visible = false;
             // 
             // pictureBox30
             // 
@@ -936,26 +920,6 @@
             this.pictureBox30.TabIndex = 600;
             this.pictureBox30.TabStop = false;
             // 
-            // pictureBox31
-            // 
-            this.pictureBox31.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox31.BackgroundImage")));
-            this.pictureBox31.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox31.Location = new System.Drawing.Point(1226, 407);
-            this.pictureBox31.Name = "pictureBox31";
-            this.pictureBox31.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox31.TabIndex = 599;
-            this.pictureBox31.TabStop = false;
-            // 
-            // pictureBox28
-            // 
-            this.pictureBox28.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox28.BackgroundImage")));
-            this.pictureBox28.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox28.Location = new System.Drawing.Point(1097, 407);
-            this.pictureBox28.Name = "pictureBox28";
-            this.pictureBox28.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox28.TabIndex = 598;
-            this.pictureBox28.TabStop = false;
-            // 
             // pictureBox29
             // 
             this.pictureBox29.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox29.BackgroundImage")));
@@ -965,16 +929,6 @@
             this.pictureBox29.Size = new System.Drawing.Size(24, 24);
             this.pictureBox29.TabIndex = 597;
             this.pictureBox29.TabStop = false;
-            // 
-            // pictureBox26
-            // 
-            this.pictureBox26.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox26.BackgroundImage")));
-            this.pictureBox26.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox26.Location = new System.Drawing.Point(990, 340);
-            this.pictureBox26.Name = "pictureBox26";
-            this.pictureBox26.Size = new System.Drawing.Size(24, 24);
-            this.pictureBox26.TabIndex = 596;
-            this.pictureBox26.TabStop = false;
             // 
             // pictureBox27
             // 
@@ -1217,6 +1171,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(25, 23);
             this.pictureBox1.TabIndex = 567;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Visible = false;
             // 
             // pictureBox2
             // 
@@ -1235,6 +1190,1905 @@
             this.pictureBox35.Size = new System.Drawing.Size(25, 23);
             this.pictureBox35.TabIndex = 565;
             this.pictureBox35.TabStop = false;
+            this.pictureBox35.Visible = false;
+            // 
+            // A66
+            // 
+            this.A66._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A66._BufferName = "A66";
+            this.A66._CommandID = "00000";
+            this.A66._Destination = "0";
+            this.A66._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A66._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A66._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A66._ReturnRequest = "0";
+            this.A66.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A66.Location = new System.Drawing.Point(1565, 610);
+            this.A66.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A66.Name = "A66";
+            this.A66.Padding = new System.Windows.Forms.Padding(3);
+            this.A66.Size = new System.Drawing.Size(51, 66);
+            this.A66.TabIndex = 277;
+            this.A66.Visible = false;
+            // 
+            // A65
+            // 
+            this.A65._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A65._BufferName = "A65";
+            this.A65._CommandID = "00000";
+            this.A65._Destination = "0";
+            this.A65._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A65._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A65._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A65._ReturnRequest = "0";
+            this.A65.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A65.Location = new System.Drawing.Point(1513, 610);
+            this.A65.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A65.Name = "A65";
+            this.A65.Padding = new System.Windows.Forms.Padding(3);
+            this.A65.Size = new System.Drawing.Size(51, 66);
+            this.A65.TabIndex = 276;
+            this.A65.Visible = false;
+            // 
+            // A79
+            // 
+            this.A79._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A79._BufferName = "A79";
+            this.A79._CommandID = "00000";
+            this.A79._Destination = "0";
+            this.A79._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A79._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A79._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A79._ReturnRequest = "0";
+            this.A79.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A79.Location = new System.Drawing.Point(1461, 244);
+            this.A79.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A79.Name = "A79";
+            this.A79.Padding = new System.Windows.Forms.Padding(3);
+            this.A79.Size = new System.Drawing.Size(51, 66);
+            this.A79.TabIndex = 275;
+            this.A79.Visible = false;
+            // 
+            // A59
+            // 
+            this.A59._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A59._BufferName = "A59";
+            this.A59._CommandID = "00000";
+            this.A59._Destination = "0";
+            this.A59._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A59._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A59._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A59._ReturnRequest = "0";
+            this.A59.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A59.Location = new System.Drawing.Point(1409, 274);
+            this.A59.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A59.Name = "A59";
+            this.A59.Padding = new System.Windows.Forms.Padding(3);
+            this.A59.Size = new System.Drawing.Size(51, 66);
+            this.A59.TabIndex = 274;
+            // 
+            // A57
+            // 
+            this.A57._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A57._BufferName = "A57";
+            this.A57._CommandID = "00000";
+            this.A57._Destination = "0";
+            this.A57._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A57._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A57._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A57._ReturnRequest = "0";
+            this.A57.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A57.Location = new System.Drawing.Point(1304, 274);
+            this.A57.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A57.Name = "A57";
+            this.A57.Padding = new System.Windows.Forms.Padding(3);
+            this.A57.Size = new System.Drawing.Size(51, 66);
+            this.A57.TabIndex = 273;
+            // 
+            // A53
+            // 
+            this.A53._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A53._BufferName = "A53";
+            this.A53._CommandID = "00000";
+            this.A53._Destination = "0";
+            this.A53._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A53._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A53._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A53._ReturnRequest = "0";
+            this.A53.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A53.Location = new System.Drawing.Point(1199, 341);
+            this.A53.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A53.Name = "A53";
+            this.A53.Padding = new System.Windows.Forms.Padding(3);
+            this.A53.Size = new System.Drawing.Size(51, 66);
+            this.A53.TabIndex = 272;
+            // 
+            // A52
+            // 
+            this.A52._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A52._BufferName = "A52";
+            this.A52._CommandID = "00000";
+            this.A52._Destination = "0";
+            this.A52._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A52._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A52._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A52._ReturnRequest = "0";
+            this.A52.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A52.Location = new System.Drawing.Point(1199, 274);
+            this.A52.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A52.Name = "A52";
+            this.A52.Padding = new System.Windows.Forms.Padding(3);
+            this.A52.Size = new System.Drawing.Size(51, 66);
+            this.A52.TabIndex = 271;
+            // 
+            // A48
+            // 
+            this.A48._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A48._BufferName = "A48";
+            this.A48._CommandID = "00000";
+            this.A48._Destination = "0";
+            this.A48._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A48._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A48._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A48._ReturnRequest = "0";
+            this.A48.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A48.Location = new System.Drawing.Point(1095, 340);
+            this.A48.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A48.Name = "A48";
+            this.A48.Padding = new System.Windows.Forms.Padding(3);
+            this.A48.Size = new System.Drawing.Size(51, 66);
+            this.A48.TabIndex = 270;
+            // 
+            // A47
+            // 
+            this.A47._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A47._BufferName = "A47";
+            this.A47._CommandID = "00000";
+            this.A47._Destination = "0";
+            this.A47._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A47._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A47._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A47._ReturnRequest = "0";
+            this.A47.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A47.Location = new System.Drawing.Point(1095, 273);
+            this.A47.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A47.Name = "A47";
+            this.A47.Padding = new System.Windows.Forms.Padding(3);
+            this.A47.Size = new System.Drawing.Size(51, 66);
+            this.A47.TabIndex = 269;
+            // 
+            // A87
+            // 
+            this.A87._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A87._BufferName = "A87";
+            this.A87._CommandID = "00000";
+            this.A87._Destination = "0";
+            this.A87._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A87._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A87._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A87._ReturnRequest = "0";
+            this.A87.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A87.Location = new System.Drawing.Point(1095, 139);
+            this.A87.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A87.Name = "A87";
+            this.A87.Padding = new System.Windows.Forms.Padding(3);
+            this.A87.Size = new System.Drawing.Size(51, 66);
+            this.A87.TabIndex = 268;
+            // 
+            // A43
+            // 
+            this.A43._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A43._BufferName = "A43";
+            this.A43._CommandID = "00000";
+            this.A43._Destination = "0";
+            this.A43._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A43._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A43._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A43._ReturnRequest = "0";
+            this.A43.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A43.Location = new System.Drawing.Point(990, 273);
+            this.A43.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A43.Name = "A43";
+            this.A43.Padding = new System.Windows.Forms.Padding(3);
+            this.A43.Size = new System.Drawing.Size(51, 66);
+            this.A43.TabIndex = 267;
+            // 
+            // A37
+            // 
+            this.A37._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A37._BufferName = "A37";
+            this.A37._CommandID = "00000";
+            this.A37._Destination = "0";
+            this.A37._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A37._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A37._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A37._ReturnRequest = "0";
+            this.A37.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A37.Location = new System.Drawing.Point(782, 206);
+            this.A37.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A37.Name = "A37";
+            this.A37.Padding = new System.Windows.Forms.Padding(3);
+            this.A37.Size = new System.Drawing.Size(51, 66);
+            this.A37.TabIndex = 265;
+            // 
+            // A35
+            // 
+            this.A35._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A35._BufferName = "A35";
+            this.A35._CommandID = "00000";
+            this.A35._Destination = "0";
+            this.A35._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A35._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A35._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A35._ReturnRequest = "0";
+            this.A35.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A35.Location = new System.Drawing.Point(730, 206);
+            this.A35.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A35.Name = "A35";
+            this.A35.Padding = new System.Windows.Forms.Padding(3);
+            this.A35.Size = new System.Drawing.Size(51, 66);
+            this.A35.TabIndex = 264;
+            // 
+            // A29
+            // 
+            this.A29._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A29._BufferName = "A29";
+            this.A29._CommandID = "00000";
+            this.A29._Destination = "0";
+            this.A29._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A29._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A29._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A29._ReturnRequest = "0";
+            this.A29.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A29.Location = new System.Drawing.Point(626, 206);
+            this.A29.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A29.Name = "A29";
+            this.A29.Padding = new System.Windows.Forms.Padding(3);
+            this.A29.Size = new System.Drawing.Size(51, 66);
+            this.A29.TabIndex = 263;
+            // 
+            // A27
+            // 
+            this.A27._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A27._BufferName = "A27";
+            this.A27._CommandID = "00000";
+            this.A27._Destination = "0";
+            this.A27._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A27._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A27._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A27._ReturnRequest = "0";
+            this.A27.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A27.Location = new System.Drawing.Point(575, 206);
+            this.A27.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A27.Name = "A27";
+            this.A27.Padding = new System.Windows.Forms.Padding(3);
+            this.A27.Size = new System.Drawing.Size(51, 66);
+            this.A27.TabIndex = 262;
+            // 
+            // A19
+            // 
+            this.A19._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A19._BufferName = "A19";
+            this.A19._CommandID = "00000";
+            this.A19._Destination = "0";
+            this.A19._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A19._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A19._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A19._ReturnRequest = "0";
+            this.A19.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A19.Location = new System.Drawing.Point(419, 206);
+            this.A19.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A19.Name = "A19";
+            this.A19.Padding = new System.Windows.Forms.Padding(3);
+            this.A19.Size = new System.Drawing.Size(51, 66);
+            this.A19.TabIndex = 261;
+            // 
+            // A11
+            // 
+            this.A11._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A11._BufferName = "A11";
+            this.A11._CommandID = "00000";
+            this.A11._Destination = "0";
+            this.A11._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A11._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A11._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A11._ReturnRequest = "0";
+            this.A11.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A11.Location = new System.Drawing.Point(263, 206);
+            this.A11.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A11.Name = "A11";
+            this.A11.Padding = new System.Windows.Forms.Padding(3);
+            this.A11.Size = new System.Drawing.Size(51, 66);
+            this.A11.TabIndex = 260;
+            // 
+            // A03
+            // 
+            this.A03._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A03._BufferName = "A03";
+            this.A03._CommandID = "00000";
+            this.A03._Destination = "0";
+            this.A03._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A03._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A03._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A03._ReturnRequest = "0";
+            this.A03.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A03.Location = new System.Drawing.Point(3, 206);
+            this.A03.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A03.Name = "A03";
+            this.A03.Padding = new System.Windows.Forms.Padding(3);
+            this.A03.Size = new System.Drawing.Size(51, 66);
+            this.A03.TabIndex = 259;
+            // 
+            // A71
+            // 
+            this.A71._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A71._BufferName = "A71";
+            this.A71._CommandID = "00000";
+            this.A71._Destination = "0";
+            this.A71._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A71._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A71._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A71._ReturnRequest = "0";
+            this.A71.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A71.Location = new System.Drawing.Point(1617, 647);
+            this.A71.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A71.Name = "A71";
+            this.A71.Padding = new System.Windows.Forms.Padding(3);
+            this.A71.Size = new System.Drawing.Size(51, 66);
+            this.A71.TabIndex = 258;
+            this.A71.Visible = false;
+            // 
+            // A70
+            // 
+            this.A70._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A70._BufferName = "A70";
+            this.A70._CommandID = "00000";
+            this.A70._Destination = "0";
+            this.A70._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A70._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A70._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A70._ReturnRequest = "0";
+            this.A70.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A70.Location = new System.Drawing.Point(1617, 579);
+            this.A70.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A70.Name = "A70";
+            this.A70.Padding = new System.Windows.Forms.Padding(3);
+            this.A70.Size = new System.Drawing.Size(51, 66);
+            this.A70.TabIndex = 257;
+            this.A70.Visible = false;
+            // 
+            // A67
+            // 
+            this.A67._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A67._BufferName = "A67";
+            this.A67._CommandID = "00000";
+            this.A67._Destination = "0";
+            this.A67._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A67._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A67._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A67._ReturnRequest = "0";
+            this.A67.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A67.Location = new System.Drawing.Point(1513, 543);
+            this.A67.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A67.Name = "A67";
+            this.A67.Padding = new System.Windows.Forms.Padding(3);
+            this.A67.Size = new System.Drawing.Size(51, 66);
+            this.A67.TabIndex = 256;
+            this.A67.Visible = false;
+            // 
+            // A68
+            // 
+            this.A68._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A68._BufferName = "A68";
+            this.A68._CommandID = "00000";
+            this.A68._Destination = "0";
+            this.A68._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A68._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A68._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A68._ReturnRequest = "0";
+            this.A68.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A68.Location = new System.Drawing.Point(1513, 476);
+            this.A68.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A68.Name = "A68";
+            this.A68.Padding = new System.Windows.Forms.Padding(3);
+            this.A68.Size = new System.Drawing.Size(51, 66);
+            this.A68.TabIndex = 255;
+            this.A68.Visible = false;
+            // 
+            // A72
+            // 
+            this.A72._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A72._BufferName = "A72";
+            this.A72._CommandID = "00000";
+            this.A72._Destination = "0";
+            this.A72._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A72._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A72._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A72._ReturnRequest = "0";
+            this.A72.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A72.Location = new System.Drawing.Point(1513, 409);
+            this.A72.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A72.Name = "A72";
+            this.A72.Padding = new System.Windows.Forms.Padding(3);
+            this.A72.Size = new System.Drawing.Size(51, 66);
+            this.A72.TabIndex = 254;
+            this.A72.Visible = false;
+            // 
+            // A73
+            // 
+            this.A73._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A73._BufferName = "A73";
+            this.A73._CommandID = "00000";
+            this.A73._Destination = "0";
+            this.A73._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A73._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A73._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A73._ReturnRequest = "0";
+            this.A73.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A73.Location = new System.Drawing.Point(1513, 342);
+            this.A73.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A73.Name = "A73";
+            this.A73.Padding = new System.Windows.Forms.Padding(3);
+            this.A73.Size = new System.Drawing.Size(51, 66);
+            this.A73.TabIndex = 253;
+            this.A73.Visible = false;
+            // 
+            // A74
+            // 
+            this.A74._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A74._BufferName = "A74";
+            this.A74._CommandID = "00000";
+            this.A74._Destination = "0";
+            this.A74._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A74._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A74._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A74._ReturnRequest = "0";
+            this.A74.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A74.Location = new System.Drawing.Point(1514, 274);
+            this.A74.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A74.Name = "A74";
+            this.A74.Padding = new System.Windows.Forms.Padding(3);
+            this.A74.Size = new System.Drawing.Size(51, 66);
+            this.A74.TabIndex = 252;
+            this.A74.Visible = false;
+            // 
+            // A76
+            // 
+            this.A76._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A76._BufferName = "A76";
+            this.A76._CommandID = "00000";
+            this.A76._Destination = "0";
+            this.A76._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A76._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A76._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A76._ReturnRequest = "0";
+            this.A76.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A76.Location = new System.Drawing.Point(1514, 207);
+            this.A76.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A76.Name = "A76";
+            this.A76.Padding = new System.Windows.Forms.Padding(3);
+            this.A76.Size = new System.Drawing.Size(51, 66);
+            this.A76.TabIndex = 251;
+            this.A76.Visible = false;
+            // 
+            // A56
+            // 
+            this.A56._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A56._BufferName = "A56";
+            this.A56._CommandID = "00000";
+            this.A56._Destination = "0";
+            this.A56._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A56._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A56._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A56._ReturnRequest = "0";
+            this.A56.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A56.Location = new System.Drawing.Point(1304, 207);
+            this.A56.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A56.Name = "A56";
+            this.A56.Padding = new System.Windows.Forms.Padding(3);
+            this.A56.Size = new System.Drawing.Size(51, 66);
+            this.A56.TabIndex = 250;
+            // 
+            // A58
+            // 
+            this.A58._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A58._BufferName = "A58";
+            this.A58._CommandID = "00000";
+            this.A58._Destination = "0";
+            this.A58._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A58._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A58._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A58._ReturnRequest = "0";
+            this.A58.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A58.Location = new System.Drawing.Point(1356, 207);
+            this.A58.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A58.Name = "A58";
+            this.A58.Padding = new System.Windows.Forms.Padding(3);
+            this.A58.Size = new System.Drawing.Size(51, 66);
+            this.A58.TabIndex = 249;
+            // 
+            // A78
+            // 
+            this.A78._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A78._BufferName = "A78";
+            this.A78._CommandID = "00000";
+            this.A78._Destination = "0";
+            this.A78._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A78._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A78._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A78._ReturnRequest = "0";
+            this.A78.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A78.Location = new System.Drawing.Point(1461, 177);
+            this.A78.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A78.Name = "A78";
+            this.A78.Padding = new System.Windows.Forms.Padding(3);
+            this.A78.Size = new System.Drawing.Size(51, 66);
+            this.A78.TabIndex = 247;
+            this.A78.Visible = false;
+            // 
+            // A61
+            // 
+            this.A61._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A61._BufferName = "A61";
+            this.A61._CommandID = "00000";
+            this.A61._Destination = "0";
+            this.A61._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A61._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A61._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A61._ReturnRequest = "0";
+            this.A61.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A61.Location = new System.Drawing.Point(1409, 207);
+            this.A61.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A61.Name = "A61";
+            this.A61.Padding = new System.Windows.Forms.Padding(3);
+            this.A61.Size = new System.Drawing.Size(51, 66);
+            this.A61.TabIndex = 246;
+            // 
+            // A54
+            // 
+            this.A54._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A54._BufferName = "A54";
+            this.A54._CommandID = "00000";
+            this.A54._Destination = "0";
+            this.A54._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A54._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A54._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A54._ReturnRequest = "0";
+            this.A54.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A54.Location = new System.Drawing.Point(1252, 207);
+            this.A54.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A54.Name = "A54";
+            this.A54.Padding = new System.Windows.Forms.Padding(3);
+            this.A54.Size = new System.Drawing.Size(51, 66);
+            this.A54.TabIndex = 245;
+            // 
+            // A51
+            // 
+            this.A51._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A51._BufferName = "A51";
+            this.A51._CommandID = "00000";
+            this.A51._Destination = "0";
+            this.A51._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A51._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A51._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A51._ReturnRequest = "0";
+            this.A51.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A51.Location = new System.Drawing.Point(1199, 207);
+            this.A51.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A51.Name = "A51";
+            this.A51.Padding = new System.Windows.Forms.Padding(3);
+            this.A51.Size = new System.Drawing.Size(51, 66);
+            this.A51.TabIndex = 244;
+            // 
+            // A50
+            // 
+            this.A50._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A50._BufferName = "A50";
+            this.A50._CommandID = "00000";
+            this.A50._Destination = "0";
+            this.A50._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A50._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A50._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A50._ReturnRequest = "0";
+            this.A50.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A50.Location = new System.Drawing.Point(1147, 206);
+            this.A50.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A50.Name = "A50";
+            this.A50.Padding = new System.Windows.Forms.Padding(3);
+            this.A50.Size = new System.Drawing.Size(51, 66);
+            this.A50.TabIndex = 243;
+            // 
+            // A46
+            // 
+            this.A46._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A46._BufferName = "A46";
+            this.A46._CommandID = "00000";
+            this.A46._Destination = "0";
+            this.A46._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A46._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A46._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A46._ReturnRequest = "0";
+            this.A46.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A46.Location = new System.Drawing.Point(1095, 206);
+            this.A46.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A46.Name = "A46";
+            this.A46.Padding = new System.Windows.Forms.Padding(3);
+            this.A46.Size = new System.Drawing.Size(51, 66);
+            this.A46.TabIndex = 242;
+            // 
+            // A45
+            // 
+            this.A45._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A45._BufferName = "A45";
+            this.A45._CommandID = "00000";
+            this.A45._Destination = "0";
+            this.A45._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A45._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A45._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A45._ReturnRequest = "0";
+            this.A45.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A45.Location = new System.Drawing.Point(1043, 206);
+            this.A45.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A45.Name = "A45";
+            this.A45.Padding = new System.Windows.Forms.Padding(3);
+            this.A45.Size = new System.Drawing.Size(51, 66);
+            this.A45.TabIndex = 241;
+            // 
+            // A42
+            // 
+            this.A42._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A42._BufferName = "A42";
+            this.A42._CommandID = "00000";
+            this.A42._Destination = "0";
+            this.A42._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A42._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A42._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A42._ReturnRequest = "0";
+            this.A42.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A42.Location = new System.Drawing.Point(990, 206);
+            this.A42.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A42.Name = "A42";
+            this.A42.Padding = new System.Windows.Forms.Padding(3);
+            this.A42.Size = new System.Drawing.Size(51, 66);
+            this.A42.TabIndex = 240;
+            // 
+            // A41
+            // 
+            this.A41._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A41._BufferName = "A41";
+            this.A41._CommandID = "00000";
+            this.A41._Destination = "0";
+            this.A41._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A41._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A41._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A41._ReturnRequest = "0";
+            this.A41.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A41.Location = new System.Drawing.Point(938, 206);
+            this.A41.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A41.Name = "A41";
+            this.A41.Padding = new System.Windows.Forms.Padding(3);
+            this.A41.Size = new System.Drawing.Size(51, 66);
+            this.A41.TabIndex = 239;
+            // 
+            // A16
+            // 
+            this.A16._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A16._BufferName = "A16";
+            this.A16._CommandID = "00000";
+            this.A16._Destination = "0";
+            this.A16._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A16._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A16._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A16._ReturnRequest = "0";
+            this.A16.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A16.Location = new System.Drawing.Point(1409, 73);
+            this.A16.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A16.Name = "A16";
+            this.A16.Padding = new System.Windows.Forms.Padding(3);
+            this.A16.Size = new System.Drawing.Size(51, 66);
+            this.A16.TabIndex = 238;
+            // 
+            // A81
+            // 
+            this.A81._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A81._BufferName = "A81";
+            this.A81._CommandID = "00000";
+            this.A81._Destination = "0";
+            this.A81._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A81._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A81._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A81._ReturnRequest = "0";
+            this.A81.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A81.Location = new System.Drawing.Point(1461, 31);
+            this.A81.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A81.Name = "A81";
+            this.A81.Padding = new System.Windows.Forms.Padding(3);
+            this.A81.Size = new System.Drawing.Size(51, 66);
+            this.A81.TabIndex = 237;
+            this.A81.Visible = false;
+            // 
+            // A77
+            // 
+            this.A77._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A77._BufferName = "A77";
+            this.A77._CommandID = "00000";
+            this.A77._Destination = "0";
+            this.A77._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A77._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A77._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A77._ReturnRequest = "0";
+            this.A77.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A77.Location = new System.Drawing.Point(1513, 74);
+            this.A77.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A77.Name = "A77";
+            this.A77.Padding = new System.Windows.Forms.Padding(3);
+            this.A77.Size = new System.Drawing.Size(51, 66);
+            this.A77.TabIndex = 235;
+            this.A77.Visible = false;
+            // 
+            // A82
+            // 
+            this.A82._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A82._BufferName = "A82";
+            this.A82._CommandID = "00000";
+            this.A82._Destination = "0";
+            this.A82._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A82._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A82._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A82._ReturnRequest = "0";
+            this.A82.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A82.Location = new System.Drawing.Point(1461, 98);
+            this.A82.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A82.Name = "A82";
+            this.A82.Padding = new System.Windows.Forms.Padding(3);
+            this.A82.Size = new System.Drawing.Size(51, 66);
+            this.A82.TabIndex = 234;
+            this.A82.Visible = false;
+            // 
+            // A83
+            // 
+            this.A83._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A83._BufferName = "A83";
+            this.A83._CommandID = "00000";
+            this.A83._Destination = "0";
+            this.A83._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A83._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A83._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A83._ReturnRequest = "0";
+            this.A83.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A83.Location = new System.Drawing.Point(1357, 73);
+            this.A83.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A83.Name = "A83";
+            this.A83.Padding = new System.Windows.Forms.Padding(3);
+            this.A83.Size = new System.Drawing.Size(51, 66);
+            this.A83.TabIndex = 233;
+            // 
+            // A08
+            // 
+            this.A08._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A08._BufferName = "A08";
+            this.A08._CommandID = "00000";
+            this.A08._Destination = "0";
+            this.A08._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A08._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A08._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A08._ReturnRequest = "0";
+            this.A08.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A08.Location = new System.Drawing.Point(1304, 73);
+            this.A08.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A08.Name = "A08";
+            this.A08.Padding = new System.Windows.Forms.Padding(3);
+            this.A08.Size = new System.Drawing.Size(51, 66);
+            this.A08.TabIndex = 232;
+            // 
+            // A84
+            // 
+            this.A84._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A84._BufferName = "A84";
+            this.A84._CommandID = "00000";
+            this.A84._Destination = "0";
+            this.A84._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A84._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A84._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A84._ReturnRequest = "0";
+            this.A84.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A84.Location = new System.Drawing.Point(1199, 73);
+            this.A84.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A84.Name = "A84";
+            this.A84.Padding = new System.Windows.Forms.Padding(3);
+            this.A84.Size = new System.Drawing.Size(104, 66);
+            this.A84.TabIndex = 231;
+            // 
+            // A85
+            // 
+            this.A85._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A85._BufferName = "A85";
+            this.A85._CommandID = "00000";
+            this.A85._Destination = "0";
+            this.A85._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A85._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A85._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A85._ReturnRequest = "0";
+            this.A85.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A85.Location = new System.Drawing.Point(1147, 72);
+            this.A85.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A85.Name = "A85";
+            this.A85.Padding = new System.Windows.Forms.Padding(3);
+            this.A85.Size = new System.Drawing.Size(51, 66);
+            this.A85.TabIndex = 230;
+            // 
+            // A86
+            // 
+            this.A86._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A86._BufferName = "A86";
+            this.A86._CommandID = "00000";
+            this.A86._Destination = "0";
+            this.A86._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A86._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A86._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A86._ReturnRequest = "0";
+            this.A86.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A86.Location = new System.Drawing.Point(1095, 72);
+            this.A86.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A86.Name = "A86";
+            this.A86.Padding = new System.Windows.Forms.Padding(3);
+            this.A86.Size = new System.Drawing.Size(51, 66);
+            this.A86.TabIndex = 229;
+            // 
+            // A88
+            // 
+            this.A88._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A88._BufferName = "A88";
+            this.A88._CommandID = "00000";
+            this.A88._Destination = "0";
+            this.A88._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A88._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A88._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A88._ReturnRequest = "0";
+            this.A88.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A88.Location = new System.Drawing.Point(990, 72);
+            this.A88.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A88.Name = "A88";
+            this.A88.Padding = new System.Windows.Forms.Padding(3);
+            this.A88.Size = new System.Drawing.Size(104, 66);
+            this.A88.TabIndex = 228;
+            // 
+            // A89
+            // 
+            this.A89._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A89._BufferName = "A89";
+            this.A89._CommandID = "00000";
+            this.A89._Destination = "0";
+            this.A89._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A89._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A89._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A89._ReturnRequest = "0";
+            this.A89.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A89.Location = new System.Drawing.Point(938, 72);
+            this.A89.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A89.Name = "A89";
+            this.A89.Padding = new System.Windows.Forms.Padding(3);
+            this.A89.Size = new System.Drawing.Size(51, 66);
+            this.A89.TabIndex = 227;
+            // 
+            // A01
+            // 
+            this.A01._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A01._BufferName = "A01";
+            this.A01._CommandID = "00000";
+            this.A01._Destination = "0";
+            this.A01._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A01._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A01._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A01._ReturnRequest = "0";
+            this.A01.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A01.Location = new System.Drawing.Point(3, 340);
+            this.A01.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A01.Name = "A01";
+            this.A01.Padding = new System.Windows.Forms.Padding(3);
+            this.A01.Size = new System.Drawing.Size(51, 66);
+            this.A01.TabIndex = 226;
+            // 
+            // A90
+            // 
+            this.A90._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A90._BufferName = "A90";
+            this.A90._CommandID = "00000";
+            this.A90._Destination = "0";
+            this.A90._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A90._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A90._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A90._ReturnRequest = "0";
+            this.A90.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A90.Location = new System.Drawing.Point(886, 72);
+            this.A90.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A90.Name = "A90";
+            this.A90.Padding = new System.Windows.Forms.Padding(3);
+            this.A90.Size = new System.Drawing.Size(51, 66);
+            this.A90.TabIndex = 225;
+            // 
+            // A93
+            // 
+            this.A93._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A93._BufferName = "A93";
+            this.A93._CommandID = "00000";
+            this.A93._Destination = "0";
+            this.A93._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A93._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A93._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A93._ReturnRequest = "0";
+            this.A93.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A93.Location = new System.Drawing.Point(834, 340);
+            this.A93.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A93.Name = "A93";
+            this.A93.Padding = new System.Windows.Forms.Padding(3);
+            this.A93.Size = new System.Drawing.Size(51, 66);
+            this.A93.TabIndex = 223;
+            // 
+            // A39
+            // 
+            this.A39._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A39._BufferName = "A39";
+            this.A39._CommandID = "00000";
+            this.A39._Destination = "0";
+            this.A39._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A39._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A39._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A39._ReturnRequest = "0";
+            this.A39.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A39.Location = new System.Drawing.Point(834, 273);
+            this.A39.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A39.Name = "A39";
+            this.A39.Padding = new System.Windows.Forms.Padding(3);
+            this.A39.Size = new System.Drawing.Size(51, 66);
+            this.A39.TabIndex = 223;
+            // 
+            // A40
+            // 
+            this.A40._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A40._BufferName = "A40";
+            this.A40._CommandID = "00000";
+            this.A40._Destination = "0";
+            this.A40._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A40._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A40._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A40._ReturnRequest = "0";
+            this.A40.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A40.Location = new System.Drawing.Point(886, 206);
+            this.A40.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A40.Name = "A40";
+            this.A40.Padding = new System.Windows.Forms.Padding(3);
+            this.A40.Size = new System.Drawing.Size(51, 66);
+            this.A40.TabIndex = 222;
+            // 
+            // A38
+            // 
+            this.A38._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A38._BufferName = "A38";
+            this.A38._CommandID = "00000";
+            this.A38._Destination = "0";
+            this.A38._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A38._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A38._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A38._ReturnRequest = "0";
+            this.A38.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A38.Location = new System.Drawing.Point(834, 206);
+            this.A38.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A38.Name = "A38";
+            this.A38.Padding = new System.Windows.Forms.Padding(3);
+            this.A38.Size = new System.Drawing.Size(51, 66);
+            this.A38.TabIndex = 221;
+            // 
+            // craneMonitor5
+            // 
+            this.craneMonitor5._CommandID = "";
+            this.craneMonitor5._CraneMode = "X";
+            this.craneMonitor5._CraneNo = 1;
+            this.craneMonitor5._CraneState = "X";
+            this.craneMonitor5.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor5.Location = new System.Drawing.Point(756, 479);
+            this.craneMonitor5.Name = "craneMonitor5";
+            this.craneMonitor5.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor5.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor5.TabIndex = 219;
+            // 
+            // A97
+            // 
+            this.A97._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A97._BufferName = "A97";
+            this.A97._CommandID = "00000";
+            this.A97._Destination = "0";
+            this.A97._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A97._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A97._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A97._ReturnRequest = "0";
+            this.A97.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A97.Location = new System.Drawing.Point(678, 72);
+            this.A97.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A97.Name = "A97";
+            this.A97.Padding = new System.Windows.Forms.Padding(3);
+            this.A97.Size = new System.Drawing.Size(51, 66);
+            this.A97.TabIndex = 217;
+            // 
+            // A95
+            // 
+            this.A95._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A95._BufferName = "A95";
+            this.A95._CommandID = "00000";
+            this.A95._Destination = "0";
+            this.A95._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A95._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A95._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A95._ReturnRequest = "0";
+            this.A95.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A95.Location = new System.Drawing.Point(730, 72);
+            this.A95.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A95.Name = "A95";
+            this.A95.Padding = new System.Windows.Forms.Padding(3);
+            this.A95.Size = new System.Drawing.Size(51, 66);
+            this.A95.TabIndex = 216;
+            // 
+            // A92
+            // 
+            this.A92._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A92._BufferName = "A92";
+            this.A92._CommandID = "00000";
+            this.A92._Destination = "0";
+            this.A92._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A92._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A92._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A92._ReturnRequest = "0";
+            this.A92.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A92.Location = new System.Drawing.Point(834, 72);
+            this.A92.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A92.Name = "A92";
+            this.A92.Padding = new System.Windows.Forms.Padding(3);
+            this.A92.Size = new System.Drawing.Size(51, 66);
+            this.A92.TabIndex = 215;
+            // 
+            // A94
+            // 
+            this.A94._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A94._BufferName = "A94";
+            this.A94._CommandID = "00000";
+            this.A94._Destination = "0";
+            this.A94._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A94._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A94._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A94._ReturnRequest = "0";
+            this.A94.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A94.Location = new System.Drawing.Point(782, 72);
+            this.A94.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A94.Name = "A94";
+            this.A94.Padding = new System.Windows.Forms.Padding(3);
+            this.A94.Size = new System.Drawing.Size(51, 66);
+            this.A94.TabIndex = 214;
+            // 
+            // A34
+            // 
+            this.A34._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A34._BufferName = "A34";
+            this.A34._CommandID = "00000";
+            this.A34._Destination = "0";
+            this.A34._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A34._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A34._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A34._ReturnRequest = "0";
+            this.A34.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A34.Location = new System.Drawing.Point(730, 407);
+            this.A34.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A34.Name = "A34";
+            this.A34.Padding = new System.Windows.Forms.Padding(3);
+            this.A34.Size = new System.Drawing.Size(51, 66);
+            this.A34.TabIndex = 212;
+            // 
+            // A33
+            // 
+            this.A33._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A33._BufferName = "A33";
+            this.A33._CommandID = "00000";
+            this.A33._Destination = "0";
+            this.A33._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A33._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A33._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A33._ReturnRequest = "0";
+            this.A33.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A33.Location = new System.Drawing.Point(730, 340);
+            this.A33.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A33.Name = "A33";
+            this.A33.Padding = new System.Windows.Forms.Padding(3);
+            this.A33.Size = new System.Drawing.Size(51, 66);
+            this.A33.TabIndex = 212;
+            // 
+            // A98
+            // 
+            this.A98._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A98._BufferName = "A98";
+            this.A98._CommandID = "00000";
+            this.A98._Destination = "0";
+            this.A98._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A98._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A98._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A98._ReturnRequest = "0";
+            this.A98.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A98.Location = new System.Drawing.Point(678, 340);
+            this.A98.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A98.Name = "A98";
+            this.A98.Padding = new System.Windows.Forms.Padding(3);
+            this.A98.Size = new System.Drawing.Size(51, 66);
+            this.A98.TabIndex = 211;
+            // 
+            // A31
+            // 
+            this.A31._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A31._BufferName = "A31";
+            this.A31._CommandID = "00000";
+            this.A31._Destination = "0";
+            this.A31._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A31._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A31._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A31._ReturnRequest = "0";
+            this.A31.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A31.Location = new System.Drawing.Point(678, 273);
+            this.A31.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A31.Name = "A31";
+            this.A31.Padding = new System.Windows.Forms.Padding(3);
+            this.A31.Size = new System.Drawing.Size(51, 66);
+            this.A31.TabIndex = 211;
+            // 
+            // A36
+            // 
+            this.A36._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A36._BufferName = "A36";
+            this.A36._CommandID = "00000";
+            this.A36._Destination = "0";
+            this.A36._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A36._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A36._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A36._ReturnRequest = "0";
+            this.A36.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A36.Location = new System.Drawing.Point(730, 273);
+            this.A36.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A36.Name = "A36";
+            this.A36.Padding = new System.Windows.Forms.Padding(3);
+            this.A36.Size = new System.Drawing.Size(51, 66);
+            this.A36.TabIndex = 210;
+            // 
+            // A30
+            // 
+            this.A30._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A30._BufferName = "A30";
+            this.A30._CommandID = "00000";
+            this.A30._Destination = "0";
+            this.A30._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A30._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A30._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A30._ReturnRequest = "0";
+            this.A30.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A30.Location = new System.Drawing.Point(678, 206);
+            this.A30.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A30.Name = "A30";
+            this.A30.Padding = new System.Windows.Forms.Padding(3);
+            this.A30.Size = new System.Drawing.Size(51, 66);
+            this.A30.TabIndex = 209;
+            // 
+            // craneMonitor3
+            // 
+            this.craneMonitor3._CommandID = "";
+            this.craneMonitor3._CraneMode = "X";
+            this.craneMonitor3._CraneNo = 2;
+            this.craneMonitor3._CraneState = "X";
+            this.craneMonitor3.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor3.Location = new System.Drawing.Point(600, 479);
+            this.craneMonitor3.Name = "craneMonitor3";
+            this.craneMonitor3.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor3.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor3.TabIndex = 207;
+            // 
+            // A25
+            // 
+            this.A25._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A25._BufferName = "A25";
+            this.A25._CommandID = "00000";
+            this.A25._Destination = "0";
+            this.A25._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A25._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A25._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A25._ReturnRequest = "0";
+            this.A25.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A25.Location = new System.Drawing.Point(575, 407);
+            this.A25.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A25.Name = "A25";
+            this.A25.Padding = new System.Windows.Forms.Padding(3);
+            this.A25.Size = new System.Drawing.Size(51, 66);
+            this.A25.TabIndex = 205;
+            // 
+            // A26
+            // 
+            this.A26._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A26._BufferName = "A26";
+            this.A26._CommandID = "00000";
+            this.A26._Destination = "0";
+            this.A26._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A26._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A26._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A26._ReturnRequest = "0";
+            this.A26.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A26.Location = new System.Drawing.Point(575, 340);
+            this.A26.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A26.Name = "A26";
+            this.A26.Padding = new System.Windows.Forms.Padding(3);
+            this.A26.Size = new System.Drawing.Size(51, 66);
+            this.A26.TabIndex = 205;
+            // 
+            // A103
+            // 
+            this.A103._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A103._BufferName = "A103";
+            this.A103._CommandID = "00000";
+            this.A103._Destination = "0";
+            this.A103._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A103._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A103._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A103._ReturnRequest = "0";
+            this.A103.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A103.Location = new System.Drawing.Point(523, 340);
+            this.A103.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A103.Name = "A103";
+            this.A103.Padding = new System.Windows.Forms.Padding(3);
+            this.A103.Size = new System.Drawing.Size(51, 66);
+            this.A103.TabIndex = 204;
+            // 
+            // A23
+            // 
+            this.A23._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A23._BufferName = "A23";
+            this.A23._CommandID = "00000";
+            this.A23._Destination = "0";
+            this.A23._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A23._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A23._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A23._ReturnRequest = "0";
+            this.A23.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A23.Location = new System.Drawing.Point(523, 273);
+            this.A23.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A23.Name = "A23";
+            this.A23.Padding = new System.Windows.Forms.Padding(3);
+            this.A23.Size = new System.Drawing.Size(51, 66);
+            this.A23.TabIndex = 204;
+            // 
+            // A28
+            // 
+            this.A28._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A28._BufferName = "A28";
+            this.A28._CommandID = "00000";
+            this.A28._Destination = "0";
+            this.A28._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A28._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A28._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A28._ReturnRequest = "0";
+            this.A28.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A28.Location = new System.Drawing.Point(575, 273);
+            this.A28.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A28.Name = "A28";
+            this.A28.Padding = new System.Windows.Forms.Padding(3);
+            this.A28.Size = new System.Drawing.Size(51, 66);
+            this.A28.TabIndex = 203;
+            // 
+            // A22
+            // 
+            this.A22._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A22._BufferName = "A22";
+            this.A22._CommandID = "00000";
+            this.A22._Destination = "0";
+            this.A22._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A22._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A22._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A22._ReturnRequest = "0";
+            this.A22.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A22.Location = new System.Drawing.Point(523, 206);
+            this.A22.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A22.Name = "A22";
+            this.A22.Padding = new System.Windows.Forms.Padding(3);
+            this.A22.Size = new System.Drawing.Size(51, 66);
+            this.A22.TabIndex = 202;
+            // 
+            // A21
+            // 
+            this.A21._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A21._BufferName = "A21";
+            this.A21._CommandID = "00000";
+            this.A21._Destination = "0";
+            this.A21._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A21._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A21._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A21._ReturnRequest = "0";
+            this.A21.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A21.Location = new System.Drawing.Point(471, 206);
+            this.A21.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A21.Name = "A21";
+            this.A21.Padding = new System.Windows.Forms.Padding(3);
+            this.A21.Size = new System.Drawing.Size(51, 66);
+            this.A21.TabIndex = 201;
+            // 
+            // craneMonitor4
+            // 
+            this.craneMonitor4._CommandID = "";
+            this.craneMonitor4._CraneMode = "X";
+            this.craneMonitor4._CraneNo = 3;
+            this.craneMonitor4._CraneState = "X";
+            this.craneMonitor4.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor4.Location = new System.Drawing.Point(444, 479);
+            this.craneMonitor4.Name = "craneMonitor4";
+            this.craneMonitor4.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor4.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor4.TabIndex = 200;
+            // 
+            // A18
+            // 
+            this.A18._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A18._BufferName = "A18";
+            this.A18._CommandID = "00000";
+            this.A18._Destination = "0";
+            this.A18._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A18._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A18._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A18._ReturnRequest = "0";
+            this.A18.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A18.Location = new System.Drawing.Point(419, 407);
+            this.A18.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A18.Name = "A18";
+            this.A18.Padding = new System.Windows.Forms.Padding(3);
+            this.A18.Size = new System.Drawing.Size(51, 66);
+            this.A18.TabIndex = 198;
+            // 
+            // A17
+            // 
+            this.A17._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A17._BufferName = "A17";
+            this.A17._CommandID = "00000";
+            this.A17._Destination = "0";
+            this.A17._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A17._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A17._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A17._ReturnRequest = "0";
+            this.A17.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A17.Location = new System.Drawing.Point(419, 340);
+            this.A17.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A17.Name = "A17";
+            this.A17.Padding = new System.Windows.Forms.Padding(3);
+            this.A17.Size = new System.Drawing.Size(51, 66);
+            this.A17.TabIndex = 198;
+            // 
+            // A09
+            // 
+            this.A09._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A09._BufferName = "A09";
+            this.A09._CommandID = "00000";
+            this.A09._Destination = "0";
+            this.A09._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A09._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A09._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A09._ReturnRequest = "0";
+            this.A09.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A09.Location = new System.Drawing.Point(263, 340);
+            this.A09.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A09.Name = "A09";
+            this.A09.Padding = new System.Windows.Forms.Padding(3);
+            this.A09.Size = new System.Drawing.Size(51, 66);
+            this.A09.TabIndex = 198;
+            // 
+            // A15
+            // 
+            this.A15._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A15._BufferName = "A15";
+            this.A15._CommandID = "00000";
+            this.A15._Destination = "0";
+            this.A15._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A15._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A15._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A15._ReturnRequest = "0";
+            this.A15.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A15.Location = new System.Drawing.Point(367, 273);
+            this.A15.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A15.Name = "A15";
+            this.A15.Padding = new System.Windows.Forms.Padding(3);
+            this.A15.Size = new System.Drawing.Size(51, 66);
+            this.A15.TabIndex = 197;
+            // 
+            // A108
+            // 
+            this.A108._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A108._BufferName = "A108";
+            this.A108._CommandID = "00000";
+            this.A108._Destination = "0";
+            this.A108._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A108._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A108._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A108._ReturnRequest = "0";
+            this.A108.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A108.Location = new System.Drawing.Point(367, 340);
+            this.A108.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A108.Name = "A108";
+            this.A108.Padding = new System.Windows.Forms.Padding(3);
+            this.A108.Size = new System.Drawing.Size(51, 66);
+            this.A108.TabIndex = 197;
+            // 
+            // A07
+            // 
+            this.A07._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A07._BufferName = "A07";
+            this.A07._CommandID = "00000";
+            this.A07._Destination = "0";
+            this.A07._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A07._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A07._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A07._ReturnRequest = "0";
+            this.A07.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A07.Location = new System.Drawing.Point(212, 273);
+            this.A07.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A07.Name = "A07";
+            this.A07.Padding = new System.Windows.Forms.Padding(3);
+            this.A07.Size = new System.Drawing.Size(51, 66);
+            this.A07.TabIndex = 197;
+            // 
+            // A20
+            // 
+            this.A20._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A20._BufferName = "A20";
+            this.A20._CommandID = "00000";
+            this.A20._Destination = "0";
+            this.A20._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A20._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A20._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A20._ReturnRequest = "0";
+            this.A20.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A20.Location = new System.Drawing.Point(419, 273);
+            this.A20.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A20.Name = "A20";
+            this.A20.Padding = new System.Windows.Forms.Padding(3);
+            this.A20.Size = new System.Drawing.Size(51, 66);
+            this.A20.TabIndex = 196;
+            // 
+            // A14
+            // 
+            this.A14._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A14._BufferName = "A14";
+            this.A14._CommandID = "00000";
+            this.A14._Destination = "0";
+            this.A14._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A14._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A14._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A14._ReturnRequest = "0";
+            this.A14.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A14.Location = new System.Drawing.Point(367, 206);
+            this.A14.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A14.Name = "A14";
+            this.A14.Padding = new System.Windows.Forms.Padding(3);
+            this.A14.Size = new System.Drawing.Size(51, 66);
+            this.A14.TabIndex = 195;
+            // 
+            // A13
+            // 
+            this.A13._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A13._BufferName = "A13";
+            this.A13._CommandID = "00000";
+            this.A13._Destination = "0";
+            this.A13._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A13._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A13._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A13._ReturnRequest = "0";
+            this.A13.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A13.Location = new System.Drawing.Point(315, 206);
+            this.A13.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A13.Name = "A13";
+            this.A13.Padding = new System.Windows.Forms.Padding(3);
+            this.A13.Size = new System.Drawing.Size(51, 66);
+            this.A13.TabIndex = 194;
+            // 
+            // craneMonitor2
+            // 
+            this.craneMonitor2._CommandID = "";
+            this.craneMonitor2._CraneMode = "X";
+            this.craneMonitor2._CraneNo = 4;
+            this.craneMonitor2._CraneState = "X";
+            this.craneMonitor2.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor2.Location = new System.Drawing.Point(289, 479);
+            this.craneMonitor2.Name = "craneMonitor2";
+            this.craneMonitor2.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor2.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor2.TabIndex = 193;
+            // 
+            // A10
+            // 
+            this.A10._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A10._BufferName = "A10";
+            this.A10._CommandID = "00000";
+            this.A10._Destination = "0";
+            this.A10._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A10._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A10._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A10._ReturnRequest = "0";
+            this.A10.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A10.Location = new System.Drawing.Point(263, 408);
+            this.A10.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A10.Name = "A10";
+            this.A10.Padding = new System.Windows.Forms.Padding(3);
+            this.A10.Size = new System.Drawing.Size(51, 66);
+            this.A10.TabIndex = 191;
+            // 
+            // A113
+            // 
+            this.A113._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A113._BufferName = "A113";
+            this.A113._CommandID = "00000";
+            this.A113._Destination = "0";
+            this.A113._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A113._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A113._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A113._ReturnRequest = "0";
+            this.A113.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A113.Location = new System.Drawing.Point(212, 341);
+            this.A113.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A113.Name = "A113";
+            this.A113.Padding = new System.Windows.Forms.Padding(3);
+            this.A113.Size = new System.Drawing.Size(51, 66);
+            this.A113.TabIndex = 190;
+            // 
+            // A12
+            // 
+            this.A12._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A12._BufferName = "A12";
+            this.A12._CommandID = "00000";
+            this.A12._Destination = "0";
+            this.A12._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A12._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A12._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A12._ReturnRequest = "0";
+            this.A12.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A12.Location = new System.Drawing.Point(263, 273);
+            this.A12.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A12.Name = "A12";
+            this.A12.Padding = new System.Windows.Forms.Padding(3);
+            this.A12.Size = new System.Drawing.Size(51, 66);
+            this.A12.TabIndex = 189;
+            // 
+            // A06
+            // 
+            this.A06._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A06._BufferName = "A06";
+            this.A06._CommandID = "00000";
+            this.A06._Destination = "0";
+            this.A06._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A06._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A06._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A06._ReturnRequest = "0";
+            this.A06.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A06.Location = new System.Drawing.Point(212, 206);
+            this.A06.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A06.Name = "A06";
+            this.A06.Padding = new System.Windows.Forms.Padding(3);
+            this.A06.Size = new System.Drawing.Size(51, 66);
+            this.A06.TabIndex = 188;
+            // 
+            // A04
+            // 
+            this.A04._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A04._BufferName = "A04";
+            this.A04._CommandID = "00000";
+            this.A04._Destination = "0";
+            this.A04._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A04._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A04._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A04._ReturnRequest = "0";
+            this.A04.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A04.Location = new System.Drawing.Point(55, 206);
+            this.A04.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A04.Name = "A04";
+            this.A04.Padding = new System.Windows.Forms.Padding(3);
+            this.A04.Size = new System.Drawing.Size(79, 66);
+            this.A04.TabIndex = 187;
+            // 
+            // A99
+            // 
+            this.A99._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A99._BufferName = "A99";
+            this.A99._CommandID = "00000";
+            this.A99._Destination = "0";
+            this.A99._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A99._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A99._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A99._ReturnRequest = "0";
+            this.A99.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A99.Location = new System.Drawing.Point(626, 72);
+            this.A99.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A99.Name = "A99";
+            this.A99.Padding = new System.Windows.Forms.Padding(3);
+            this.A99.Size = new System.Drawing.Size(51, 66);
+            this.A99.TabIndex = 186;
+            // 
+            // A100
+            // 
+            this.A100._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A100._BufferName = "A100";
+            this.A100._CommandID = "00000";
+            this.A100._Destination = "0";
+            this.A100._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A100._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A100._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A100._ReturnRequest = "0";
+            this.A100.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A100.Location = new System.Drawing.Point(575, 72);
+            this.A100.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A100.Name = "A100";
+            this.A100.Padding = new System.Windows.Forms.Padding(3);
+            this.A100.Size = new System.Drawing.Size(51, 66);
+            this.A100.TabIndex = 184;
+            // 
+            // A102
+            // 
+            this.A102._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A102._BufferName = "A102";
+            this.A102._CommandID = "00000";
+            this.A102._Destination = "0";
+            this.A102._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A102._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A102._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A102._ReturnRequest = "0";
+            this.A102.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A102.Location = new System.Drawing.Point(523, 72);
+            this.A102.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A102.Name = "A102";
+            this.A102.Padding = new System.Windows.Forms.Padding(3);
+            this.A102.Size = new System.Drawing.Size(51, 66);
+            this.A102.TabIndex = 183;
+            // 
+            // A104
+            // 
+            this.A104._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A104._BufferName = "A104";
+            this.A104._CommandID = "00000";
+            this.A104._Destination = "0";
+            this.A104._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A104._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A104._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A104._ReturnRequest = "0";
+            this.A104.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A104.Location = new System.Drawing.Point(471, 72);
+            this.A104.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A104.Name = "A104";
+            this.A104.Padding = new System.Windows.Forms.Padding(3);
+            this.A104.Size = new System.Drawing.Size(51, 66);
+            this.A104.TabIndex = 182;
+            // 
+            // A105
+            // 
+            this.A105._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A105._BufferName = "A105";
+            this.A105._CommandID = "00000";
+            this.A105._Destination = "0";
+            this.A105._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A105._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A105._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A105._ReturnRequest = "0";
+            this.A105.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A105.Location = new System.Drawing.Point(419, 72);
+            this.A105.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A105.Name = "A105";
+            this.A105.Padding = new System.Windows.Forms.Padding(3);
+            this.A105.Size = new System.Drawing.Size(51, 66);
+            this.A105.TabIndex = 181;
+            // 
+            // A107
+            // 
+            this.A107._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A107._BufferName = "A107";
+            this.A107._CommandID = "00000";
+            this.A107._Destination = "0";
+            this.A107._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A107._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A107._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A107._ReturnRequest = "0";
+            this.A107.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A107.Location = new System.Drawing.Point(367, 72);
+            this.A107.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A107.Name = "A107";
+            this.A107.Padding = new System.Windows.Forms.Padding(3);
+            this.A107.Size = new System.Drawing.Size(51, 66);
+            this.A107.TabIndex = 179;
+            // 
+            // A109
+            // 
+            this.A109._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A109._BufferName = "A109";
+            this.A109._CommandID = "00000";
+            this.A109._Destination = "0";
+            this.A109._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A109._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A109._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A109._ReturnRequest = "0";
+            this.A109.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A109.Location = new System.Drawing.Point(316, 72);
+            this.A109.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A109.Name = "A109";
+            this.A109.Padding = new System.Windows.Forms.Padding(3);
+            this.A109.Size = new System.Drawing.Size(51, 66);
+            this.A109.TabIndex = 177;
+            // 
+            // A110
+            // 
+            this.A110._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A110._BufferName = "A110";
+            this.A110._CommandID = "00000";
+            this.A110._Destination = "0";
+            this.A110._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A110._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A110._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A110._ReturnRequest = "0";
+            this.A110.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A110.Location = new System.Drawing.Point(264, 72);
+            this.A110.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A110.Name = "A110";
+            this.A110.Padding = new System.Windows.Forms.Padding(3);
+            this.A110.Size = new System.Drawing.Size(51, 66);
+            this.A110.TabIndex = 176;
+            // 
+            // A112
+            // 
+            this.A112._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A112._BufferName = "A112";
+            this.A112._CommandID = "00000";
+            this.A112._Destination = "0";
+            this.A112._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A112._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A112._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A112._ReturnRequest = "0";
+            this.A112.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A112.Location = new System.Drawing.Point(212, 72);
+            this.A112.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A112.Name = "A112";
+            this.A112.Padding = new System.Windows.Forms.Padding(3);
+            this.A112.Size = new System.Drawing.Size(51, 66);
+            this.A112.TabIndex = 175;
+            // 
+            // A05
+            // 
+            this.A05._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A05._BufferName = "A05";
+            this.A05._CommandID = "00000";
+            this.A05._Destination = "0";
+            this.A05._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A05._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A05._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A05._ReturnRequest = "0";
+            this.A05.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A05.Location = new System.Drawing.Point(135, 206);
+            this.A05.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A05.Name = "A05";
+            this.A05.Padding = new System.Windows.Forms.Padding(3);
+            this.A05.Size = new System.Drawing.Size(76, 66);
+            this.A05.TabIndex = 174;
+            // 
+            // A02
+            // 
+            this.A02._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A02._BufferName = "A02";
+            this.A02._CommandID = "00000";
+            this.A02._Destination = "0";
+            this.A02._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A02._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A02._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A02._ReturnRequest = "0";
+            this.A02.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A02.Location = new System.Drawing.Point(3, 273);
+            this.A02.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A02.Name = "A02";
+            this.A02.Padding = new System.Windows.Forms.Padding(3);
+            this.A02.Size = new System.Drawing.Size(51, 66);
+            this.A02.TabIndex = 173;
+            // 
+            // A114
+            // 
+            this.A114._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A114._BufferName = "A114";
+            this.A114._CommandID = "00000";
+            this.A114._Destination = "0";
+            this.A114._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A114._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A114._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A114._ReturnRequest = "0";
+            this.A114.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A114.Location = new System.Drawing.Point(160, 72);
+            this.A114.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A114.Name = "A114";
+            this.A114.Padding = new System.Windows.Forms.Padding(3);
+            this.A114.Size = new System.Drawing.Size(51, 66);
+            this.A114.TabIndex = 172;
+            // 
+            // A115
+            // 
+            this.A115._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A115._BufferName = "A115";
+            this.A115._CommandID = "00000";
+            this.A115._Destination = "0";
+            this.A115._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A115._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A115._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A115._ReturnRequest = "0";
+            this.A115.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A115.Location = new System.Drawing.Point(107, 72);
+            this.A115.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A115.Name = "A115";
+            this.A115.Padding = new System.Windows.Forms.Padding(3);
+            this.A115.Size = new System.Drawing.Size(51, 66);
+            this.A115.TabIndex = 171;
+            // 
+            // A116
+            // 
+            this.A116._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A116._BufferName = "A116";
+            this.A116._CommandID = "00000";
+            this.A116._Destination = "0";
+            this.A116._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A116._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A116._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A116._ReturnRequest = "0";
+            this.A116.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A116.Location = new System.Drawing.Point(55, 72);
+            this.A116.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A116.Name = "A116";
+            this.A116.Padding = new System.Windows.Forms.Padding(3);
+            this.A116.Size = new System.Drawing.Size(51, 66);
+            this.A116.TabIndex = 170;
+            // 
+            // A118
+            // 
+            this.A118._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A118._BufferName = "A118";
+            this.A118._CommandID = "00000";
+            this.A118._Destination = "0";
+            this.A118._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A118._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A118._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A118._ReturnRequest = "0";
+            this.A118.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A118.Location = new System.Drawing.Point(3, 139);
+            this.A118.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A118.Name = "A118";
+            this.A118.Padding = new System.Windows.Forms.Padding(3);
+            this.A118.Size = new System.Drawing.Size(51, 66);
+            this.A118.TabIndex = 169;
+            // 
+            // A117
+            // 
+            this.A117._Auto = Mirle.ASRS.Buffer.Signal.Off;
+            this.A117._BufferName = "A117";
+            this.A117._CommandID = "00000";
+            this.A117._Destination = "0";
+            this.A117._Error = Mirle.ASRS.Buffer.Signal.Off;
+            this.A117._Load = Mirle.ASRS.Buffer.Signal.Off;
+            this.A117._Mode = Mirle.ASRS.Buffer.StnMode.None;
+            this.A117._ReturnRequest = "0";
+            this.A117.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.A117.Location = new System.Drawing.Point(3, 72);
+            this.A117.MinimumSize = new System.Drawing.Size(51, 66);
+            this.A117.Name = "A117";
+            this.A117.Padding = new System.Windows.Forms.Padding(3);
+            this.A117.Size = new System.Drawing.Size(51, 66);
+            this.A117.TabIndex = 169;
+            // 
+            // craneMonitor1
+            // 
+            this.craneMonitor1._CommandID = "";
+            this.craneMonitor1._CraneMode = "X";
+            this.craneMonitor1._CraneNo = 5;
+            this.craneMonitor1._CraneState = "X";
+            this.craneMonitor1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor1.Location = new System.Drawing.Point(77, 479);
+            this.craneMonitor1.Name = "craneMonitor1";
+            this.craneMonitor1.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor1.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor1.TabIndex = 168;
             // 
             // tabPage1
             // 
@@ -1294,1889 +3148,6 @@
             this.btn_Query.UseVisualStyleBackColor = true;
             this.btn_Query.Click += new System.EventHandler(this.btn_Query_Click);
             // 
-            // A66
-            // 
-            this.A66._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A66._BufferName = "A66";
-            this.A66._CommandID = "00000";
-            this.A66._Destination = "0";
-            this.A66._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A66._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A66._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A66._ReturnRequest = false;
-            this.A66.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A66.Location = new System.Drawing.Point(1565, 610);
-            this.A66.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A66.Name = "A66";
-            this.A66.Padding = new System.Windows.Forms.Padding(3);
-            this.A66.Size = new System.Drawing.Size(51, 66);
-            this.A66.TabIndex = 277;
-            // 
-            // A65
-            // 
-            this.A65._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A65._BufferName = "A65";
-            this.A65._CommandID = "00000";
-            this.A65._Destination = "0";
-            this.A65._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A65._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A65._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A65._ReturnRequest = false;
-            this.A65.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A65.Location = new System.Drawing.Point(1513, 610);
-            this.A65.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A65.Name = "A65";
-            this.A65.Padding = new System.Windows.Forms.Padding(3);
-            this.A65.Size = new System.Drawing.Size(51, 66);
-            this.A65.TabIndex = 276;
-            // 
-            // A79
-            // 
-            this.A79._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A79._BufferName = "A79";
-            this.A79._CommandID = "00000";
-            this.A79._Destination = "0";
-            this.A79._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A79._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A79._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A79._ReturnRequest = false;
-            this.A79.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A79.Location = new System.Drawing.Point(1461, 244);
-            this.A79.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A79.Name = "A79";
-            this.A79.Padding = new System.Windows.Forms.Padding(3);
-            this.A79.Size = new System.Drawing.Size(51, 66);
-            this.A79.TabIndex = 275;
-            // 
-            // A59
-            // 
-            this.A59._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A59._BufferName = "A59";
-            this.A59._CommandID = "00000";
-            this.A59._Destination = "0";
-            this.A59._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A59._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A59._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A59._ReturnRequest = false;
-            this.A59.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A59.Location = new System.Drawing.Point(1409, 274);
-            this.A59.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A59.Name = "A59";
-            this.A59.Padding = new System.Windows.Forms.Padding(3);
-            this.A59.Size = new System.Drawing.Size(51, 66);
-            this.A59.TabIndex = 274;
-            // 
-            // A57
-            // 
-            this.A57._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A57._BufferName = "A57";
-            this.A57._CommandID = "00000";
-            this.A57._Destination = "0";
-            this.A57._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A57._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A57._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A57._ReturnRequest = false;
-            this.A57.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A57.Location = new System.Drawing.Point(1304, 274);
-            this.A57.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A57.Name = "A57";
-            this.A57.Padding = new System.Windows.Forms.Padding(3);
-            this.A57.Size = new System.Drawing.Size(104, 66);
-            this.A57.TabIndex = 273;
-            // 
-            // A53
-            // 
-            this.A53._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A53._BufferName = "A53";
-            this.A53._CommandID = "00000";
-            this.A53._Destination = "0";
-            this.A53._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A53._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A53._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A53._ReturnRequest = false;
-            this.A53.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A53.Location = new System.Drawing.Point(1199, 341);
-            this.A53.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A53.Name = "A53";
-            this.A53.Padding = new System.Windows.Forms.Padding(3);
-            this.A53.Size = new System.Drawing.Size(51, 66);
-            this.A53.TabIndex = 272;
-            // 
-            // A52
-            // 
-            this.A52._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A52._BufferName = "A52";
-            this.A52._CommandID = "00000";
-            this.A52._Destination = "0";
-            this.A52._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A52._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A52._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A52._ReturnRequest = false;
-            this.A52.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A52.Location = new System.Drawing.Point(1199, 274);
-            this.A52.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A52.Name = "A52";
-            this.A52.Padding = new System.Windows.Forms.Padding(3);
-            this.A52.Size = new System.Drawing.Size(51, 66);
-            this.A52.TabIndex = 271;
-            // 
-            // A48
-            // 
-            this.A48._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A48._BufferName = "A48";
-            this.A48._CommandID = "00000";
-            this.A48._Destination = "0";
-            this.A48._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A48._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A48._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A48._ReturnRequest = false;
-            this.A48.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A48.Location = new System.Drawing.Point(1095, 340);
-            this.A48.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A48.Name = "A48";
-            this.A48.Padding = new System.Windows.Forms.Padding(3);
-            this.A48.Size = new System.Drawing.Size(51, 66);
-            this.A48.TabIndex = 270;
-            // 
-            // A47
-            // 
-            this.A47._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A47._BufferName = "A47";
-            this.A47._CommandID = "00000";
-            this.A47._Destination = "0";
-            this.A47._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A47._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A47._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A47._ReturnRequest = false;
-            this.A47.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A47.Location = new System.Drawing.Point(1095, 273);
-            this.A47.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A47.Name = "A47";
-            this.A47.Padding = new System.Windows.Forms.Padding(3);
-            this.A47.Size = new System.Drawing.Size(51, 66);
-            this.A47.TabIndex = 269;
-            // 
-            // A87
-            // 
-            this.A87._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A87._BufferName = "A87";
-            this.A87._CommandID = "00000";
-            this.A87._Destination = "0";
-            this.A87._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A87._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A87._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A87._ReturnRequest = false;
-            this.A87.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A87.Location = new System.Drawing.Point(1095, 139);
-            this.A87.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A87.Name = "A87";
-            this.A87.Padding = new System.Windows.Forms.Padding(3);
-            this.A87.Size = new System.Drawing.Size(51, 66);
-            this.A87.TabIndex = 268;
-            // 
-            // A43
-            // 
-            this.A43._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A43._BufferName = "A43";
-            this.A43._CommandID = "00000";
-            this.A43._Destination = "0";
-            this.A43._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A43._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A43._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A43._ReturnRequest = false;
-            this.A43.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A43.Location = new System.Drawing.Point(990, 273);
-            this.A43.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A43.Name = "A43";
-            this.A43.Padding = new System.Windows.Forms.Padding(3);
-            this.A43.Size = new System.Drawing.Size(51, 66);
-            this.A43.TabIndex = 267;
-            // 
-            // A37
-            // 
-            this.A37._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A37._BufferName = "A37";
-            this.A37._CommandID = "00000";
-            this.A37._Destination = "0";
-            this.A37._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A37._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A37._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A37._ReturnRequest = false;
-            this.A37.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A37.Location = new System.Drawing.Point(782, 206);
-            this.A37.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A37.Name = "A37";
-            this.A37.Padding = new System.Windows.Forms.Padding(3);
-            this.A37.Size = new System.Drawing.Size(51, 66);
-            this.A37.TabIndex = 265;
-            // 
-            // A35
-            // 
-            this.A35._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A35._BufferName = "A35";
-            this.A35._CommandID = "00000";
-            this.A35._Destination = "0";
-            this.A35._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A35._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A35._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A35._ReturnRequest = false;
-            this.A35.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A35.Location = new System.Drawing.Point(730, 206);
-            this.A35.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A35.Name = "A35";
-            this.A35.Padding = new System.Windows.Forms.Padding(3);
-            this.A35.Size = new System.Drawing.Size(51, 66);
-            this.A35.TabIndex = 264;
-            // 
-            // A29
-            // 
-            this.A29._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A29._BufferName = "A29";
-            this.A29._CommandID = "00000";
-            this.A29._Destination = "0";
-            this.A29._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A29._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A29._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A29._ReturnRequest = false;
-            this.A29.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A29.Location = new System.Drawing.Point(626, 206);
-            this.A29.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A29.Name = "A29";
-            this.A29.Padding = new System.Windows.Forms.Padding(3);
-            this.A29.Size = new System.Drawing.Size(51, 66);
-            this.A29.TabIndex = 263;
-            // 
-            // A27
-            // 
-            this.A27._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A27._BufferName = "A27";
-            this.A27._CommandID = "00000";
-            this.A27._Destination = "0";
-            this.A27._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A27._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A27._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A27._ReturnRequest = false;
-            this.A27.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A27.Location = new System.Drawing.Point(575, 206);
-            this.A27.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A27.Name = "A27";
-            this.A27.Padding = new System.Windows.Forms.Padding(3);
-            this.A27.Size = new System.Drawing.Size(51, 66);
-            this.A27.TabIndex = 262;
-            // 
-            // A19
-            // 
-            this.A19._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A19._BufferName = "A19";
-            this.A19._CommandID = "00000";
-            this.A19._Destination = "0";
-            this.A19._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A19._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A19._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A19._ReturnRequest = false;
-            this.A19.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A19.Location = new System.Drawing.Point(419, 206);
-            this.A19.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A19.Name = "A19";
-            this.A19.Padding = new System.Windows.Forms.Padding(3);
-            this.A19.Size = new System.Drawing.Size(51, 66);
-            this.A19.TabIndex = 261;
-            // 
-            // A11
-            // 
-            this.A11._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A11._BufferName = "A11";
-            this.A11._CommandID = "00000";
-            this.A11._Destination = "0";
-            this.A11._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A11._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A11._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A11._ReturnRequest = false;
-            this.A11.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A11.Location = new System.Drawing.Point(263, 206);
-            this.A11.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A11.Name = "A11";
-            this.A11.Padding = new System.Windows.Forms.Padding(3);
-            this.A11.Size = new System.Drawing.Size(51, 66);
-            this.A11.TabIndex = 260;
-            // 
-            // A03
-            // 
-            this.A03._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A03._BufferName = "A03";
-            this.A03._CommandID = "00000";
-            this.A03._Destination = "0";
-            this.A03._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A03._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A03._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A03._ReturnRequest = false;
-            this.A03.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A03.Location = new System.Drawing.Point(3, 206);
-            this.A03.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A03.Name = "A03";
-            this.A03.Padding = new System.Windows.Forms.Padding(3);
-            this.A03.Size = new System.Drawing.Size(51, 66);
-            this.A03.TabIndex = 259;
-            // 
-            // A71
-            // 
-            this.A71._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A71._BufferName = "A71";
-            this.A71._CommandID = "00000";
-            this.A71._Destination = "0";
-            this.A71._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A71._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A71._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A71._ReturnRequest = false;
-            this.A71.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A71.Location = new System.Drawing.Point(1617, 647);
-            this.A71.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A71.Name = "A71";
-            this.A71.Padding = new System.Windows.Forms.Padding(3);
-            this.A71.Size = new System.Drawing.Size(51, 66);
-            this.A71.TabIndex = 258;
-            // 
-            // A70
-            // 
-            this.A70._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A70._BufferName = "A70";
-            this.A70._CommandID = "00000";
-            this.A70._Destination = "0";
-            this.A70._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A70._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A70._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A70._ReturnRequest = false;
-            this.A70.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A70.Location = new System.Drawing.Point(1617, 579);
-            this.A70.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A70.Name = "A70";
-            this.A70.Padding = new System.Windows.Forms.Padding(3);
-            this.A70.Size = new System.Drawing.Size(51, 66);
-            this.A70.TabIndex = 257;
-            // 
-            // A67
-            // 
-            this.A67._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A67._BufferName = "A67";
-            this.A67._CommandID = "00000";
-            this.A67._Destination = "0";
-            this.A67._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A67._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A67._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A67._ReturnRequest = false;
-            this.A67.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A67.Location = new System.Drawing.Point(1513, 543);
-            this.A67.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A67.Name = "A67";
-            this.A67.Padding = new System.Windows.Forms.Padding(3);
-            this.A67.Size = new System.Drawing.Size(51, 66);
-            this.A67.TabIndex = 256;
-            // 
-            // A68
-            // 
-            this.A68._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A68._BufferName = "A68";
-            this.A68._CommandID = "00000";
-            this.A68._Destination = "0";
-            this.A68._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A68._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A68._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A68._ReturnRequest = false;
-            this.A68.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A68.Location = new System.Drawing.Point(1513, 476);
-            this.A68.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A68.Name = "A68";
-            this.A68.Padding = new System.Windows.Forms.Padding(3);
-            this.A68.Size = new System.Drawing.Size(51, 66);
-            this.A68.TabIndex = 255;
-            // 
-            // A72
-            // 
-            this.A72._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A72._BufferName = "A72";
-            this.A72._CommandID = "00000";
-            this.A72._Destination = "0";
-            this.A72._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A72._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A72._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A72._ReturnRequest = false;
-            this.A72.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A72.Location = new System.Drawing.Point(1513, 409);
-            this.A72.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A72.Name = "A72";
-            this.A72.Padding = new System.Windows.Forms.Padding(3);
-            this.A72.Size = new System.Drawing.Size(51, 66);
-            this.A72.TabIndex = 254;
-            // 
-            // A73
-            // 
-            this.A73._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A73._BufferName = "A73";
-            this.A73._CommandID = "00000";
-            this.A73._Destination = "0";
-            this.A73._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A73._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A73._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A73._ReturnRequest = false;
-            this.A73.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A73.Location = new System.Drawing.Point(1513, 342);
-            this.A73.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A73.Name = "A73";
-            this.A73.Padding = new System.Windows.Forms.Padding(3);
-            this.A73.Size = new System.Drawing.Size(51, 66);
-            this.A73.TabIndex = 253;
-            // 
-            // A74
-            // 
-            this.A74._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A74._BufferName = "A74";
-            this.A74._CommandID = "00000";
-            this.A74._Destination = "0";
-            this.A74._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A74._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A74._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A74._ReturnRequest = false;
-            this.A74.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A74.Location = new System.Drawing.Point(1514, 274);
-            this.A74.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A74.Name = "A74";
-            this.A74.Padding = new System.Windows.Forms.Padding(3);
-            this.A74.Size = new System.Drawing.Size(51, 66);
-            this.A74.TabIndex = 252;
-            // 
-            // A76
-            // 
-            this.A76._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A76._BufferName = "A76";
-            this.A76._CommandID = "00000";
-            this.A76._Destination = "0";
-            this.A76._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A76._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A76._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A76._ReturnRequest = false;
-            this.A76.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A76.Location = new System.Drawing.Point(1514, 207);
-            this.A76.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A76.Name = "A76";
-            this.A76.Padding = new System.Windows.Forms.Padding(3);
-            this.A76.Size = new System.Drawing.Size(51, 66);
-            this.A76.TabIndex = 251;
-            // 
-            // A56
-            // 
-            this.A56._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A56._BufferName = "A56";
-            this.A56._CommandID = "00000";
-            this.A56._Destination = "0";
-            this.A56._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A56._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A56._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A56._ReturnRequest = false;
-            this.A56.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A56.Location = new System.Drawing.Point(1304, 207);
-            this.A56.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A56.Name = "A56";
-            this.A56.Padding = new System.Windows.Forms.Padding(3);
-            this.A56.Size = new System.Drawing.Size(51, 66);
-            this.A56.TabIndex = 250;
-            // 
-            // A58
-            // 
-            this.A58._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A58._BufferName = "A58";
-            this.A58._CommandID = "00000";
-            this.A58._Destination = "0";
-            this.A58._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A58._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A58._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A58._ReturnRequest = false;
-            this.A58.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A58.Location = new System.Drawing.Point(1356, 207);
-            this.A58.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A58.Name = "A58";
-            this.A58.Padding = new System.Windows.Forms.Padding(3);
-            this.A58.Size = new System.Drawing.Size(51, 66);
-            this.A58.TabIndex = 249;
-            // 
-            // A78
-            // 
-            this.A78._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A78._BufferName = "A78";
-            this.A78._CommandID = "00000";
-            this.A78._Destination = "0";
-            this.A78._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A78._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A78._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A78._ReturnRequest = false;
-            this.A78.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A78.Location = new System.Drawing.Point(1461, 177);
-            this.A78.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A78.Name = "A78";
-            this.A78.Padding = new System.Windows.Forms.Padding(3);
-            this.A78.Size = new System.Drawing.Size(51, 66);
-            this.A78.TabIndex = 247;
-            // 
-            // A61
-            // 
-            this.A61._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A61._BufferName = "A61";
-            this.A61._CommandID = "00000";
-            this.A61._Destination = "0";
-            this.A61._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A61._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A61._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A61._ReturnRequest = false;
-            this.A61.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A61.Location = new System.Drawing.Point(1409, 207);
-            this.A61.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A61.Name = "A61";
-            this.A61.Padding = new System.Windows.Forms.Padding(3);
-            this.A61.Size = new System.Drawing.Size(51, 66);
-            this.A61.TabIndex = 246;
-            // 
-            // A54
-            // 
-            this.A54._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A54._BufferName = "A54";
-            this.A54._CommandID = "00000";
-            this.A54._Destination = "0";
-            this.A54._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A54._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A54._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A54._ReturnRequest = false;
-            this.A54.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A54.Location = new System.Drawing.Point(1252, 207);
-            this.A54.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A54.Name = "A54";
-            this.A54.Padding = new System.Windows.Forms.Padding(3);
-            this.A54.Size = new System.Drawing.Size(51, 66);
-            this.A54.TabIndex = 245;
-            // 
-            // D51
-            // 
-            this.D51._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.D51._BufferName = "D51";
-            this.D51._CommandID = "00000";
-            this.D51._Destination = "0";
-            this.D51._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.D51._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.D51._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.D51._ReturnRequest = false;
-            this.D51.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.D51.Location = new System.Drawing.Point(1199, 207);
-            this.D51.MinimumSize = new System.Drawing.Size(51, 66);
-            this.D51.Name = "D51";
-            this.D51.Padding = new System.Windows.Forms.Padding(3);
-            this.D51.Size = new System.Drawing.Size(51, 66);
-            this.D51.TabIndex = 244;
-            // 
-            // A50
-            // 
-            this.A50._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A50._BufferName = "A50";
-            this.A50._CommandID = "00000";
-            this.A50._Destination = "0";
-            this.A50._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A50._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A50._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A50._ReturnRequest = false;
-            this.A50.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A50.Location = new System.Drawing.Point(1147, 206);
-            this.A50.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A50.Name = "A50";
-            this.A50.Padding = new System.Windows.Forms.Padding(3);
-            this.A50.Size = new System.Drawing.Size(51, 66);
-            this.A50.TabIndex = 243;
-            // 
-            // A46
-            // 
-            this.A46._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A46._BufferName = "A46";
-            this.A46._CommandID = "00000";
-            this.A46._Destination = "0";
-            this.A46._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A46._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A46._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A46._ReturnRequest = false;
-            this.A46.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A46.Location = new System.Drawing.Point(1095, 206);
-            this.A46.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A46.Name = "A46";
-            this.A46.Padding = new System.Windows.Forms.Padding(3);
-            this.A46.Size = new System.Drawing.Size(51, 66);
-            this.A46.TabIndex = 242;
-            // 
-            // A45
-            // 
-            this.A45._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A45._BufferName = "A45";
-            this.A45._CommandID = "00000";
-            this.A45._Destination = "0";
-            this.A45._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A45._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A45._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A45._ReturnRequest = false;
-            this.A45.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A45.Location = new System.Drawing.Point(1043, 206);
-            this.A45.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A45.Name = "A45";
-            this.A45.Padding = new System.Windows.Forms.Padding(3);
-            this.A45.Size = new System.Drawing.Size(51, 66);
-            this.A45.TabIndex = 241;
-            // 
-            // A42
-            // 
-            this.A42._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A42._BufferName = "A42";
-            this.A42._CommandID = "00000";
-            this.A42._Destination = "0";
-            this.A42._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A42._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A42._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A42._ReturnRequest = false;
-            this.A42.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A42.Location = new System.Drawing.Point(990, 206);
-            this.A42.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A42.Name = "A42";
-            this.A42.Padding = new System.Windows.Forms.Padding(3);
-            this.A42.Size = new System.Drawing.Size(51, 66);
-            this.A42.TabIndex = 240;
-            // 
-            // A41
-            // 
-            this.A41._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A41._BufferName = "A41";
-            this.A41._CommandID = "00000";
-            this.A41._Destination = "0";
-            this.A41._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A41._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A41._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A41._ReturnRequest = false;
-            this.A41.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A41.Location = new System.Drawing.Point(938, 206);
-            this.A41.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A41.Name = "A41";
-            this.A41.Padding = new System.Windows.Forms.Padding(3);
-            this.A41.Size = new System.Drawing.Size(51, 66);
-            this.A41.TabIndex = 239;
-            // 
-            // A16
-            // 
-            this.A16._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A16._BufferName = "A16";
-            this.A16._CommandID = "00000";
-            this.A16._Destination = "0";
-            this.A16._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A16._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A16._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A16._ReturnRequest = false;
-            this.A16.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A16.Location = new System.Drawing.Point(1409, 73);
-            this.A16.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A16.Name = "A16";
-            this.A16.Padding = new System.Windows.Forms.Padding(3);
-            this.A16.Size = new System.Drawing.Size(51, 66);
-            this.A16.TabIndex = 238;
-            // 
-            // A81
-            // 
-            this.A81._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A81._BufferName = "A81";
-            this.A81._CommandID = "00000";
-            this.A81._Destination = "0";
-            this.A81._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A81._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A81._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A81._ReturnRequest = false;
-            this.A81.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A81.Location = new System.Drawing.Point(1461, 31);
-            this.A81.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A81.Name = "A81";
-            this.A81.Padding = new System.Windows.Forms.Padding(3);
-            this.A81.Size = new System.Drawing.Size(51, 66);
-            this.A81.TabIndex = 237;
-            // 
-            // A77
-            // 
-            this.A77._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A77._BufferName = "A77";
-            this.A77._CommandID = "00000";
-            this.A77._Destination = "0";
-            this.A77._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A77._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A77._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A77._ReturnRequest = false;
-            this.A77.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A77.Location = new System.Drawing.Point(1513, 74);
-            this.A77.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A77.Name = "A77";
-            this.A77.Padding = new System.Windows.Forms.Padding(3);
-            this.A77.Size = new System.Drawing.Size(51, 66);
-            this.A77.TabIndex = 235;
-            // 
-            // A82
-            // 
-            this.A82._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A82._BufferName = "A82";
-            this.A82._CommandID = "00000";
-            this.A82._Destination = "0";
-            this.A82._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A82._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A82._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A82._ReturnRequest = false;
-            this.A82.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A82.Location = new System.Drawing.Point(1461, 98);
-            this.A82.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A82.Name = "A82";
-            this.A82.Padding = new System.Windows.Forms.Padding(3);
-            this.A82.Size = new System.Drawing.Size(51, 66);
-            this.A82.TabIndex = 234;
-            // 
-            // A83
-            // 
-            this.A83._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A83._BufferName = "A83";
-            this.A83._CommandID = "00000";
-            this.A83._Destination = "0";
-            this.A83._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A83._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A83._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A83._ReturnRequest = false;
-            this.A83.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A83.Location = new System.Drawing.Point(1357, 73);
-            this.A83.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A83.Name = "A83";
-            this.A83.Padding = new System.Windows.Forms.Padding(3);
-            this.A83.Size = new System.Drawing.Size(51, 66);
-            this.A83.TabIndex = 233;
-            // 
-            // A08
-            // 
-            this.A08._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A08._BufferName = "A08";
-            this.A08._CommandID = "00000";
-            this.A08._Destination = "0";
-            this.A08._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A08._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A08._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A08._ReturnRequest = false;
-            this.A08.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A08.Location = new System.Drawing.Point(1304, 73);
-            this.A08.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A08.Name = "A08";
-            this.A08.Padding = new System.Windows.Forms.Padding(3);
-            this.A08.Size = new System.Drawing.Size(51, 66);
-            this.A08.TabIndex = 232;
-            // 
-            // A84
-            // 
-            this.A84._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A84._BufferName = "A84";
-            this.A84._CommandID = "00000";
-            this.A84._Destination = "0";
-            this.A84._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A84._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A84._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A84._ReturnRequest = false;
-            this.A84.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A84.Location = new System.Drawing.Point(1199, 73);
-            this.A84.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A84.Name = "A84";
-            this.A84.Padding = new System.Windows.Forms.Padding(3);
-            this.A84.Size = new System.Drawing.Size(104, 66);
-            this.A84.TabIndex = 231;
-            // 
-            // A85
-            // 
-            this.A85._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A85._BufferName = "A85";
-            this.A85._CommandID = "00000";
-            this.A85._Destination = "0";
-            this.A85._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A85._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A85._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A85._ReturnRequest = false;
-            this.A85.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A85.Location = new System.Drawing.Point(1147, 72);
-            this.A85.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A85.Name = "A85";
-            this.A85.Padding = new System.Windows.Forms.Padding(3);
-            this.A85.Size = new System.Drawing.Size(51, 66);
-            this.A85.TabIndex = 230;
-            // 
-            // A86
-            // 
-            this.A86._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A86._BufferName = "A86";
-            this.A86._CommandID = "00000";
-            this.A86._Destination = "0";
-            this.A86._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A86._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A86._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A86._ReturnRequest = false;
-            this.A86.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A86.Location = new System.Drawing.Point(1095, 72);
-            this.A86.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A86.Name = "A86";
-            this.A86.Padding = new System.Windows.Forms.Padding(3);
-            this.A86.Size = new System.Drawing.Size(51, 66);
-            this.A86.TabIndex = 229;
-            // 
-            // A88
-            // 
-            this.A88._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A88._BufferName = "A88";
-            this.A88._CommandID = "00000";
-            this.A88._Destination = "0";
-            this.A88._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A88._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A88._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A88._ReturnRequest = false;
-            this.A88.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A88.Location = new System.Drawing.Point(990, 72);
-            this.A88.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A88.Name = "A88";
-            this.A88.Padding = new System.Windows.Forms.Padding(3);
-            this.A88.Size = new System.Drawing.Size(104, 66);
-            this.A88.TabIndex = 228;
-            // 
-            // A89
-            // 
-            this.A89._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A89._BufferName = "A89";
-            this.A89._CommandID = "00000";
-            this.A89._Destination = "0";
-            this.A89._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A89._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A89._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A89._ReturnRequest = false;
-            this.A89.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A89.Location = new System.Drawing.Point(938, 72);
-            this.A89.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A89.Name = "A89";
-            this.A89.Padding = new System.Windows.Forms.Padding(3);
-            this.A89.Size = new System.Drawing.Size(51, 66);
-            this.A89.TabIndex = 227;
-            // 
-            // A01
-            // 
-            this.A01._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A01._BufferName = "A01";
-            this.A01._CommandID = "00000";
-            this.A01._Destination = "0";
-            this.A01._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A01._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A01._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A01._ReturnRequest = false;
-            this.A01.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A01.Location = new System.Drawing.Point(3, 340);
-            this.A01.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A01.Name = "A01";
-            this.A01.Padding = new System.Windows.Forms.Padding(3);
-            this.A01.Size = new System.Drawing.Size(51, 66);
-            this.A01.TabIndex = 226;
-            // 
-            // A90
-            // 
-            this.A90._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A90._BufferName = "A90";
-            this.A90._CommandID = "00000";
-            this.A90._Destination = "0";
-            this.A90._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A90._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A90._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A90._ReturnRequest = false;
-            this.A90.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A90.Location = new System.Drawing.Point(886, 72);
-            this.A90.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A90.Name = "A90";
-            this.A90.Padding = new System.Windows.Forms.Padding(3);
-            this.A90.Size = new System.Drawing.Size(51, 66);
-            this.A90.TabIndex = 225;
-            // 
-            // A93
-            // 
-            this.A93._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A93._BufferName = "A93";
-            this.A93._CommandID = "00000";
-            this.A93._Destination = "0";
-            this.A93._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A93._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A93._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A93._ReturnRequest = false;
-            this.A93.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A93.Location = new System.Drawing.Point(834, 340);
-            this.A93.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A93.Name = "A93";
-            this.A93.Padding = new System.Windows.Forms.Padding(3);
-            this.A93.Size = new System.Drawing.Size(51, 66);
-            this.A93.TabIndex = 223;
-            // 
-            // A39
-            // 
-            this.A39._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A39._BufferName = "A39";
-            this.A39._CommandID = "00000";
-            this.A39._Destination = "0";
-            this.A39._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A39._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A39._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A39._ReturnRequest = false;
-            this.A39.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A39.Location = new System.Drawing.Point(834, 273);
-            this.A39.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A39.Name = "A39";
-            this.A39.Padding = new System.Windows.Forms.Padding(3);
-            this.A39.Size = new System.Drawing.Size(51, 66);
-            this.A39.TabIndex = 223;
-            // 
-            // A40
-            // 
-            this.A40._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A40._BufferName = "A40";
-            this.A40._CommandID = "00000";
-            this.A40._Destination = "0";
-            this.A40._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A40._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A40._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A40._ReturnRequest = false;
-            this.A40.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A40.Location = new System.Drawing.Point(886, 206);
-            this.A40.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A40.Name = "A40";
-            this.A40.Padding = new System.Windows.Forms.Padding(3);
-            this.A40.Size = new System.Drawing.Size(51, 66);
-            this.A40.TabIndex = 222;
-            // 
-            // A38
-            // 
-            this.A38._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A38._BufferName = "A38";
-            this.A38._CommandID = "00000";
-            this.A38._Destination = "0";
-            this.A38._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A38._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A38._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A38._ReturnRequest = false;
-            this.A38.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A38.Location = new System.Drawing.Point(834, 206);
-            this.A38.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A38.Name = "A38";
-            this.A38.Padding = new System.Windows.Forms.Padding(3);
-            this.A38.Size = new System.Drawing.Size(51, 66);
-            this.A38.TabIndex = 221;
-            // 
-            // craneMonitor5
-            // 
-            this.craneMonitor5._CommandID = "";
-            this.craneMonitor5._CraneMode = "X";
-            this.craneMonitor5._CraneNo = 1;
-            this.craneMonitor5._CraneState = "X";
-            this.craneMonitor5.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor5.Location = new System.Drawing.Point(756, 479);
-            this.craneMonitor5.Name = "craneMonitor5";
-            this.craneMonitor5.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor5.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor5.TabIndex = 219;
-            // 
-            // A97
-            // 
-            this.A97._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A97._BufferName = "A97";
-            this.A97._CommandID = "00000";
-            this.A97._Destination = "0";
-            this.A97._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A97._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A97._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A97._ReturnRequest = false;
-            this.A97.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A97.Location = new System.Drawing.Point(678, 72);
-            this.A97.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A97.Name = "A97";
-            this.A97.Padding = new System.Windows.Forms.Padding(3);
-            this.A97.Size = new System.Drawing.Size(51, 66);
-            this.A97.TabIndex = 217;
-            // 
-            // A95
-            // 
-            this.A95._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A95._BufferName = "A95";
-            this.A95._CommandID = "00000";
-            this.A95._Destination = "0";
-            this.A95._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A95._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A95._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A95._ReturnRequest = false;
-            this.A95.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A95.Location = new System.Drawing.Point(730, 72);
-            this.A95.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A95.Name = "A95";
-            this.A95.Padding = new System.Windows.Forms.Padding(3);
-            this.A95.Size = new System.Drawing.Size(51, 66);
-            this.A95.TabIndex = 216;
-            // 
-            // A92
-            // 
-            this.A92._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A92._BufferName = "A92";
-            this.A92._CommandID = "00000";
-            this.A92._Destination = "0";
-            this.A92._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A92._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A92._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A92._ReturnRequest = false;
-            this.A92.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A92.Location = new System.Drawing.Point(834, 72);
-            this.A92.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A92.Name = "A92";
-            this.A92.Padding = new System.Windows.Forms.Padding(3);
-            this.A92.Size = new System.Drawing.Size(51, 66);
-            this.A92.TabIndex = 215;
-            // 
-            // A94
-            // 
-            this.A94._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A94._BufferName = "A94";
-            this.A94._CommandID = "00000";
-            this.A94._Destination = "0";
-            this.A94._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A94._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A94._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A94._ReturnRequest = false;
-            this.A94.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A94.Location = new System.Drawing.Point(782, 72);
-            this.A94.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A94.Name = "A94";
-            this.A94.Padding = new System.Windows.Forms.Padding(3);
-            this.A94.Size = new System.Drawing.Size(51, 66);
-            this.A94.TabIndex = 214;
-            // 
-            // A34
-            // 
-            this.A34._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A34._BufferName = "A34";
-            this.A34._CommandID = "00000";
-            this.A34._Destination = "0";
-            this.A34._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A34._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A34._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A34._ReturnRequest = false;
-            this.A34.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A34.Location = new System.Drawing.Point(730, 407);
-            this.A34.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A34.Name = "A34";
-            this.A34.Padding = new System.Windows.Forms.Padding(3);
-            this.A34.Size = new System.Drawing.Size(51, 66);
-            this.A34.TabIndex = 212;
-            // 
-            // A33
-            // 
-            this.A33._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A33._BufferName = "A33";
-            this.A33._CommandID = "00000";
-            this.A33._Destination = "0";
-            this.A33._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A33._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A33._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A33._ReturnRequest = false;
-            this.A33.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A33.Location = new System.Drawing.Point(730, 340);
-            this.A33.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A33.Name = "A33";
-            this.A33.Padding = new System.Windows.Forms.Padding(3);
-            this.A33.Size = new System.Drawing.Size(51, 66);
-            this.A33.TabIndex = 212;
-            // 
-            // A98
-            // 
-            this.A98._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A98._BufferName = "A98";
-            this.A98._CommandID = "00000";
-            this.A98._Destination = "0";
-            this.A98._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A98._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A98._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A98._ReturnRequest = false;
-            this.A98.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A98.Location = new System.Drawing.Point(678, 340);
-            this.A98.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A98.Name = "A98";
-            this.A98.Padding = new System.Windows.Forms.Padding(3);
-            this.A98.Size = new System.Drawing.Size(51, 66);
-            this.A98.TabIndex = 211;
-            // 
-            // A31
-            // 
-            this.A31._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A31._BufferName = "A31";
-            this.A31._CommandID = "00000";
-            this.A31._Destination = "0";
-            this.A31._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A31._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A31._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A31._ReturnRequest = false;
-            this.A31.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A31.Location = new System.Drawing.Point(678, 273);
-            this.A31.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A31.Name = "A31";
-            this.A31.Padding = new System.Windows.Forms.Padding(3);
-            this.A31.Size = new System.Drawing.Size(51, 66);
-            this.A31.TabIndex = 211;
-            // 
-            // A36
-            // 
-            this.A36._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A36._BufferName = "A36";
-            this.A36._CommandID = "00000";
-            this.A36._Destination = "0";
-            this.A36._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A36._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A36._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A36._ReturnRequest = false;
-            this.A36.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A36.Location = new System.Drawing.Point(730, 273);
-            this.A36.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A36.Name = "A36";
-            this.A36.Padding = new System.Windows.Forms.Padding(3);
-            this.A36.Size = new System.Drawing.Size(51, 66);
-            this.A36.TabIndex = 210;
-            // 
-            // A30
-            // 
-            this.A30._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A30._BufferName = "A30";
-            this.A30._CommandID = "00000";
-            this.A30._Destination = "0";
-            this.A30._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A30._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A30._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A30._ReturnRequest = false;
-            this.A30.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A30.Location = new System.Drawing.Point(678, 206);
-            this.A30.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A30.Name = "A30";
-            this.A30.Padding = new System.Windows.Forms.Padding(3);
-            this.A30.Size = new System.Drawing.Size(51, 66);
-            this.A30.TabIndex = 209;
-            // 
-            // craneMonitor3
-            // 
-            this.craneMonitor3._CommandID = "";
-            this.craneMonitor3._CraneMode = "X";
-            this.craneMonitor3._CraneNo = 2;
-            this.craneMonitor3._CraneState = "X";
-            this.craneMonitor3.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor3.Location = new System.Drawing.Point(600, 479);
-            this.craneMonitor3.Name = "craneMonitor3";
-            this.craneMonitor3.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor3.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor3.TabIndex = 207;
-            // 
-            // A25
-            // 
-            this.A25._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A25._BufferName = "A25";
-            this.A25._CommandID = "00000";
-            this.A25._Destination = "0";
-            this.A25._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A25._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A25._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A25._ReturnRequest = false;
-            this.A25.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A25.Location = new System.Drawing.Point(575, 407);
-            this.A25.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A25.Name = "A25";
-            this.A25.Padding = new System.Windows.Forms.Padding(3);
-            this.A25.Size = new System.Drawing.Size(51, 66);
-            this.A25.TabIndex = 205;
-            // 
-            // A26
-            // 
-            this.A26._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A26._BufferName = "A26";
-            this.A26._CommandID = "00000";
-            this.A26._Destination = "0";
-            this.A26._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A26._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A26._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A26._ReturnRequest = false;
-            this.A26.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A26.Location = new System.Drawing.Point(575, 340);
-            this.A26.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A26.Name = "A26";
-            this.A26.Padding = new System.Windows.Forms.Padding(3);
-            this.A26.Size = new System.Drawing.Size(51, 66);
-            this.A26.TabIndex = 205;
-            // 
-            // A103
-            // 
-            this.A103._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A103._BufferName = "A103";
-            this.A103._CommandID = "00000";
-            this.A103._Destination = "0";
-            this.A103._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A103._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A103._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A103._ReturnRequest = false;
-            this.A103.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A103.Location = new System.Drawing.Point(523, 340);
-            this.A103.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A103.Name = "A103";
-            this.A103.Padding = new System.Windows.Forms.Padding(3);
-            this.A103.Size = new System.Drawing.Size(51, 66);
-            this.A103.TabIndex = 204;
-            // 
-            // A23
-            // 
-            this.A23._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A23._BufferName = "A23";
-            this.A23._CommandID = "00000";
-            this.A23._Destination = "0";
-            this.A23._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A23._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A23._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A23._ReturnRequest = false;
-            this.A23.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A23.Location = new System.Drawing.Point(523, 273);
-            this.A23.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A23.Name = "A23";
-            this.A23.Padding = new System.Windows.Forms.Padding(3);
-            this.A23.Size = new System.Drawing.Size(51, 66);
-            this.A23.TabIndex = 204;
-            // 
-            // A28
-            // 
-            this.A28._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A28._BufferName = "A28";
-            this.A28._CommandID = "00000";
-            this.A28._Destination = "0";
-            this.A28._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A28._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A28._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A28._ReturnRequest = false;
-            this.A28.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A28.Location = new System.Drawing.Point(575, 273);
-            this.A28.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A28.Name = "A28";
-            this.A28.Padding = new System.Windows.Forms.Padding(3);
-            this.A28.Size = new System.Drawing.Size(51, 66);
-            this.A28.TabIndex = 203;
-            // 
-            // A22
-            // 
-            this.A22._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A22._BufferName = "A22";
-            this.A22._CommandID = "00000";
-            this.A22._Destination = "0";
-            this.A22._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A22._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A22._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A22._ReturnRequest = false;
-            this.A22.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A22.Location = new System.Drawing.Point(523, 206);
-            this.A22.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A22.Name = "A22";
-            this.A22.Padding = new System.Windows.Forms.Padding(3);
-            this.A22.Size = new System.Drawing.Size(51, 66);
-            this.A22.TabIndex = 202;
-            // 
-            // A21
-            // 
-            this.A21._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A21._BufferName = "A21";
-            this.A21._CommandID = "00000";
-            this.A21._Destination = "0";
-            this.A21._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A21._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A21._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A21._ReturnRequest = false;
-            this.A21.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A21.Location = new System.Drawing.Point(471, 206);
-            this.A21.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A21.Name = "A21";
-            this.A21.Padding = new System.Windows.Forms.Padding(3);
-            this.A21.Size = new System.Drawing.Size(51, 66);
-            this.A21.TabIndex = 201;
-            // 
-            // craneMonitor4
-            // 
-            this.craneMonitor4._CommandID = "";
-            this.craneMonitor4._CraneMode = "X";
-            this.craneMonitor4._CraneNo = 3;
-            this.craneMonitor4._CraneState = "X";
-            this.craneMonitor4.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor4.Location = new System.Drawing.Point(444, 479);
-            this.craneMonitor4.Name = "craneMonitor4";
-            this.craneMonitor4.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor4.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor4.TabIndex = 200;
-            // 
-            // A18
-            // 
-            this.A18._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A18._BufferName = "A18";
-            this.A18._CommandID = "00000";
-            this.A18._Destination = "0";
-            this.A18._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A18._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A18._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A18._ReturnRequest = false;
-            this.A18.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A18.Location = new System.Drawing.Point(419, 407);
-            this.A18.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A18.Name = "A18";
-            this.A18.Padding = new System.Windows.Forms.Padding(3);
-            this.A18.Size = new System.Drawing.Size(51, 66);
-            this.A18.TabIndex = 198;
-            // 
-            // A17
-            // 
-            this.A17._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A17._BufferName = "A17";
-            this.A17._CommandID = "00000";
-            this.A17._Destination = "0";
-            this.A17._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A17._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A17._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A17._ReturnRequest = false;
-            this.A17.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A17.Location = new System.Drawing.Point(419, 340);
-            this.A17.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A17.Name = "A17";
-            this.A17.Padding = new System.Windows.Forms.Padding(3);
-            this.A17.Size = new System.Drawing.Size(51, 66);
-            this.A17.TabIndex = 198;
-            // 
-            // A09
-            // 
-            this.A09._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A09._BufferName = "A09";
-            this.A09._CommandID = "00000";
-            this.A09._Destination = "0";
-            this.A09._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A09._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A09._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A09._ReturnRequest = false;
-            this.A09.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A09.Location = new System.Drawing.Point(263, 340);
-            this.A09.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A09.Name = "A09";
-            this.A09.Padding = new System.Windows.Forms.Padding(3);
-            this.A09.Size = new System.Drawing.Size(51, 66);
-            this.A09.TabIndex = 198;
-            // 
-            // A15
-            // 
-            this.A15._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A15._BufferName = "A15";
-            this.A15._CommandID = "00000";
-            this.A15._Destination = "0";
-            this.A15._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A15._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A15._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A15._ReturnRequest = false;
-            this.A15.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A15.Location = new System.Drawing.Point(367, 273);
-            this.A15.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A15.Name = "A15";
-            this.A15.Padding = new System.Windows.Forms.Padding(3);
-            this.A15.Size = new System.Drawing.Size(51, 66);
-            this.A15.TabIndex = 197;
-            // 
-            // A108
-            // 
-            this.A108._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A108._BufferName = "A108";
-            this.A108._CommandID = "00000";
-            this.A108._Destination = "0";
-            this.A108._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A108._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A108._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A108._ReturnRequest = false;
-            this.A108.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A108.Location = new System.Drawing.Point(367, 340);
-            this.A108.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A108.Name = "A108";
-            this.A108.Padding = new System.Windows.Forms.Padding(3);
-            this.A108.Size = new System.Drawing.Size(51, 66);
-            this.A108.TabIndex = 197;
-            // 
-            // A07
-            // 
-            this.A07._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A07._BufferName = "A07";
-            this.A07._CommandID = "00000";
-            this.A07._Destination = "0";
-            this.A07._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A07._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A07._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A07._ReturnRequest = false;
-            this.A07.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A07.Location = new System.Drawing.Point(212, 273);
-            this.A07.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A07.Name = "A07";
-            this.A07.Padding = new System.Windows.Forms.Padding(3);
-            this.A07.Size = new System.Drawing.Size(51, 66);
-            this.A07.TabIndex = 197;
-            // 
-            // A20
-            // 
-            this.A20._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A20._BufferName = "A20";
-            this.A20._CommandID = "00000";
-            this.A20._Destination = "0";
-            this.A20._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A20._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A20._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A20._ReturnRequest = false;
-            this.A20.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A20.Location = new System.Drawing.Point(419, 273);
-            this.A20.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A20.Name = "A20";
-            this.A20.Padding = new System.Windows.Forms.Padding(3);
-            this.A20.Size = new System.Drawing.Size(51, 66);
-            this.A20.TabIndex = 196;
-            // 
-            // A14
-            // 
-            this.A14._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A14._BufferName = "A14";
-            this.A14._CommandID = "00000";
-            this.A14._Destination = "0";
-            this.A14._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A14._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A14._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A14._ReturnRequest = false;
-            this.A14.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A14.Location = new System.Drawing.Point(367, 206);
-            this.A14.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A14.Name = "A14";
-            this.A14.Padding = new System.Windows.Forms.Padding(3);
-            this.A14.Size = new System.Drawing.Size(51, 66);
-            this.A14.TabIndex = 195;
-            // 
-            // A13
-            // 
-            this.A13._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A13._BufferName = "A13";
-            this.A13._CommandID = "00000";
-            this.A13._Destination = "0";
-            this.A13._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A13._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A13._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A13._ReturnRequest = false;
-            this.A13.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A13.Location = new System.Drawing.Point(315, 206);
-            this.A13.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A13.Name = "A13";
-            this.A13.Padding = new System.Windows.Forms.Padding(3);
-            this.A13.Size = new System.Drawing.Size(51, 66);
-            this.A13.TabIndex = 194;
-            // 
-            // craneMonitor2
-            // 
-            this.craneMonitor2._CommandID = "";
-            this.craneMonitor2._CraneMode = "X";
-            this.craneMonitor2._CraneNo = 4;
-            this.craneMonitor2._CraneState = "X";
-            this.craneMonitor2.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor2.Location = new System.Drawing.Point(289, 479);
-            this.craneMonitor2.Name = "craneMonitor2";
-            this.craneMonitor2.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor2.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor2.TabIndex = 193;
-            // 
-            // A10
-            // 
-            this.A10._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A10._BufferName = "A10";
-            this.A10._CommandID = "00000";
-            this.A10._Destination = "0";
-            this.A10._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A10._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A10._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A10._ReturnRequest = false;
-            this.A10.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A10.Location = new System.Drawing.Point(263, 408);
-            this.A10.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A10.Name = "A10";
-            this.A10.Padding = new System.Windows.Forms.Padding(3);
-            this.A10.Size = new System.Drawing.Size(51, 66);
-            this.A10.TabIndex = 191;
-            // 
-            // A113
-            // 
-            this.A113._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A113._BufferName = "A113";
-            this.A113._CommandID = "00000";
-            this.A113._Destination = "0";
-            this.A113._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A113._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A113._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A113._ReturnRequest = false;
-            this.A113.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A113.Location = new System.Drawing.Point(212, 341);
-            this.A113.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A113.Name = "A113";
-            this.A113.Padding = new System.Windows.Forms.Padding(3);
-            this.A113.Size = new System.Drawing.Size(51, 66);
-            this.A113.TabIndex = 190;
-            // 
-            // A12
-            // 
-            this.A12._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A12._BufferName = "A12";
-            this.A12._CommandID = "00000";
-            this.A12._Destination = "0";
-            this.A12._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A12._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A12._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A12._ReturnRequest = false;
-            this.A12.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A12.Location = new System.Drawing.Point(263, 273);
-            this.A12.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A12.Name = "A12";
-            this.A12.Padding = new System.Windows.Forms.Padding(3);
-            this.A12.Size = new System.Drawing.Size(51, 66);
-            this.A12.TabIndex = 189;
-            // 
-            // A06
-            // 
-            this.A06._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A06._BufferName = "A06";
-            this.A06._CommandID = "00000";
-            this.A06._Destination = "0";
-            this.A06._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A06._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A06._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A06._ReturnRequest = false;
-            this.A06.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A06.Location = new System.Drawing.Point(212, 206);
-            this.A06.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A06.Name = "A06";
-            this.A06.Padding = new System.Windows.Forms.Padding(3);
-            this.A06.Size = new System.Drawing.Size(51, 66);
-            this.A06.TabIndex = 188;
-            // 
-            // A04
-            // 
-            this.A04._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A04._BufferName = "A04";
-            this.A04._CommandID = "00000";
-            this.A04._Destination = "0";
-            this.A04._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A04._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A04._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A04._ReturnRequest = false;
-            this.A04.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A04.Location = new System.Drawing.Point(55, 206);
-            this.A04.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A04.Name = "A04";
-            this.A04.Padding = new System.Windows.Forms.Padding(3);
-            this.A04.Size = new System.Drawing.Size(79, 66);
-            this.A04.TabIndex = 187;
-            // 
-            // A99
-            // 
-            this.A99._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A99._BufferName = "A99";
-            this.A99._CommandID = "00000";
-            this.A99._Destination = "0";
-            this.A99._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A99._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A99._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A99._ReturnRequest = false;
-            this.A99.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A99.Location = new System.Drawing.Point(626, 72);
-            this.A99.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A99.Name = "A99";
-            this.A99.Padding = new System.Windows.Forms.Padding(3);
-            this.A99.Size = new System.Drawing.Size(51, 66);
-            this.A99.TabIndex = 186;
-            // 
-            // A100
-            // 
-            this.A100._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A100._BufferName = "A100";
-            this.A100._CommandID = "00000";
-            this.A100._Destination = "0";
-            this.A100._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A100._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A100._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A100._ReturnRequest = false;
-            this.A100.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A100.Location = new System.Drawing.Point(575, 72);
-            this.A100.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A100.Name = "A100";
-            this.A100.Padding = new System.Windows.Forms.Padding(3);
-            this.A100.Size = new System.Drawing.Size(51, 66);
-            this.A100.TabIndex = 184;
-            // 
-            // A102
-            // 
-            this.A102._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A102._BufferName = "A102";
-            this.A102._CommandID = "00000";
-            this.A102._Destination = "0";
-            this.A102._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A102._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A102._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A102._ReturnRequest = false;
-            this.A102.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A102.Location = new System.Drawing.Point(523, 72);
-            this.A102.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A102.Name = "A102";
-            this.A102.Padding = new System.Windows.Forms.Padding(3);
-            this.A102.Size = new System.Drawing.Size(51, 66);
-            this.A102.TabIndex = 183;
-            // 
-            // A104
-            // 
-            this.A104._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A104._BufferName = "A104";
-            this.A104._CommandID = "00000";
-            this.A104._Destination = "0";
-            this.A104._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A104._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A104._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A104._ReturnRequest = false;
-            this.A104.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A104.Location = new System.Drawing.Point(471, 72);
-            this.A104.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A104.Name = "A104";
-            this.A104.Padding = new System.Windows.Forms.Padding(3);
-            this.A104.Size = new System.Drawing.Size(51, 66);
-            this.A104.TabIndex = 182;
-            // 
-            // A105
-            // 
-            this.A105._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A105._BufferName = "A105";
-            this.A105._CommandID = "00000";
-            this.A105._Destination = "0";
-            this.A105._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A105._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A105._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A105._ReturnRequest = false;
-            this.A105.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A105.Location = new System.Drawing.Point(419, 72);
-            this.A105.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A105.Name = "A105";
-            this.A105.Padding = new System.Windows.Forms.Padding(3);
-            this.A105.Size = new System.Drawing.Size(51, 66);
-            this.A105.TabIndex = 181;
-            // 
-            // A107
-            // 
-            this.A107._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A107._BufferName = "A107";
-            this.A107._CommandID = "00000";
-            this.A107._Destination = "0";
-            this.A107._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A107._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A107._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A107._ReturnRequest = false;
-            this.A107.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A107.Location = new System.Drawing.Point(367, 72);
-            this.A107.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A107.Name = "A107";
-            this.A107.Padding = new System.Windows.Forms.Padding(3);
-            this.A107.Size = new System.Drawing.Size(51, 66);
-            this.A107.TabIndex = 179;
-            // 
-            // A109
-            // 
-            this.A109._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A109._BufferName = "A109";
-            this.A109._CommandID = "00000";
-            this.A109._Destination = "0";
-            this.A109._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A109._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A109._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A109._ReturnRequest = false;
-            this.A109.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A109.Location = new System.Drawing.Point(316, 72);
-            this.A109.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A109.Name = "A109";
-            this.A109.Padding = new System.Windows.Forms.Padding(3);
-            this.A109.Size = new System.Drawing.Size(51, 66);
-            this.A109.TabIndex = 177;
-            // 
-            // A110
-            // 
-            this.A110._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A110._BufferName = "A110";
-            this.A110._CommandID = "00000";
-            this.A110._Destination = "0";
-            this.A110._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A110._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A110._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A110._ReturnRequest = false;
-            this.A110.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A110.Location = new System.Drawing.Point(264, 72);
-            this.A110.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A110.Name = "A110";
-            this.A110.Padding = new System.Windows.Forms.Padding(3);
-            this.A110.Size = new System.Drawing.Size(51, 66);
-            this.A110.TabIndex = 176;
-            // 
-            // A112
-            // 
-            this.A112._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A112._BufferName = "A112";
-            this.A112._CommandID = "00000";
-            this.A112._Destination = "0";
-            this.A112._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A112._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A112._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A112._ReturnRequest = false;
-            this.A112.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A112.Location = new System.Drawing.Point(212, 72);
-            this.A112.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A112.Name = "A112";
-            this.A112.Padding = new System.Windows.Forms.Padding(3);
-            this.A112.Size = new System.Drawing.Size(51, 66);
-            this.A112.TabIndex = 175;
-            // 
-            // A05
-            // 
-            this.A05._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A05._BufferName = "A05";
-            this.A05._CommandID = "00000";
-            this.A05._Destination = "0";
-            this.A05._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A05._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A05._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A05._ReturnRequest = false;
-            this.A05.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A05.Location = new System.Drawing.Point(135, 206);
-            this.A05.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A05.Name = "A05";
-            this.A05.Padding = new System.Windows.Forms.Padding(3);
-            this.A05.Size = new System.Drawing.Size(76, 66);
-            this.A05.TabIndex = 174;
-            // 
-            // A02
-            // 
-            this.A02._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A02._BufferName = "A02";
-            this.A02._CommandID = "00000";
-            this.A02._Destination = "0";
-            this.A02._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A02._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A02._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A02._ReturnRequest = false;
-            this.A02.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A02.Location = new System.Drawing.Point(3, 273);
-            this.A02.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A02.Name = "A02";
-            this.A02.Padding = new System.Windows.Forms.Padding(3);
-            this.A02.Size = new System.Drawing.Size(51, 66);
-            this.A02.TabIndex = 173;
-            // 
-            // A114
-            // 
-            this.A114._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A114._BufferName = "A114";
-            this.A114._CommandID = "00000";
-            this.A114._Destination = "0";
-            this.A114._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A114._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A114._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A114._ReturnRequest = false;
-            this.A114.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A114.Location = new System.Drawing.Point(160, 72);
-            this.A114.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A114.Name = "A114";
-            this.A114.Padding = new System.Windows.Forms.Padding(3);
-            this.A114.Size = new System.Drawing.Size(51, 66);
-            this.A114.TabIndex = 172;
-            // 
-            // A115
-            // 
-            this.A115._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A115._BufferName = "A115";
-            this.A115._CommandID = "00000";
-            this.A115._Destination = "0";
-            this.A115._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A115._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A115._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A115._ReturnRequest = false;
-            this.A115.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A115.Location = new System.Drawing.Point(107, 72);
-            this.A115.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A115.Name = "A115";
-            this.A115.Padding = new System.Windows.Forms.Padding(3);
-            this.A115.Size = new System.Drawing.Size(51, 66);
-            this.A115.TabIndex = 171;
-            // 
-            // A116
-            // 
-            this.A116._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A116._BufferName = "A116";
-            this.A116._CommandID = "00000";
-            this.A116._Destination = "0";
-            this.A116._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A116._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A116._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A116._ReturnRequest = false;
-            this.A116.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A116.Location = new System.Drawing.Point(55, 72);
-            this.A116.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A116.Name = "A116";
-            this.A116.Padding = new System.Windows.Forms.Padding(3);
-            this.A116.Size = new System.Drawing.Size(51, 66);
-            this.A116.TabIndex = 170;
-            // 
-            // A118
-            // 
-            this.A118._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A118._BufferName = "A118";
-            this.A118._CommandID = "00000";
-            this.A118._Destination = "0";
-            this.A118._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A118._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A118._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A118._ReturnRequest = false;
-            this.A118.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A118.Location = new System.Drawing.Point(3, 139);
-            this.A118.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A118.Name = "A118";
-            this.A118.Padding = new System.Windows.Forms.Padding(3);
-            this.A118.Size = new System.Drawing.Size(51, 66);
-            this.A118.TabIndex = 169;
-            // 
-            // A117
-            // 
-            this.A117._Auto = Mirle.ASRS.Buffer.Signal.Off;
-            this.A117._BufferName = "A117";
-            this.A117._CommandID = "00000";
-            this.A117._Destination = "0";
-            this.A117._Error = Mirle.ASRS.Buffer.Signal.Off;
-            this.A117._Load = Mirle.ASRS.Buffer.Signal.Off;
-            this.A117._Mode = Mirle.ASRS.Buffer.StnMode.None;
-            this.A117._ReturnRequest = false;
-            this.A117.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A117.Location = new System.Drawing.Point(3, 72);
-            this.A117.MinimumSize = new System.Drawing.Size(51, 66);
-            this.A117.Name = "A117";
-            this.A117.Padding = new System.Windows.Forms.Padding(3);
-            this.A117.Size = new System.Drawing.Size(51, 66);
-            this.A117.TabIndex = 169;
-            // 
-            // craneMonitor1
-            // 
-            this.craneMonitor1._CommandID = "";
-            this.craneMonitor1._CraneMode = "X";
-            this.craneMonitor1._CraneNo = 5;
-            this.craneMonitor1._CraneState = "X";
-            this.craneMonitor1.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor1.Location = new System.Drawing.Point(77, 479);
-            this.craneMonitor1.Name = "craneMonitor1";
-            this.craneMonitor1.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor1.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor1.TabIndex = 168;
-            // 
             // WCS
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -3210,6 +3181,7 @@
             this.tbpUpdatePosted.ResumeLayout(false);
             this.tbpSingelMonitor.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox26)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox42)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox41)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox40)).EndInit();
@@ -3218,13 +3190,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox37)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox34)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox33)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox32)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox36)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox30)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox31)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox28)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox29)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox26)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox27)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox24)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox25)).EndInit();
@@ -3356,7 +3323,7 @@
         private BufferMonitor A78;
         private BufferMonitor A61;
         private BufferMonitor A54;
-        private BufferMonitor D51;
+        private BufferMonitor A51;
         private BufferMonitor A50;
         private BufferMonitor A46;
         private BufferMonitor A45;
@@ -3417,12 +3384,8 @@
         internal System.Windows.Forms.PictureBox pictureBox11;
         internal System.Windows.Forms.PictureBox pictureBox14;
         internal System.Windows.Forms.PictureBox pictureBox15;
-        internal System.Windows.Forms.PictureBox pictureBox36;
         internal System.Windows.Forms.PictureBox pictureBox30;
-        internal System.Windows.Forms.PictureBox pictureBox31;
-        internal System.Windows.Forms.PictureBox pictureBox28;
         internal System.Windows.Forms.PictureBox pictureBox29;
-        internal System.Windows.Forms.PictureBox pictureBox26;
         internal System.Windows.Forms.PictureBox pictureBox27;
         internal System.Windows.Forms.PictureBox pictureBox24;
         internal System.Windows.Forms.PictureBox pictureBox25;
@@ -3434,7 +3397,6 @@
         internal System.Windows.Forms.PictureBox pictureBox19;
         internal System.Windows.Forms.PictureBox pictureBox16;
         internal System.Windows.Forms.PictureBox pictureBox17;
-        internal System.Windows.Forms.PictureBox pictureBox32;
         internal System.Windows.Forms.PictureBox pictureBox37;
         internal System.Windows.Forms.PictureBox pictureBox34;
         internal System.Windows.Forms.PictureBox pictureBox33;
@@ -3443,6 +3405,7 @@
         internal System.Windows.Forms.PictureBox pictureBox39;
         internal System.Windows.Forms.PictureBox pictureBox38;
         internal System.Windows.Forms.PictureBox pictureBox42;
+        internal System.Windows.Forms.PictureBox pictureBox26;
     }
 }
 

@@ -1,0 +1,5 @@
+﻿# BufferName, BufferIndex, StnName, StnIndex
+A41,40,A41,1
+A43,42,A43,2
+A48,47,A48,3
+A59,58,A59,4

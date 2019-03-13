@@ -123,6 +123,7 @@
     <None Include="Resources\MainControl.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\AllotCrane.txt" />
     <Content Include="Config\BCR.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -138,6 +139,7 @@
     <Content Include="Config\StoreIn.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Config\StoreOutIn.txt" />
     <None Include="Resources\top.png" />
     <None Include="Resources\dow.png" />
     <None Include="Resources\top.bmp" />

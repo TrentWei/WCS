@@ -17,9 +17,11 @@ namespace Mirle.ASRS
 
             try
             {
+              
                 strSQL = string.Format("update CtrlHs set Hs='0' where EquNo='{0}'", "A1");
+                
                 if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
-                    return true;
+                     return true;
                 else
                     return false;
             }
@@ -47,9 +49,7 @@ namespace Mirle.ASRS
                     }
                     else
                     {
-
                         return false;
-
                     }
                 }
                 else

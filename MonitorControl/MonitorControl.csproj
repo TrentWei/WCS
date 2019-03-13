@@ -46,6 +46,12 @@
     <Compile Include="BufferMonitor.Designer.cs">
       <DependentUpon>BufferMonitor.cs</DependentUpon>
     </Compile>
+    <Compile Include="CraneModeMonitor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CraneModeMonitor.Designer.cs">
+      <DependentUpon>CraneModeMonitor.cs</DependentUpon>
+    </Compile>
     <Compile Include="CraneMonitor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -58,6 +64,9 @@
   <ItemGroup>
     <EmbeddedResource Include="BufferMonitor.resx">
       <DependentUpon>BufferMonitor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CraneModeMonitor.resx">
+      <DependentUpon>CraneModeMonitor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CraneMonitor.resx">
       <DependentUpon>CraneMonitor.cs</DependentUpon>

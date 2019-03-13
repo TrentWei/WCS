@@ -32,7 +32,7 @@ namespace Mirle.ASRS
             set
             {
                 autoSignal = value;
-                if(autoSignal == Buffer.Signal.On)
+                if (autoSignal == Buffer.Signal.On)
                     funUpdate(lblAuto, "1", Color.Lime);
                 else
                     funUpdate(lblAuto, "0", Color.Red);
@@ -45,7 +45,7 @@ namespace Mirle.ASRS
             set
             {
                 loadSignal = value;
-                if(loadSignal == Buffer.Signal.On)
+                if (loadSignal == Buffer.Signal.On)
                     funUpdate(lblLoad, "V", Color.LightSkyBlue);
                 else
                     funUpdate(lblLoad, string.Empty, Color.White);
@@ -58,7 +58,7 @@ namespace Mirle.ASRS
             set
             {
                 errorSignal = value;
-                if(errorSignal == Buffer.Signal.On)
+                if (errorSignal == Buffer.Signal.On)
                     funUpdate(lblError, "X", Color.Red);
                 else
                     funUpdate(lblError, string.Empty, Color.White);
@@ -93,15 +93,12 @@ namespace Mirle.ASRS
             }
         }
 
-        public bool _ReturnRequest
+        public string _ReturnRequest
         {
-            get { return lblReturnRequest.Text == "1"; }
+            get { return lblReturnRequest.Text; }
             set
             {
-                if(value)
-                    funUpdate(lblReturnRequest, "1", Color.Red);
-                else
-                    funUpdate(lblReturnRequest, "0", Color.White);
+                funUpdate(lblReturnRequest, value, Color.White);
             }
         }
 
@@ -112,7 +109,7 @@ namespace Mirle.ASRS
 
         private void funUpdate(Label label, string text, Color color)
         {
-            if(label.InvokeRequired)
+            if (label.InvokeRequired)
             {
                 Update_EventHandler Update = new Update_EventHandler(funUpdate);
                 this.Invoke(Update, label, text, color);

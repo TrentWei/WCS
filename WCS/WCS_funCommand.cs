@@ -33,18 +33,20 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funUpdateCommand(string commandID, string setStn_No)
+        private bool funUpdateCommandLoc(string commandID, string setStn_No,string setLoc)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
             try
             {
-                if (string.IsNullOrWhiteSpace(commandID) || string.IsNullOrWhiteSpace(setStn_No))
+                if (string.IsNullOrWhiteSpace(commandID) || string.IsNullOrWhiteSpace(setStn_No) || string.IsNullOrWhiteSpace(setLoc))
                     return false;
                 strSQL = "UPDATE CMD_MST SET";
                 strSQL += " STN_NO='" + setStn_No + "'";
+                strSQL += " LOC='" + setLoc + "'";
+                strSQL += " TRACE='" + Trace.StoreIn_GetStoreInCommandAndSetLoc + "'";
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
-                strSQL += " AND CMD_STS<='1'";
+                strSQL += " AND CMD_STS<'1'";
                 return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch (Exception ex)
@@ -113,7 +115,10 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funCreateStoreInCommand(string commandID, string location, string palletNo,string Stn_No)
+      
+
+
+        private bool funCreateStoreInCommand(string commandID,string commandStatus,string commandIoType, string location, string palletNo,string Stn_No,string ActualWeight,string Loc_Size,string Newlocation)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -121,12 +126,13 @@ namespace Mirle.ASRS
             try
             {
 
-                strSQL = "INSERT INTO CMD_MST(Cmd_Sno, Cmd_Mode, Cmd_Sts, Io_Type, Plt_No,";
-                strSQL += " Stn_No, Loc, Prty, Prog_Id, User_Id, TRACE, Crt_Dte) Values (";
+                strSQL = "INSERT INTO CMD_MST(CMD_DTE,Cmd_Sno, Cmd_Mode, Cmd_Sts, Io_Type, Plt_No,";
+                strSQL += " Stn_No, Loc, Prty, Prog_Id, User_Id, TRACE, Crt_Dte,Actual_Weight,LOC_SIZE) Values (";
+                strSQL += "'" + DateTime.Now.ToString("yyyyMMdd") + "',";
                 strSQL += "'" + commandID + "', ";
-                strSQL += "'"+ CMDMode.StoreIn+ "', ";
+                strSQL += "'"+ commandStatus + "', ";
                 strSQL += "'"+ CommandState.Inital+ "', ";
-                strSQL += "'12', ";
+                strSQL += "'"+ commandIoType + "', ";
                 strSQL += "'" + palletNo + "', ";
                 strSQL += "'" + Stn_No + "', ";
                 strSQL += "'" + location + "', ";
@@ -134,7 +140,10 @@ namespace Mirle.ASRS
                 strSQL += "'WCS', ";
                 strSQL += "'WCS', ";
                 strSQL += "'0', ";
-                strSQL += "'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "')";
+                strSQL += "'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "',";
+                strSQL += "'"+ ActualWeight + "', ";
+                strSQL += "'" + Loc_Size + "', ";
+                strSQL += "'" + Newlocation + "') ";
                 return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
             catch(Exception ex)
@@ -191,7 +200,7 @@ namespace Mirle.ASRS
 
                     intTimes++;
                     strSQL = "SELECT * FROM SNO_CTL";
-                    strSQL += " WHERE Sno_Type='CF'";
+                    strSQL += " WHERE Sno_Type='CmdSno'";
                     if(InitSys._DB.GetDataTable(strSQL, ref dtCommandID, ref strEM))
                     {
                         string strCmdSno = dtCommandID.Rows[0]["Sno"].ToString();
@@ -201,24 +210,23 @@ namespace Mirle.ASRS
                         if (intCmdSno > 29999)
                         {
                             intCmdSno = 1;
-                            strCmdSno = intCmdSno.ToString();
                         }
                         strCmdSnoNew = (intCmdSno + 1).ToString();
                         strSQL = "UPDATE SNO_CTL";
-                        strSQL += " SET Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
+                        strSQL += " SET Trn_Dte='" + DateTime.Now.ToString("yyyyMMdd") + "',";
                         strSQL += " SNO='" + strCmdSnoNew + "'";
-                        strSQL += " WHERE Sno_Type='CF'";
+                        strSQL += " WHERE Sno_Type='CmdSno'";
                         if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
-                            return strCmdSno.PadLeft(5, '0');
+                            return strCmdSnoNew.PadLeft(5, '0');
                     }
                     else
                     {
                         strSQL = "INSERT INTO SNO_CTL (Trn_Dte, Sno_Type, SNO) VALUES (";
-                        strSQL += "'" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
-                        strSQL += "'CF',";
+                        strSQL += "'" + DateTime.Now.ToString("yyyyMMdd") + "',";
+                        strSQL += "'CmdSno',";
                         strSQL += "'1')";
                         if(InitSys._DB.ExecuteSQL(strSQL, ref strEM))
-                            return "1";
+                            return "1".PadLeft(5, '0');
                     }
                 }
                 while(intTimes < 10);
