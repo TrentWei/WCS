@@ -150,7 +150,7 @@
             this.A39 = new Mirle.ASRS.BufferMonitor();
             this.A40 = new Mirle.ASRS.BufferMonitor();
             this.A38 = new Mirle.ASRS.BufferMonitor();
-            this.craneMonitor5 = new Mirle.ASRS.CraneMonitor();
+            this.craneMonitor1 = new Mirle.ASRS.CraneMonitor();
             this.A97 = new Mirle.ASRS.BufferMonitor();
             this.A95 = new Mirle.ASRS.BufferMonitor();
             this.A92 = new Mirle.ASRS.BufferMonitor();
@@ -161,7 +161,7 @@
             this.A31 = new Mirle.ASRS.BufferMonitor();
             this.A36 = new Mirle.ASRS.BufferMonitor();
             this.A30 = new Mirle.ASRS.BufferMonitor();
-            this.craneMonitor3 = new Mirle.ASRS.CraneMonitor();
+            this.craneMonitor2 = new Mirle.ASRS.CraneMonitor();
             this.A25 = new Mirle.ASRS.BufferMonitor();
             this.A26 = new Mirle.ASRS.BufferMonitor();
             this.A103 = new Mirle.ASRS.BufferMonitor();
@@ -169,7 +169,7 @@
             this.A28 = new Mirle.ASRS.BufferMonitor();
             this.A22 = new Mirle.ASRS.BufferMonitor();
             this.A21 = new Mirle.ASRS.BufferMonitor();
-            this.craneMonitor4 = new Mirle.ASRS.CraneMonitor();
+            this.craneMonitor3 = new Mirle.ASRS.CraneMonitor();
             this.A18 = new Mirle.ASRS.BufferMonitor();
             this.A17 = new Mirle.ASRS.BufferMonitor();
             this.A09 = new Mirle.ASRS.BufferMonitor();
@@ -179,7 +179,7 @@
             this.A20 = new Mirle.ASRS.BufferMonitor();
             this.A14 = new Mirle.ASRS.BufferMonitor();
             this.A13 = new Mirle.ASRS.BufferMonitor();
-            this.craneMonitor2 = new Mirle.ASRS.CraneMonitor();
+            this.craneMonitor4 = new Mirle.ASRS.CraneMonitor();
             this.A10 = new Mirle.ASRS.BufferMonitor();
             this.A113 = new Mirle.ASRS.BufferMonitor();
             this.A12 = new Mirle.ASRS.BufferMonitor();
@@ -201,7 +201,7 @@
             this.A116 = new Mirle.ASRS.BufferMonitor();
             this.A118 = new Mirle.ASRS.BufferMonitor();
             this.A117 = new Mirle.ASRS.BufferMonitor();
-            this.craneMonitor1 = new Mirle.ASRS.CraneMonitor();
+            this.craneMonitor5 = new Mirle.ASRS.CraneMonitor();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.dgvCmdMst = new System.Windows.Forms.DataGridView();
@@ -761,7 +761,7 @@
             this.panel1.Controls.Add(this.A39);
             this.panel1.Controls.Add(this.A40);
             this.panel1.Controls.Add(this.A38);
-            this.panel1.Controls.Add(this.craneMonitor5);
+            this.panel1.Controls.Add(this.craneMonitor1);
             this.panel1.Controls.Add(this.A97);
             this.panel1.Controls.Add(this.A95);
             this.panel1.Controls.Add(this.A92);
@@ -772,7 +772,7 @@
             this.panel1.Controls.Add(this.A31);
             this.panel1.Controls.Add(this.A36);
             this.panel1.Controls.Add(this.A30);
-            this.panel1.Controls.Add(this.craneMonitor3);
+            this.panel1.Controls.Add(this.craneMonitor2);
             this.panel1.Controls.Add(this.A25);
             this.panel1.Controls.Add(this.A26);
             this.panel1.Controls.Add(this.A103);
@@ -780,7 +780,7 @@
             this.panel1.Controls.Add(this.A28);
             this.panel1.Controls.Add(this.A22);
             this.panel1.Controls.Add(this.A21);
-            this.panel1.Controls.Add(this.craneMonitor4);
+            this.panel1.Controls.Add(this.craneMonitor3);
             this.panel1.Controls.Add(this.A18);
             this.panel1.Controls.Add(this.A17);
             this.panel1.Controls.Add(this.A09);
@@ -790,7 +790,7 @@
             this.panel1.Controls.Add(this.A20);
             this.panel1.Controls.Add(this.A14);
             this.panel1.Controls.Add(this.A13);
-            this.panel1.Controls.Add(this.craneMonitor2);
+            this.panel1.Controls.Add(this.craneMonitor4);
             this.panel1.Controls.Add(this.A10);
             this.panel1.Controls.Add(this.A113);
             this.panel1.Controls.Add(this.A12);
@@ -812,7 +812,7 @@
             this.panel1.Controls.Add(this.A116);
             this.panel1.Controls.Add(this.A118);
             this.panel1.Controls.Add(this.A117);
-            this.panel1.Controls.Add(this.craneMonitor1);
+            this.panel1.Controls.Add(this.craneMonitor5);
             this.panel1.Location = new System.Drawing.Point(8, 8);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1824, 735);
@@ -2179,18 +2179,18 @@
             this.A38.Size = new System.Drawing.Size(51, 66);
             this.A38.TabIndex = 221;
             // 
-            // craneMonitor5
+            // craneMonitor1
             // 
-            this.craneMonitor5._CommandID = "";
-            this.craneMonitor5._CraneMode = "X";
-            this.craneMonitor5._CraneNo = 1;
-            this.craneMonitor5._CraneState = "X";
-            this.craneMonitor5.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor5.Location = new System.Drawing.Point(756, 479);
-            this.craneMonitor5.Name = "craneMonitor5";
-            this.craneMonitor5.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor5.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor5.TabIndex = 219;
+            this.craneMonitor1._CommandID = "";
+            this.craneMonitor1._CraneMode = "X";
+            this.craneMonitor1._CraneNo = 1;
+            this.craneMonitor1._CraneState = "X";
+            this.craneMonitor1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor1.Location = new System.Drawing.Point(756, 479);
+            this.craneMonitor1.Name = "craneMonitor1";
+            this.craneMonitor1.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor1.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor1.TabIndex = 219;
             // 
             // A97
             // 
@@ -2372,18 +2372,18 @@
             this.A30.Size = new System.Drawing.Size(51, 66);
             this.A30.TabIndex = 209;
             // 
-            // craneMonitor3
+            // craneMonitor2
             // 
-            this.craneMonitor3._CommandID = "";
-            this.craneMonitor3._CraneMode = "X";
-            this.craneMonitor3._CraneNo = 2;
-            this.craneMonitor3._CraneState = "X";
-            this.craneMonitor3.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor3.Location = new System.Drawing.Point(600, 479);
-            this.craneMonitor3.Name = "craneMonitor3";
-            this.craneMonitor3.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor3.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor3.TabIndex = 207;
+            this.craneMonitor2._CommandID = "";
+            this.craneMonitor2._CraneMode = "X";
+            this.craneMonitor2._CraneNo = 2;
+            this.craneMonitor2._CraneState = "X";
+            this.craneMonitor2.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor2.Location = new System.Drawing.Point(600, 479);
+            this.craneMonitor2.Name = "craneMonitor2";
+            this.craneMonitor2.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor2.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor2.TabIndex = 207;
             // 
             // A25
             // 
@@ -2511,18 +2511,18 @@
             this.A21.Size = new System.Drawing.Size(51, 66);
             this.A21.TabIndex = 201;
             // 
-            // craneMonitor4
+            // craneMonitor3
             // 
-            this.craneMonitor4._CommandID = "";
-            this.craneMonitor4._CraneMode = "X";
-            this.craneMonitor4._CraneNo = 3;
-            this.craneMonitor4._CraneState = "X";
-            this.craneMonitor4.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor4.Location = new System.Drawing.Point(444, 479);
-            this.craneMonitor4.Name = "craneMonitor4";
-            this.craneMonitor4.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor4.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor4.TabIndex = 200;
+            this.craneMonitor3._CommandID = "";
+            this.craneMonitor3._CraneMode = "X";
+            this.craneMonitor3._CraneNo = 3;
+            this.craneMonitor3._CraneState = "X";
+            this.craneMonitor3.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor3.Location = new System.Drawing.Point(444, 479);
+            this.craneMonitor3.Name = "craneMonitor3";
+            this.craneMonitor3.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor3.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor3.TabIndex = 200;
             // 
             // A18
             // 
@@ -2686,18 +2686,18 @@
             this.A13.Size = new System.Drawing.Size(51, 66);
             this.A13.TabIndex = 194;
             // 
-            // craneMonitor2
+            // craneMonitor4
             // 
-            this.craneMonitor2._CommandID = "";
-            this.craneMonitor2._CraneMode = "X";
-            this.craneMonitor2._CraneNo = 4;
-            this.craneMonitor2._CraneState = "X";
-            this.craneMonitor2.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor2.Location = new System.Drawing.Point(289, 479);
-            this.craneMonitor2.Name = "craneMonitor2";
-            this.craneMonitor2.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor2.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor2.TabIndex = 193;
+            this.craneMonitor4._CommandID = "";
+            this.craneMonitor4._CraneMode = "X";
+            this.craneMonitor4._CraneNo = 4;
+            this.craneMonitor4._CraneState = "X";
+            this.craneMonitor4.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor4.Location = new System.Drawing.Point(289, 479);
+            this.craneMonitor4.Name = "craneMonitor4";
+            this.craneMonitor4.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor4.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor4.TabIndex = 193;
             // 
             // A10
             // 
@@ -3077,18 +3077,18 @@
             this.A117.Size = new System.Drawing.Size(51, 66);
             this.A117.TabIndex = 169;
             // 
-            // craneMonitor1
+            // craneMonitor5
             // 
-            this.craneMonitor1._CommandID = "";
-            this.craneMonitor1._CraneMode = "X";
-            this.craneMonitor1._CraneNo = 5;
-            this.craneMonitor1._CraneState = "X";
-            this.craneMonitor1.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.craneMonitor1.Location = new System.Drawing.Point(77, 479);
-            this.craneMonitor1.Name = "craneMonitor1";
-            this.craneMonitor1.Padding = new System.Windows.Forms.Padding(3);
-            this.craneMonitor1.Size = new System.Drawing.Size(103, 90);
-            this.craneMonitor1.TabIndex = 168;
+            this.craneMonitor5._CommandID = "";
+            this.craneMonitor5._CraneMode = "X";
+            this.craneMonitor5._CraneNo = 5;
+            this.craneMonitor5._CraneState = "X";
+            this.craneMonitor5.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.craneMonitor5.Location = new System.Drawing.Point(77, 479);
+            this.craneMonitor5.Name = "craneMonitor5";
+            this.craneMonitor5.Padding = new System.Windows.Forms.Padding(3);
+            this.craneMonitor5.Size = new System.Drawing.Size(103, 90);
+            this.craneMonitor5.TabIndex = 168;
             // 
             // tabPage1
             // 
@@ -3267,7 +3267,7 @@
         private BufferMonitor A39;
         private BufferMonitor A40;
         private BufferMonitor A38;
-        private CraneMonitor craneMonitor5;
+        private CraneMonitor craneMonitor1;
         private BufferMonitor A97;
         private BufferMonitor A95;
         private BufferMonitor A92;
@@ -3276,19 +3276,19 @@
         private BufferMonitor A31;
         private BufferMonitor A36;
         private BufferMonitor A30;
-        private CraneMonitor craneMonitor3;
+        private CraneMonitor craneMonitor2;
         private BufferMonitor A26;
         private BufferMonitor A23;
         private BufferMonitor A28;
         private BufferMonitor A22;
         private BufferMonitor A21;
-        private CraneMonitor craneMonitor4;
+        private CraneMonitor craneMonitor3;
         private BufferMonitor A09;
         private BufferMonitor A07;
         private BufferMonitor A20;
         private BufferMonitor A14;
         private BufferMonitor A13;
-        private CraneMonitor craneMonitor2;
+        private CraneMonitor craneMonitor4;
         private BufferMonitor A10;
         private BufferMonitor A113;
         private BufferMonitor A12;
@@ -3309,7 +3309,7 @@
         private BufferMonitor A115;
         private BufferMonitor A116;
         private BufferMonitor A117;
-        private CraneMonitor craneMonitor1;
+        private CraneMonitor craneMonitor5;
         private BufferMonitor A71;
         private BufferMonitor A70;
         private BufferMonitor A67;

@@ -245,7 +245,7 @@ namespace Mirle.ASRS
             try
             {
                 string sFileName = null;
-                sFileName = @"C:\inetpub\wwwroot\TV_WS";
+                sFileName = @"D:\TV_WS";
                 if (System.IO.Directory.Exists(sFileName) == false)
                 {
                     System.IO.Directory.CreateDirectory(sFileName);

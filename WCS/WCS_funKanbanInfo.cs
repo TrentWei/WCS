@@ -67,8 +67,9 @@ namespace Mirle.ASRS
             string strPalletNo = string.Empty;
             int intPalletQty = 0;
             int intPalletTaskQty = 0;
+            string strPalletQty = string.Empty;
+            string strPalletTaskQty = string.Empty;
             string strCycNo = string.Empty;
-            KanbanInfoStyle infoStyle = new KanbanInfoStyle();
             List<KanbanInfoStyle> listInfo = new List<KanbanInfoStyle>();
             string strEM = string.Empty;
             if (sKanbanModel == KanbanModel.ERROR)
@@ -80,7 +81,7 @@ namespace Mirle.ASRS
             {
                 strSQL = "select * from CMD_MST ";
                 strSQL += " where CMD_SNO='" + sCmdSno.PadLeft(5, '0') + "'";
-                strSQL += " and PLT_NO='" + sCmdSno.PadLeft(5, '0') + "'";
+
                 if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                 {
                     CommandInfo commandInfo = new CommandInfo();
@@ -94,19 +95,20 @@ namespace Mirle.ASRS
 
                     if (!string.IsNullOrEmpty(commandInfo.CommandID)) strCommandID = "命令序号:" + commandInfo.CommandID;
                     if (!string.IsNullOrEmpty(commandInfo.PalletNo)) strPalletNo = "托盘单号:" + commandInfo.PalletNo;
-                    if (!string.IsNullOrEmpty(commandInfo.CycleNo)) strCycNo = "盘点单号:" + commandInfo.CycleNo; sKanbanModel = KanbanModel.CYC;
+                    if (!string.IsNullOrEmpty(commandInfo.CycleNo)) { strCycNo = "盘点单号:" + commandInfo.CycleNo; sKanbanModel = KanbanModel.CYC; }
                     if (!string.IsNullOrEmpty(commandInfo.WEIGH) && !string.IsNullOrEmpty(commandInfo.ACTUAL_WEIGHT)) strEM = "计划重量:" + commandInfo.WEIGH + "实际重量:" + commandInfo.ACTUAL_WEIGHT;
                     strSQL = "select case TKT_NO when null then 2 ELSE 1  end as GAODU,BOX_ID,ITEM_NO  from Box ";
-                    strSQL += " where Sub_NO='" + SubNo + "' order GAODU ";
+                    strSQL += " where Sub_NO='" + SubNo + "' order by GAODU ";
                     if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                     {
                         for (int i = 0; i < dtCmdSno.Rows.Count; i++)
                         {
+                            KanbanInfoStyle infoStyle = new KanbanInfoStyle();
                             if (dtCmdSno.Rows[i]["GAODU"].ToString() == "1")
                             {
                                 intPalletQty += 1;
                                 intPalletTaskQty += 1;
-                                infoStyle.Color = HtmlColor.Green;
+                                infoStyle.Color = HtmlColor.Antiquewhite;
                             }
                             if (dtCmdSno.Rows[i]["GAODU"].ToString() == "2")
                             {
@@ -114,7 +116,7 @@ namespace Mirle.ASRS
                                 intPalletQty += 1;
                                 infoStyle.Color = HtmlColor.Gray;
                             }
-                            infoStyle.Info = "料号:" + dtCmdSno.Rows[i]["ITEM_NO"].ToString() + "箱号:" + dtCmdSno.Rows[i]["BOX_ID"].ToString();
+                            infoStyle.Info = "物料编号:" + dtCmdSno.Rows[i]["ITEM_NO"].ToString() + "  箱号:" + dtCmdSno.Rows[i]["BOX_ID"].ToString();
                             listInfo.Add(infoStyle);
                         }
                         switch (sKanbanModel)
@@ -144,11 +146,14 @@ namespace Mirle.ASRS
                 int Count = listInfo.Count;
                 for (int i = 0; i < 10 - Count; i++)
                 {
-                    infoStyle.Color = "";
+                    KanbanInfoStyle infoStyle = new KanbanInfoStyle();
+                    infoStyle.Color =" ";
                     infoStyle.Info = " ";
                     listInfo.Add(infoStyle);
                 }
             }
+            if (intPalletQty > 0) strPalletQty = "托盘数量:" + intPalletQty.ToString();
+            if (intPalletTaskQty > 0) strPalletTaskQty = "托盘数量:" + intPalletTaskQty.ToString();
             try
             {
                 string sHtml = "<!DOCTYPE html><html><head><meta http - equiv = \"Content - Type\" content = \"text / html; charset = utf - 8\" /><title></title><meta charset = \"utf - 8\" http-equiv = \"refresh\" content = \"1\" /><style>* {font-family: 微软雅黑;margin: 0;padding: 0;}";
@@ -161,31 +166,31 @@ namespace Mirle.ASRS
                 sHtml += "<td class=\"td_Left_tr2_tab_td1\" rowspan=\"2\" style=\"align-content: center; " + strColor + ";\"> <label id = \"MessageMain\" Width = \"100%\" > " + sKanbanModel + " </label></td>";
                 sHtml += "<td class=\"td_Left_tr2_tab_td2\"><div id = \"txt_Message1\" > " + strCommandID + " </div></td ></tr ><tr><td class=\"td_Left_tr2_tab_td2\">";
                 sHtml += "<div id = \"txt_Message2\" > " + strPalletNo + " </div>";
-                sHtml += "</td ></tr><tr><td class=\"td_Left_tr2_tab_td1\"><div id = \"txt_Message5\" > " + intPalletQty + "</div></td>";
+                sHtml += "</td ></tr><tr><td class=\"td_Left_tr2_tab_td1\"><div id = \"txt_Message5\" > " + strPalletQty + "</div></td>";
                 sHtml += "<td class=\"td_Left_tr2_tab_td2\"><div id = \"txt_Message4\" > " + strCycNo + " </div></td></tr><tr>";
-                sHtml += "<td class=\"td_Left_tr2_tab_td1\"><div id = \"txt_Message6\" > " + intPalletTaskQty + "</div></td>";
+                sHtml += "<td class=\"td_Left_tr2_tab_td1\"><div id = \"txt_Message6\" > " + strPalletTaskQty + "</div></td>";
                 sHtml += "<td class=\"td_Left_tr2_tab_td2\"><div id = \"txt_Message3\" >" + strEM + "</div></ td ></tr></table></td></tr></table></td></tr></table></div>";
                 sHtml += "<div id=\"follow_Main\"><div id = \"txt_MessageBox\" >";
-                sHtml += "<table style=\"width: 100 %; height: 100 % \">";
-                sHtml += "<tr style=\"border: 1px solid #808080;width:100%;height:20%;\">";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[0].Color + " \">" + listInfo[0].Info + "</td>";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[1].Color + " \">" + listInfo[1].Info + "</td>";
+                sHtml += "<table style=\"width:100%; height:100% \">";
+                sHtml += "<tr>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[0].Color + " \">" + listInfo[0].Info + "</td>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[1].Color + " \">" + listInfo[1].Info + "</td>";
                 sHtml += "</tr>";
-                sHtml += "<tr style=\"border: 1px solid #808080;width:100%;height:20%;\">";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[2].Color + " \">" + listInfo[2].Info + "</td>";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[3].Color + " \">" + listInfo[3].Info + "</td>";
+                sHtml += "<tr>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[2].Color + " \">" + listInfo[2].Info + "</td>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[3].Color + " \">" + listInfo[3].Info + "</td>";
                 sHtml += "</tr>";
-                sHtml += "<tr style=\"border: 1px solid #808080;width:100%;height:20%;\">";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[4].Color + " \">" + listInfo[4].Info + "</td>";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[5].Color + " \">" + listInfo[5].Info + "</td>";
+                sHtml += "<tr>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[4].Color + " \">" + listInfo[4].Info + "</td>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[5].Color + " \">" + listInfo[5].Info + "</td>";
                 sHtml += "</tr>";
-                sHtml += "<tr style=\"border: 1px solid #808080;width:100%;height:20%;\">";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[6].Color + " \">" + listInfo[6].Info + "</td>";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[7].Color + " \">" + listInfo[7].Info + "</td>";
+                sHtml += "<tr>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[6].Color + " \">" + listInfo[6].Info + "</td>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[7].Color + " \">" + listInfo[7].Info + "</td>";
                 sHtml += "</tr>";
-                sHtml += "<tr style=\"border: 1px solid #808080;width:100%;height:20%;\">";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[8].Color + " \">" + listInfo[8].Info + "</td>";
-                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:100%; " + listInfo[9].Color + " \">" + listInfo[9].Info + "</td>";
+                sHtml += "<tr>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[8].Color + " \">" + listInfo[8].Info + "</td>";
+                sHtml += "<td style=\"border: 1px solid #808080;width:50%;height:20%; " + listInfo[9].Color + " \">" + listInfo[9].Info + "</td>";
                 sHtml += "</tr>";
                 sHtml += "</table>";
                 sHtml += "</div></div></form></body></html>";

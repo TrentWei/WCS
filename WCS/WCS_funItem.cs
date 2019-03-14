@@ -99,7 +99,7 @@ namespace Mirle.ASRS
             }
         }
 
-        private bool funGetCode(ref int Pack001, ref int Pack002)
+        private bool funGetCode(ref double Pack001, ref double Pack002)
         {
             DataTable dtCode = new DataTable();
             string strSQL = string.Empty;
@@ -109,13 +109,13 @@ namespace Mirle.ASRS
             Pack002 = 0;
             try
             {
-                strSQL = "SELECT * FROM CMD_MST  where CODE_TYPE='PACK' AND CODE_NO in ('001','002')  ";
+                strSQL = "SELECT * FROM CODE where CODE_TYPE='Pack' AND CODE_NO in ('001','002')  ";
                 if (InitSys._DB.GetDataTable(strSQL, ref dtCode, ref strEM))
                 {
                     if (dtCode.Rows.Count>=2)
                     {
-                        Pack001 = Convert.ToInt32(dtCode.Rows[0]["CODE_NAME"].ToString());
-                        Pack002 = Convert.ToInt32(dtCode.Rows[1]["CODE_NAME"].ToString());
+                        Pack001 = Convert.ToDouble(dtCode.Rows[0]["CODE_NAME"].ToString());
+                        Pack002 = Convert.ToDouble(dtCode.Rows[1]["CODE_NAME"].ToString());
                     }
                     return true;
                 }

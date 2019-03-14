@@ -127,7 +127,7 @@ namespace Mirle.ASRS
             {
 
                 strSQL = "INSERT INTO CMD_MST(CMD_DTE,Cmd_Sno, Cmd_Mode, Cmd_Sts, Io_Type, Plt_No,";
-                strSQL += " Stn_No, Loc, Prty, Prog_Id, User_Id, TRACE, Crt_Dte,Actual_Weight,LOC_SIZE) Values (";
+                strSQL += " Stn_No, Loc, Prty, Prog_Id, User_Id, TRACE, Crt_Dte,Actual_Weight,LOC_SIZE,New_LOC) Values (";
                 strSQL += "'" + DateTime.Now.ToString("yyyyMMdd") + "',";
                 strSQL += "'" + commandID + "', ";
                 strSQL += "'"+ commandStatus + "', ";

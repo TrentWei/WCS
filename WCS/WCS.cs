@@ -298,6 +298,8 @@ namespace Mirle.ASRS
                                 bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 6].ToString();
                                 bufferData[intIndex]._PalletNo = intarResultData[(intIndex * 10) + 7].ToString();
 
+                                bufferData[intIndex]._LoactionSize = intarResultData[(intIndex * 10) + 8] == 1;
+
                                 bufferData[intIndex]._Clearnotice = intarResultData[(intIndex * 10) + 9] == 1;
 
                             }
@@ -632,11 +634,11 @@ namespace Mirle.ASRS
             try
             {
                 dicCraneMap.Clear();
-                for (int intIndex = 0; intIndex < sctMain1.Panel2.Controls.Count; intIndex++)
+                for (int intIndex = 0; intIndex < panel1.Controls.Count; intIndex++)
                 {
-                    if (sctMain1.Panel2.Controls[intIndex] is CraneMonitor)
+                    if (panel1.Controls[intIndex] is CraneMonitor)
                     {
-                        CraneMonitor craneMonitor = (CraneMonitor)sctMain1.Panel2.Controls[intIndex];
+                        CraneMonitor craneMonitor = (CraneMonitor)panel1.Controls[intIndex];
                         dicCraneMap.Add(craneMonitor._CraneNo, craneMonitor);
                     }
                 }

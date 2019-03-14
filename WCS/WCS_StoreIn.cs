@@ -38,7 +38,7 @@ namespace Mirle.ASRS
                     //命令为空、目的站为空、模式0、自动、荷有、
                     if (bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On
                         && bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On
-                        && bufferData[intBufferIndex]._EQUStatus.RearLocation == Buffer.Signal.On
+                        && bufferData[intBufferIndex]._EQUStatus.FrontLocation == Buffer.Signal.On
                         && string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID)
                         && string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination)
                         && bufferData[intBufferIndex]._Mode == StnMode.None
@@ -84,7 +84,7 @@ namespace Mirle.ASRS
                             #endregion BCR Read Fail & Write MPLC Success & BCR Clear
 
                             string[] strValues = new string[] { "4" };
-                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
                             funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "扫码失败！", intBufferIndex);
 
                             #endregion Read Error
@@ -93,13 +93,30 @@ namespace Mirle.ASRS
                         {
                             #region Read OK
                             string strBCR = bCRData[intIndex]._ResultID;
-                            strSQL = "SELECT * FROM CMD_MST";
                             strSQL = "SELECT * FROM CMD_MST WHERE PLT_NO='" + strBCR + "'";
                             if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                             {
                                 string strIoType = dtCmdSno.Rows[0]["IO_TYPE"].ToString();
                                 string strCmdSno = dtCmdSno.Rows[0]["CMD_SNO"].ToString();
-                                if (strIoType == IO_TYPE.StoreIn11)
+
+                                if (strIoType == IO_TYPE.StoreIn15)
+                                {
+                                    string[] strValues = new string[] { strCmdSno, CMDMode.StoreIn, "83" };
+                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
+                                    {
+                                        strValues = new string[] { "1" };
+                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_Discharged, strValues);
+                                        funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "扫码失败！", intBufferIndex);
+
+                                        bCRData[intIndex].funClear();
+                                        strMsg = bCRData[intIndex]._BufferName + "|";
+                                        strMsg += "2->0|";
+                                        strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
+                                        strMsg += "BCR Clear!";
+                                        funWriteSysTraceLog(strMsg);
+                                    }
+                                }
+                                else if (strIoType == IO_TYPE.StoreIn11)
                                 {
                                     #region 删除已存在命令
                                     strMsg = strBufferName + "|";
@@ -109,7 +126,7 @@ namespace Mirle.ASRS
                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
                                     try
                                     {
-                                        strSQL = "INSERT INTO CMD_MST_HIS SELECT * FROM CMD_MST WHERE PLT_NO='" + strBCR + "'";
+                                        strSQL = "INSERT INTO CMD_MST_LOG SELECT * FROM CMD_MST WHERE PLT_NO='" + strBCR + "'";
                                         if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                                         {
 
@@ -162,157 +179,159 @@ namespace Mirle.ASRS
                                         }
                                     }
                                     #endregion
-
-                                    strSQL = " SELECT P.SUB_NO,SUM(LOTATT12)AS INWEIGHT  FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO   ";
-                                    strSQL += " WHERE B.STATUS IN ('0','W') AND LOC='' AND P.PLT_NO='" + strBCR + "'";
-                                    strSQL += " GROUP BY P.SUB_NO  ";
-                                    if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                }
+                            }
+                            else
+                            {
+                                //算出托盘上所有产品净重量
+                                strSQL = " SELECT P.SUB_NO,SUM(LOTATT12)AS INWEIGHT  FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO   ";
+                                strSQL += " WHERE B.STATUS IN ('0','W')  AND Nvl(LOC,' ')=' ' AND P.PLT_NO='" + strBCR + "'";
+                                strSQL += " GROUP BY P.SUB_NO  ";
+                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                {
+                                    #region 产生新的入库命令
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
+                                    try
                                     {
-                                        #region 产生新的入库命令
-                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
-                                        try
+                                        string strLoaction = "";
+                                        string strActualWeight = dtCmdSno.Rows[0]["INWEIGHT"].ToString();
+                                        string strSubNo = dtCmdSno.Rows[0]["SUB_NO"].ToString();
+                                        string strCommandID = funGetCommandID();
+
+                                        if (funCreateStoreInCommand(strCommandID, CMDMode.StoreIn, IO_TYPE.StoreIn11, strLoaction, strBCR, strBufferName, strActualWeight, " ", " "))
                                         {
-                                            string strLoaction = "";
-                                            string strActualWeight = dtCmdSno.Rows[0]["INWEIGHT"].ToString();
-                                            string strSubNo = dtCmdSno.Rows[0]["SUB_NO"].ToString();
-                                            string strCommandID = funGetCommandID();
-
-                                            if (funCreateStoreInCommand(strCommandID, CMDMode.StoreIn, IO_TYPE.StoreIn11, strLoaction, strBCR, strBufferName, strActualWeight, " ", " "))
+                                            if (funLockStoreInBox(strSubNo, LoactionState.IN))
                                             {
-                                                if (funLockStoreInBox(strSubNo, LoactionState.IN))
+                                                string[] strValues = new string[] { strCommandID, CMDMode.StoreIn, "83" };
+                                                if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
                                                 {
-                                                    string[] strValues = new string[] { strCommandID, CMDMode.StoreIn, "83" };
-                                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
+                                                    if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit))
                                                     {
-                                                        if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit))
-                                                        {
-                                                            strMsg = strBufferName + "|";
-                                                            strMsg += strBCR + "|";
-                                                            strMsg += strCommandID + "|";
-                                                            strMsg += "|";
-                                                            strMsg += "StoreIn Command And WritePLC Success";
-                                                            funWriteSysTraceLog(strMsg);
+                                                        strMsg = strBufferName + "|";
+                                                        strMsg += strBCR + "|";
+                                                        strMsg += strCommandID + "|";
+                                                        strMsg += "|";
+                                                        strMsg += "StoreIn Command And WritePLC Success";
+                                                        funWriteSysTraceLog(strMsg);
 
-                                                            funSetKanbanInfo(KanbanModel.IN, strBufferName, strCommandID, strSubNo, string.Empty, intBufferIndex);
+                                                        bCRData[intIndex].funClear();
+                                                        strMsg = bCRData[intIndex]._BufferName + "|";
+                                                        strMsg += "2->0|";
+                                                        strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
+                                                        strMsg += "BCR Clear!";
+                                                        funWriteSysTraceLog(strMsg);
 
-                                                        }
-                                                        else
-                                                        {
-                                                            #region StoreInAndTransactionCommit Fail
-                                                            InitSys._MPLC.funClearMPLC(bufferData[intBufferIndex]._W_CmdSno);
-                                                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                                            strMsg = strBufferName + "|";
-                                                            strMsg += strBCR + "|";
-                                                            strMsg += strCommandID + "|";
-                                                            strMsg += "|";
-                                                            strMsg += "StoreIn And TransactionCommit Fail!";
-                                                            funWriteSysTraceLog(strMsg);
-                                                            #endregion StoreInAndTransactionCommit Fail
+                                                        //strValues= new string[] {"1"};
+                                                        //InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues);
 
-                                                            strValues = new string[] { "1" };
-                                                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
-                                                            funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "事务提交失败！", intBufferIndex);
+                                                        funSetKanbanInfo(KanbanModel.IN, strBufferName, strCommandID, strSubNo, string.Empty, intBufferIndex);
 
-                                                        }
                                                     }
                                                     else
                                                     {
-                                                        #region StoreInAndWriteMPLC Fail
+                                                        #region StoreInAndTransactionCommit Fail
+                                                        InitSys._MPLC.funClearMPLC(bufferData[intBufferIndex]._W_CmdSno);
                                                         InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                                         strMsg = strBufferName + "|";
                                                         strMsg += strBCR + "|";
                                                         strMsg += strCommandID + "|";
                                                         strMsg += "|";
-                                                        strMsg += "StoreInAndWriteMPLC Fail!";
+                                                        strMsg += "StoreIn And TransactionCommit Fail!";
                                                         funWriteSysTraceLog(strMsg);
-                                                        #endregion StoreInAndWriteMPLC Fail
+                                                        #endregion StoreInAndTransactionCommit Fail
 
                                                         strValues = new string[] { "1" };
-                                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
-                                                        funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "命令写入PLC失败！", intBufferIndex);
+                                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
+                                                        funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "事务提交失败！", intBufferIndex);
 
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    #region Update StoreIn BOX_ID Fail
+                                                    #region StoreInAndWriteMPLC Fail
                                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                                     strMsg = strBufferName + "|";
                                                     strMsg += strBCR + "|";
                                                     strMsg += strCommandID + "|";
                                                     strMsg += "|";
-                                                    strMsg += "Update StoreIn BOX_ID Fail!";
+                                                    strMsg += "StoreInAndWriteMPLC Fail!";
                                                     funWriteSysTraceLog(strMsg);
-                                                    #endregion Update StoreIn PalletNo Fail
+                                                    #endregion StoreInAndWriteMPLC Fail
 
-                                                    string[] strValues = new string[] { "2" };
-                                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
-                                                    funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "子托盘跟新失败！", intBufferIndex);
+                                                    strValues = new string[] { "1" };
+                                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
+                                                    funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "命令写入PLC失败！", intBufferIndex);
 
                                                 }
                                             }
                                             else
                                             {
-                                                #region Insert Command Fail
+                                                #region Update StoreIn BOX_ID Fail
                                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                                                strMsg = strCommandID + "|";
-                                                strMsg += strLoaction + "|";
+                                                strMsg = strBufferName + "|";
                                                 strMsg += strBCR + "|";
-                                                strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
-                                                strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
-                                                strMsg += "StroreIn Command Insert Fail!";
+                                                strMsg += strCommandID + "|";
+                                                strMsg += "|";
+                                                strMsg += "Update StoreIn BOX_ID Fail!";
                                                 funWriteSysTraceLog(strMsg);
-                                                #endregion Insert Command Fail
+                                                #endregion Update StoreIn PalletNo Fail
 
-                                                string[] strValues = new string[] { "1" };
-                                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
-                                                funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "命令产生失败！", intBufferIndex);
+                                                string[] strValues = new string[] { "2" };
+                                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
+                                                funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "子托盘跟新失败！", intBufferIndex);
 
                                             }
                                         }
-                                        catch (Exception ex)
+                                        else
                                         {
-                                            strMsg = strBufferName + "|";
-                                            strMsg += strBCR + "|";
-                                            strMsg += "|";
-                                            strMsg += "产生命令入库出现异常！";
-                                            funWriteSysTraceLog(strMsg);
+                                            #region Insert Command Fail
                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                            strMsg = strCommandID + "|";
+                                            strMsg += strLoaction + "|";
+                                            strMsg += strBCR + "|";
+                                            strMsg += CommandState.Inital + "->" + CommandState.Start + "|";
+                                            strMsg += Trace.Inital + "->" + Trace.StoreOut_GetStoreOutCommandAndWritePLC + "|";
+                                            strMsg += "StroreIn Command Insert Fail!";
+                                            funWriteSysTraceLog(strMsg);
+                                            #endregion Insert Command Fail
+
+                                            string[] strValues = new string[] { "1" };
+                                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
+                                            funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "命令产生失败！", intBufferIndex);
+
                                         }
-                                        #endregion
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        #region Can't Find StroreIn PLT_MST&BOX
-                                        strMsg = bufferData[intBufferIndex]._BufferName + "|";
-                                        strMsg += bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "Can't Find StroreIn PLT_MST&BOX!";
+                                        strMsg = strBufferName + "|";
+                                        strMsg += strBCR + "|";
+                                        strMsg += "|";
+                                        strMsg += "产生命令入库出现异常！";
                                         funWriteSysTraceLog(strMsg);
-
-                                        bCRData[intIndex].funClear();
-                                        strMsg = bCRData[intIndex]._BufferName + "|";
-                                        strMsg += "2->0|";
-                                        strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
-                                        strMsg += "BCR Clear!";
-                                        funWriteSysTraceLog(strMsg);
-                                        #endregion Can't Find StroreIn PLT_MST&BOX
-
-                                        string[] strValues = new string[] { "1" };
-                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
-                                        funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "条码无资料！", intBufferIndex);
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                     }
+                                    #endregion
                                 }
                                 else
                                 {
-                                    string[] strValues = new string[] { strCmdSno, CMDMode.StoreIn, "83" };
-                                    if (InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_CmdSno, strValues))
-                                    {
-                                        strValues = new string[] { "1" };
-                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_Discharged, strValues);
-                                        funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "扫码失败！", intBufferIndex);
-                                    }
-                                }
+                                    #region Can't Find StroreIn PLT_MST&BOX
+                                    strMsg = bufferData[intBufferIndex]._BufferName + "|";
+                                    strMsg += bCRData[intIndex]._ResultID + "|";
+                                    strMsg += "Can't Find StroreIn PLT_MST&BOX!";
+                                    funWriteSysTraceLog(strMsg);
 
+                                    bCRData[intIndex].funClear();
+                                    strMsg = bCRData[intIndex]._BufferName + "|";
+                                    strMsg += "2->0|";
+                                    strMsg += strBCR + "->" + bCRData[intIndex]._ResultID + "|";
+                                    strMsg += "BCR Clear!";
+                                    funWriteSysTraceLog(strMsg);
+                                    #endregion Can't Find StroreIn PLT_MST&BOX
+
+                                    string[] strValues = new string[] { "1" };
+                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
+                                    funSetKanbanInfo(KanbanModel.ERROR, strBufferName, string.Empty, string.Empty, "条码无资料！", intBufferIndex);
+                                }
                             }
                             #endregion Read OK
                         }
@@ -377,7 +396,7 @@ namespace Mirle.ASRS
                             string strBCR = bCRData[intIndex]._ResultID;
                             strSQL = "SELECT * FROM CMD_MST ";
                             strSQL += "WHERE PLT_NO='" + strBCR + "' ";
-                            strSQL += "AND LOC='' AND CMD_STS='0'";
+                            strSQL += "AND Nvl(LOC,' ')=' ' AND CMD_STS='0'";
                             if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                             {
                                 string strCommandID = dtCmdSno.Rows[0]["CMD_MST"].ToString();
@@ -429,9 +448,14 @@ namespace Mirle.ASRS
                     #endregion
 
                     #region A83称重机称重
+                    // 
+                    //
+
                     if (bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On
                       && bufferData[intBufferIndex]._EQUStatus.Load == Buffer.Signal.On
                       && bufferData[intBufferIndex]._EQUStatus.FrontLocation == Buffer.Signal.On
+                      && !bufferData[intBufferIndex]._Discharged
+                      && bufferData[intBufferIndex]._ReturnRequest == "0"
                       && !string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID)
                       && !string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination)
                       && bufferData[intBufferIndex]._Mode == StnMode.StoreIn
@@ -473,49 +497,50 @@ namespace Mirle.ASRS
                             strMsg += "BCR Clear!";
                             funWriteSysTraceLog(strMsg);
                             string[] strValues = new string[] { "4" };
-                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
                             #endregion BCR Read Fail & Write MPLC Success & BCR Clear
                         }
                         else if (bCRData[intIndex]._BCRSts == BCR.BCRSts.ReadFinish && bCRData[intIndex]._ResultID != "ERROR")
                         {
                             #region Read OK
-                            int strWeight = int.Parse(bCRData[intIndex]._ResultID);
+                            string intWeight = bCRData[intIndex]._ResultID.Replace(' ', '+');
+                            int strWeight = int.Parse(intWeight.Substring(intWeight.LastIndexOf('+'), (intWeight.Length - intWeight.LastIndexOf('+')) - 1));
+                            strWeight = strWeight / 10;
                             string strCommandID = bufferData[intBufferIndex]._CommandID.PadLeft(5, '0');
                             string strPltNo = string.Empty;
-                            int Pack001 = 0;
-                            int Pack002 = 0;
-                            int inSKU_GROUP3 = 0;
-                            int inBOX_COUNT = 0;
-
-
+                            double Pack001 = 0;
+                            double Pack002 = 0;
+                            double inSKU_GROUP3 = 0;
+                            double inBOX_COUNT = 0;
 
                             strSQL = "SELECT PLT_NO,ACTUAL_WEIGHT,IO_TYPE  ";
                             strSQL += "FROM CMD_MST ";
-                            strSQL += "WHERE CMD_MST='" + strCommandID + "'";
+                            strSQL += "WHERE CMD_SNO='" + strCommandID + "'";
                             if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                             {
-                                int inActualWeight = int.Parse(dtCmdSno.Rows[0]["ACTUAL_WEIGHT"].ToString());
+                                double inActualWeight = double.Parse(dtCmdSno.Rows[0]["ACTUAL_WEIGHT"].ToString());
                                 strPltNo = dtCmdSno.Rows[0]["PLT_NO"].ToString();
                                 string strIO_TYPE = dtCmdSno.Rows[0]["IO_TYPE"].ToString();
 
                                 if (strIO_TYPE == IO_TYPE.StoreIn11)
                                 {
                                     #region 入库
-                                    strSQL = "SELECT SUM(I.SKU_GROUP3) AS SKU_GROUP3,COUNT(B.SUB_NO) AS BOX_COUNT ";
+                                    strSQL = "SELECT SUM(I.WIDTH) AS WIDTH,COUNT(B.SUB_NO) AS BOX_COUNT ";
                                     strSQL += "FROM  PLT_MST P  JOIN BOX B  ON P.SUB_NO=B.SUB_NO JOIN ITEM_MST I  ON B.ITEM_NO=I.ITEM_NO ";
                                     strSQL += "WHERE P.PLT_NO='" + strPltNo + "' ";
                                     strSQL += "GROUP By B.SUB_NO ";
 
                                     if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                                     {
-                                        inSKU_GROUP3 = Convert.ToInt32(dtCmdSno.Rows[0]["SKU_GROUP3"].ToString());
-                                        inBOX_COUNT = Convert.ToInt32(dtCmdSno.Rows[0]["BOX_COUNT"].ToString());
-                                        inActualWeight = (Pack001 * inBOX_COUNT + Pack002 * inSKU_GROUP3) + inActualWeight;
-                                        strSQL = "UPDATE CMD_MST SET WEIGHT='" + strWeight + "' ,ACTUAL_WEIGHT='" + inActualWeight + "'";
-                                        if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                        if (funGetCode(ref Pack001, ref Pack002))
                                         {
-                                            if (funGetCode(ref Pack001, ref Pack002))
+                                            inSKU_GROUP3 = Convert.ToDouble(dtCmdSno.Rows[0]["WIDTH"].ToString());
+                                            inBOX_COUNT = Convert.ToDouble(dtCmdSno.Rows[0]["BOX_COUNT"].ToString());
+                                            inActualWeight = (Pack001 * inBOX_COUNT + Pack002 * inSKU_GROUP3) + inActualWeight;
+                                            strSQL = "UPDATE CMD_MST SET WEIGH='" + strWeight + "' ,ACTUAL_WEIGHT='" + inActualWeight + "' WHERE CMD_SNO='" + strCommandID + "'";
+                                            if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
                                             {
+
                                                 #region 对比重量
                                                 if (strWeight - inActualWeight >= 20)
                                                 {
@@ -545,8 +570,15 @@ namespace Mirle.ASRS
                                                     strMsg += strCommandID + "|";
                                                     strMsg += "货物超重！";
                                                     funWriteSysTraceLog(strMsg);
+
+                                                    bCRData[intIndex].funClear();
+                                                    strMsg = bCRData[intIndex]._BufferName + "|";
+                                                    strMsg += "2->0|";
+                                                    strMsg += "ERROR|";
+                                                    strMsg += "BCR Clear!";
+                                                    funWriteSysTraceLog(strMsg);
                                                     string[] strValues = new string[] { "3" };
-                                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
                                                 }
                                                 #endregion
                                             }
@@ -557,8 +589,15 @@ namespace Mirle.ASRS
                                                 strMsg += strCommandID + "|";
                                                 strMsg += "称重时获取皮重失败！";
                                                 funWriteSysTraceLog(strMsg);
+
+                                                bCRData[intIndex].funClear();
+                                                strMsg = bCRData[intIndex]._BufferName + "|";
+                                                strMsg += "2->0|";
+                                                strMsg += "ERROR|";
+                                                strMsg += "BCR Clear!";
+                                                funWriteSysTraceLog(strMsg);
                                                 string[] strValues = new string[] { "1" };
-                                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
                                             }
                                         }
                                     }
@@ -569,8 +608,15 @@ namespace Mirle.ASRS
                                         strMsg += strCommandID + "|";
                                         strMsg += "称重时获取箱数、规格失败！";
                                         funWriteSysTraceLog(strMsg);
+
+                                        bCRData[intIndex].funClear();
+                                        strMsg = bCRData[intIndex]._BufferName + "|";
+                                        strMsg += "2->0|";
+                                        strMsg += "ERROR|";
+                                        strMsg += "BCR Clear!";
+                                        funWriteSysTraceLog(strMsg);
                                         string[] strValues = new string[] { "1" };
-                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
                                     }
                                     #endregion
                                 }
@@ -604,8 +650,15 @@ namespace Mirle.ASRS
                                 strMsg += strWeight + "|";
                                 strMsg += "称重时未查询到命令信息!";
                                 funWriteSysTraceLog(strMsg);
+
+                                bCRData[intIndex].funClear();
+                                strMsg = bCRData[intIndex]._BufferName + "|";
+                                strMsg += "2->0|";
+                                strMsg += "ERROR|";
+                                strMsg += "BCR Clear!";
+                                funWriteSysTraceLog(strMsg);
                                 string[] strValues = new string[] { "1" };
-                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
                             }
                             #endregion
                         }
@@ -615,7 +668,7 @@ namespace Mirle.ASRS
                     #region A08站口高度检测
                     if (bufferData[7]._EQUStatus.AutoMode == Buffer.Signal.On && bufferData[7]._EQUStatus.Load == Buffer.Signal.On
                         && bufferData[7]._EQUStatus.FrontLocation == Buffer.Signal.On && bufferData[7]._ReturnRequest == "0" && !string.IsNullOrWhiteSpace(bufferData[7]._CommandID)
-                        && !string.IsNullOrWhiteSpace(bufferData[7]._Destination)&& bufferData[7]._Mode == StnMode.StoreIn
+                        && !string.IsNullOrWhiteSpace(bufferData[7]._Destination) && bufferData[7]._Mode == StnMode.StoreIn
                         && strBufferName == STN_NO.StoreInA08)
                     {
                         string strCommandID = bufferData[7]._CommandID.PadLeft(5, '0');
@@ -626,7 +679,7 @@ namespace Mirle.ASRS
                         string strCrnNo = string.Empty;
                         string strPltNo = string.Empty;
 
-                        if (bufferData[7]._EQUAlarmStatus.OverHigh == Signal.Off|| bufferData[7]._EQUAlarmStatus.OverLength == Signal.Off|| bufferData[7]._EQUAlarmStatus.OverWidth == Signal.Off)
+                        if (bufferData[7]._EQUAlarmStatus.OverHigh == Signal.Off || bufferData[7]._EQUAlarmStatus.OverLength == Signal.Off || bufferData[7]._EQUAlarmStatus.OverWidth == Signal.Off)
                         {
                             if (bufferData[7]._EQUStatus.Siez == Signal.Off) strLocSiez = "L";
                             if (bufferData[7]._EQUStatus.Siez == Signal.On) strLocSiez = "H";
@@ -685,7 +738,7 @@ namespace Mirle.ASRS
                                                         strMsg += "StoreIn UpdateLocationMaster Fail";
                                                         funWriteSysTraceLog(strMsg);
                                                         string[] strValues = new string[] { "2" };
-                                                        InitSys._MPLC.funWriteMPLC(bufferData[7]._ReturnRequest, strValues);
+                                                        InitSys._MPLC.funWriteMPLC(bufferData[7]._W_ReturnRequest, strValues);
                                                     }
                                                     #endregion
                                                 }
@@ -700,7 +753,7 @@ namespace Mirle.ASRS
                                                 funWriteSysTraceLog(strMsg);
                                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                                 string[] strValues = new string[] { "2" };
-                                                InitSys._MPLC.funWriteMPLC(bufferData[7]._ReturnRequest, strValues);
+                                                InitSys._MPLC.funWriteMPLC(bufferData[7]._W_ReturnRequest, strValues);
                                             }
                                             #endregion
                                         }
@@ -767,7 +820,7 @@ namespace Mirle.ASRS
                             funWriteSysTraceLog(strMsg);
 
                             string[] strValues = new string[] { "4" };
-                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
 
                             #endregion BCR Read Fail & Write MPLC Success & BCR Clear
 
@@ -908,7 +961,7 @@ namespace Mirle.ASRS
                                                                     funWriteSysTraceLog(strMsg);
 
                                                                     string[] strValues = new string[] { "1" };
-                                                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
 
                                                                     #endregion StoreInAndTransactionCommit Fail
                                                                 }
@@ -925,7 +978,7 @@ namespace Mirle.ASRS
                                                                 funWriteSysTraceLog(strMsg);
 
                                                                 string[] strValues = new string[] { "1" };
-                                                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
 
                                                                 #endregion Update StoreIn PalletNo Fail
                                                             }
@@ -947,7 +1000,7 @@ namespace Mirle.ASRS
 
                                                             InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                                             string[] strValues = new string[] { "2" };
-                                                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
 
                                                         }
                                                     }
@@ -965,7 +1018,7 @@ namespace Mirle.ASRS
                                                         funWriteSysTraceLog(strMsg);
 
                                                         string[] strValues = new string[] { "1" };
-                                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                                        InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
 
                                                         #endregion Insert Command Fail
                                                     }
@@ -987,7 +1040,7 @@ namespace Mirle.ASRS
 
                                                     InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                                     string[] strValues = new string[] { "2" };
-                                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                                    InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
 
                                                 }
                                             }
@@ -1007,7 +1060,7 @@ namespace Mirle.ASRS
                                                 funWriteSysTraceLog(strMsg);
 
                                                 string[] strValues = new string[] { "1" };
-                                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                                InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
 
                                                 InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
                                             }
@@ -1029,7 +1082,7 @@ namespace Mirle.ASRS
                                             funWriteSysTraceLog(strMsg);
 
                                             string[] strValues = new string[] { "1" };
-                                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._ReturnRequest, strValues);
+                                            InitSys._MPLC.funWriteMPLC(bufferData[intBufferIndex]._W_ReturnRequest, strValues);
                                             #endregion Can't Find StroreIn PLT_MST&BOX
                                         }
                                     }

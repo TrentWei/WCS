@@ -187,7 +187,7 @@ namespace Mirle.ASRS
                 timBCRReadTimeOut.Interval = 100;
                 timBCRReadTimeOut.Elapsed += new System.Timers.ElapsedEventHandler(timBCRReadTimeOut_Elapsed);
 
-                serialPort = new SerialPort(strPort, 115200, Parity.None, 8, StopBits.One);
+                serialPort = new SerialPort(strPort, 9600, Parity.None, 8, StopBits.One);
                 serialPort.DataReceived += new SerialDataReceivedEventHandler(serialPort_DataReceived);
                 serialPort.Open();
                 InitSys.funWriteLog("BCR_Trace", strBCRName + "|" + strPort + "|Open!");

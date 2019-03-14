@@ -90,6 +90,7 @@ namespace Mirle.ASRS
             public const string Red = "background-color:#ff0000;";
             public const string Bule = "background-color:#00ffff;";
             public const string Green = "background-color:#b6ff00;";
+            public const string Antiquewhite = "background-color:#f395dd;";
             public const string Gray = "background-color:#808080;";
             public const string Yellow = "background-color:#ffd800;";
         }
@@ -169,7 +170,7 @@ namespace Mirle.ASRS
             public const string IN = "I";
             public const string OUT = "O";
             public const string S = "S";
-
+            public const string W = "W";
         }
 
         private class STN_NO
@@ -179,6 +180,7 @@ namespace Mirle.ASRS
             public const string StoreOutA18 = "A18";
             public const string StoreOutA26 = "A26";
             public const string StoreOutA34 = "A34";
+            public const string StoreInA58 = "A58";
             public const string StoreInA53 = "A53";
             public const string StoreInA90 = "A90";
             public const string StoreInA41 = "A41";

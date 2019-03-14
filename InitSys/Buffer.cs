@@ -65,6 +65,11 @@ namespace Mirle.ASRS
         /// </summary>
         public bool _APositioning { get; set; }
         /// <summary>
+        /// 储位大小,余料回库是记录原货物储位大小用
+        /// </summary>
+        public bool _LoactionSize { get; set; }
+        
+        /// <summary>
         /// 站口看板清除
         /// </summary>
         public bool _Clearnotice { get; set; }
@@ -146,6 +151,10 @@ namespace Mirle.ASRS
             get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 5).ToString(); }
         }
 
+        public string _W_LoactionSize
+        {
+            get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 8).ToString(); }
+        }
         public string _W_Clearnotice
         {
             get { return "D" + (int.Parse(strAddress.Remove(0, 1)) + 9).ToString(); }
