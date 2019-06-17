@@ -147,7 +147,7 @@ namespace Mirle.ASRS
             /// <summary>
             /// 取消待过账
             /// </summary>
-            public const string CancelWaitPost = "4";
+            public const string CancelWaitPost = "6";
             public const string EQUCancelWaitPost = "8";
             /// <summary>
             /// 强制完成待过账
@@ -156,7 +156,7 @@ namespace Mirle.ASRS
             /// <summary>
             /// 强制取消待过账
             /// </summary>
-            public const string CancelConstraint = "6";
+            public const string CancelConstraint = "7";
             public const string Cancel = "9";
             public const string PostFail = "F";
 
@@ -181,6 +181,7 @@ namespace Mirle.ASRS
             public const string StoreOutA26 = "A26";
             public const string StoreOutA34 = "A34";
             public const string StoreInA58 = "A58";
+            public const string StoreInA57 = "A57";
             public const string StoreInA53 = "A53";
             public const string StoreInA90 = "A90";
             public const string StoreInA41 = "A41";
@@ -221,9 +222,13 @@ namespace Mirle.ASRS
         private class IO_TYPE
         {
             public const string StoreIn11 = "11";
-            public const string StoreIn15 = "25";
+            public const string StoreIn15 = "15";
+            public const string StoreIn16 = "16";
+            public const string StoreOut20 = "20";
             public const string StoreOut21 = "21";
+            public const string StoreOut24 = "24";
             public const string StoreOut25 = "25";
+            public const string StoreOut26 = "26";
             public const string PickingIn = "30";
             public const string PickingOut = "31";
             public const string LoactionToLoaction = "51";

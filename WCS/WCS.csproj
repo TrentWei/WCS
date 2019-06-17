@@ -150,7 +150,7 @@
       <Name>InitSys</Name>
     </ProjectReference>
     <ProjectReference Include="..\MonitorControl\MonitorControl.csproj">
-      <Project>{C439AF31-61F5-4B50-8390-F15B8AC3B4BD}</Project>
+      <Project>{c439af31-61f5-4b50-8390-f15b8ac3b4bd}</Project>
       <Name>MonitorControl</Name>
     </ProjectReference>
   </ItemGroup>

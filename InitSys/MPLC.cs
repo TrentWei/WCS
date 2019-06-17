@@ -20,7 +20,7 @@ namespace Mirle.ASRS
         {
             get
             {
-                if(aeiPLC != null)
+                if (aeiPLC != null)
                     return bolIsConnection;
                 else
                     return bolIsConnection = false;
@@ -46,7 +46,7 @@ namespace Mirle.ASRS
             {
                 aeiPLC = new ActEasyIF();
                 aeiPLC.ActLogicalStationNumber = intStationNumber;
-                if(aeiPLC.Open() == 0)
+                if (aeiPLC.Open() == 0)
                 {
                     InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", "Open Success!");
                     return bolIsConnection = true;
@@ -57,7 +57,7 @@ namespace Mirle.ASRS
                     return bolIsConnection = false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 errMsg = ex.Message;
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
@@ -70,7 +70,7 @@ namespace Mirle.ASRS
         {
             try
             {
-                if(aeiPLC != null)
+                if (aeiPLC != null)
                 {
                     aeiPLC.Close();
                     aeiPLC = null;
@@ -78,7 +78,7 @@ namespace Mirle.ASRS
                     InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", "Close!");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -93,11 +93,11 @@ namespace Mirle.ASRS
             string strData = string.Empty;
             try
             {
-                if(aeiPLC.ReadDeviceBlock(address, length, out retData[0]) == 0)
+                if (aeiPLC.ReadDeviceBlock(address, length, out retData[0]) == 0)
                 {
-                    for(int intLength = 0; intLength < retData.Length; intLength++)
+                    for (int intLength = 0; intLength < retData.Length; intLength++)
                     {
-                        if(string.IsNullOrWhiteSpace(strData))
+                        if (string.IsNullOrWhiteSpace(strData))
                             strData = retData[intLength].ToString();
                         else
                             strData += "," + retData[intLength].ToString();
@@ -111,7 +111,7 @@ namespace Mirle.ASRS
                     return bolIsConnection = false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -128,20 +128,20 @@ namespace Mirle.ASRS
             try
             {
                 int[] intData = new int[setData.Length];
-                for(int intLength = 0; intLength < setData.Length; intLength++)
+                for (int intLength = 0; intLength < setData.Length; intLength++)
                 {
-                    if(string.IsNullOrWhiteSpace(setData[intLength]))
+                    if (string.IsNullOrWhiteSpace(setData[intLength]))
                         setData[intLength] = "0";
 
                     intData[intLength] = int.Parse(setData[intLength]);
 
-                    if(string.IsNullOrWhiteSpace(strData))
+                    if (string.IsNullOrWhiteSpace(strData))
                         strData = setData[intLength];
                     else
                         strData += "," + setData[intLength];
                 }
 
-                if(aeiPLC.WriteDeviceBlock(deviceBlockAddress, setData.Length, ref intData[0]) == 0)
+                if (aeiPLC.WriteDeviceBlock(deviceBlockAddress, setData.Length, ref intData[0]) == 0)
                 {
                     InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", deviceBlockAddress + "|" + strData + "|WriteDeviceBlock Success!");
                     return bolIsConnection = true;
@@ -152,7 +152,7 @@ namespace Mirle.ASRS
                     return bolIsConnection = false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -166,7 +166,7 @@ namespace Mirle.ASRS
             {
                 string strAdrress = string.Empty;
 
-                if(aeiPLC.SetDevice(strAdrress, setBit ? 1 : 0) == 0)
+                if (aeiPLC.SetDevice(strAdrress, setBit ? 1 : 0) == 0)
                 {
                     InitSys.funWriteLog("MPLC_" + intStationNumber + "_Trace", deviceAddress + "|" + (setBit ? 1 : 0) + "|SetDevice Success!");
                     return bolIsConnection = true;
@@ -177,7 +177,7 @@ namespace Mirle.ASRS
                     return bolIsConnection = false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MethodBase methodBase = MethodBase.GetCurrentMethod();
                 InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
@@ -189,6 +189,34 @@ namespace Mirle.ASRS
         {
             string[] strValues = new string[] { "0", "0", "0" };
             funWriteMPLC(deviceBlockAddress, strValues);
+        }
+
+        public void funWriteCrnModeToMPLC(string strCrnNo, string strCrnMode)
+        {
+            string sValue = string.Empty;
+            switch (strCrnMode)
+            {
+                case "C":
+                    sValue = "3";
+                    break;
+                case "R":
+                    sValue = "2";
+                    break;
+                case "M":
+                case "I":
+                    sValue = "1";
+                    break;
+                case "N":
+                case "X":
+                case "E":
+                    sValue = "4";
+                    break;
+                default:
+                    sValue = "0";
+                    break;
+            }
+            InitSys._MPLC.funWriteMPLC("D23" + strCrnNo, sValue);
+
         }
         #endregion Write
 

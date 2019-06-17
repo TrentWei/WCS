@@ -38,6 +38,7 @@
             this.btnReconnectBCR = new System.Windows.Forms.Button();
             this.chkAutoReconnect = new System.Windows.Forms.CheckBox();
             this.btnReconnectSPLC = new System.Windows.Forms.Button();
+            this.chkAutoWeight = new System.Windows.Forms.CheckBox();
             this.gpbMainState = new System.Windows.Forms.GroupBox();
             this.tlpMainState = new System.Windows.Forms.TableLayoutPanel();
             this.lblSPLCSts = new System.Windows.Forms.Label();
@@ -204,8 +205,8 @@
             this.craneMonitor5 = new Mirle.ASRS.CraneMonitor();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.dgvCmdMst = new System.Windows.Forms.DataGridView();
-            this.btn_Delete = new System.Windows.Forms.Button();
             this.btn_Query = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sctMain1)).BeginInit();
             this.sctMain1.Panel1.SuspendLayout();
@@ -299,6 +300,7 @@
             this.tlpButton.Controls.Add(this.btnReconnectBCR, 1, 6);
             this.tlpButton.Controls.Add(this.chkAutoReconnect, 1, 7);
             this.tlpButton.Controls.Add(this.btnReconnectSPLC, 1, 5);
+            this.tlpButton.Controls.Add(this.chkAutoWeight, 1, 2);
             this.tlpButton.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tlpButton.Location = new System.Drawing.Point(0, 393);
             this.tlpButton.Name = "tlpButton";
@@ -400,6 +402,18 @@
             this.btnReconnectSPLC.UseVisualStyleBackColor = true;
             this.btnReconnectSPLC.Visible = false;
             this.btnReconnectSPLC.Click += new System.EventHandler(this.btnReconnectSPLC_Click);
+            // 
+            // chkAutoWeight
+            // 
+            this.chkAutoWeight.AutoSize = true;
+            this.chkAutoWeight.Checked = true;
+            this.chkAutoWeight.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAutoWeight.Location = new System.Drawing.Point(25, 58);
+            this.chkAutoWeight.Name = "chkAutoWeight";
+            this.chkAutoWeight.Size = new System.Drawing.Size(72, 16);
+            this.chkAutoWeight.TabIndex = 22;
+            this.chkAutoWeight.Text = "称重启用";
+            this.chkAutoWeight.UseVisualStyleBackColor = true;
             // 
             // gpbMainState
             // 
@@ -608,7 +622,7 @@
             this.tbcMain.Location = new System.Drawing.Point(0, 0);
             this.tbcMain.Name = "tbcMain";
             this.tbcMain.SelectedIndex = 0;
-            this.tbcMain.Size = new System.Drawing.Size(1846, 893);
+            this.tbcMain.Size = new System.Drawing.Size(1742, 702);
             this.tbcMain.TabIndex = 0;
             // 
             // tbpSystemTrace
@@ -617,7 +631,7 @@
             this.tbpSystemTrace.Location = new System.Drawing.Point(4, 22);
             this.tbpSystemTrace.Name = "tbpSystemTrace";
             this.tbpSystemTrace.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSystemTrace.Size = new System.Drawing.Size(1838, 867);
+            this.tbpSystemTrace.Size = new System.Drawing.Size(1734, 676);
             this.tbpSystemTrace.TabIndex = 0;
             this.tbpSystemTrace.Text = "System Trace";
             this.tbpSystemTrace.UseVisualStyleBackColor = true;
@@ -630,7 +644,7 @@
             this.lsbSysTrace.ItemHeight = 20;
             this.lsbSysTrace.Location = new System.Drawing.Point(3, 3);
             this.lsbSysTrace.Name = "lsbSysTrace";
-            this.lsbSysTrace.Size = new System.Drawing.Size(1832, 861);
+            this.lsbSysTrace.Size = new System.Drawing.Size(1728, 670);
             this.lsbSysTrace.TabIndex = 0;
             // 
             // tbpUpdatePosted
@@ -638,7 +652,7 @@
             this.tbpUpdatePosted.Controls.Add(this.lsbUpdate);
             this.tbpUpdatePosted.Location = new System.Drawing.Point(4, 22);
             this.tbpUpdatePosted.Name = "tbpUpdatePosted";
-            this.tbpUpdatePosted.Size = new System.Drawing.Size(1838, 867);
+            this.tbpUpdatePosted.Size = new System.Drawing.Size(1734, 676);
             this.tbpUpdatePosted.TabIndex = 2;
             this.tbpUpdatePosted.Text = "Update Posted";
             this.tbpUpdatePosted.UseVisualStyleBackColor = true;
@@ -651,17 +665,16 @@
             this.lsbUpdate.ItemHeight = 20;
             this.lsbUpdate.Location = new System.Drawing.Point(0, 0);
             this.lsbUpdate.Name = "lsbUpdate";
-            this.lsbUpdate.Size = new System.Drawing.Size(1838, 867);
+            this.lsbUpdate.Size = new System.Drawing.Size(1734, 676);
             this.lsbUpdate.TabIndex = 1;
             // 
             // tbpSingelMonitor
             // 
-            this.tbpSingelMonitor.AutoScroll = true;
             this.tbpSingelMonitor.Controls.Add(this.panel1);
             this.tbpSingelMonitor.Location = new System.Drawing.Point(4, 22);
             this.tbpSingelMonitor.Name = "tbpSingelMonitor";
             this.tbpSingelMonitor.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSingelMonitor.Size = new System.Drawing.Size(1838, 867);
+            this.tbpSingelMonitor.Size = new System.Drawing.Size(1734, 676);
             this.tbpSingelMonitor.TabIndex = 1;
             this.tbpSingelMonitor.Text = "Singel Monitor";
             this.tbpSingelMonitor.UseVisualStyleBackColor = true;
@@ -813,9 +826,9 @@
             this.panel1.Controls.Add(this.A118);
             this.panel1.Controls.Add(this.A117);
             this.panel1.Controls.Add(this.craneMonitor5);
-            this.panel1.Location = new System.Drawing.Point(8, 8);
+            this.panel1.Location = new System.Drawing.Point(6, 8);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1824, 735);
+            this.panel1.Size = new System.Drawing.Size(1723, 665);
             this.panel1.TabIndex = 0;
             // 
             // pictureBox26
@@ -1044,7 +1057,7 @@
             // 
             this.pictureBox12.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox12.BackgroundImage")));
             this.pictureBox12.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox12.Location = new System.Drawing.Point(1262, 142);
+            this.pictureBox12.Location = new System.Drawing.Point(1317, 152);
             this.pictureBox12.Name = "pictureBox12";
             this.pictureBox12.Size = new System.Drawing.Size(24, 24);
             this.pictureBox12.TabIndex = 584;
@@ -1054,7 +1067,7 @@
             // 
             this.pictureBox13.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox13.BackgroundImage")));
             this.pictureBox13.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox13.Location = new System.Drawing.Point(1421, 142);
+            this.pictureBox13.Location = new System.Drawing.Point(1421, 152);
             this.pictureBox13.Name = "pictureBox13";
             this.pictureBox13.Size = new System.Drawing.Size(24, 24);
             this.pictureBox13.TabIndex = 583;
@@ -1064,7 +1077,7 @@
             // 
             this.pictureBox10.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox10.BackgroundImage")));
             this.pictureBox10.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox10.Location = new System.Drawing.Point(1421, 172);
+            this.pictureBox10.Location = new System.Drawing.Point(1421, 176);
             this.pictureBox10.Name = "pictureBox10";
             this.pictureBox10.Size = new System.Drawing.Size(24, 24);
             this.pictureBox10.TabIndex = 582;
@@ -1074,7 +1087,7 @@
             // 
             this.pictureBox11.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox11.BackgroundImage")));
             this.pictureBox11.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox11.Location = new System.Drawing.Point(1262, 172);
+            this.pictureBox11.Location = new System.Drawing.Point(1317, 175);
             this.pictureBox11.Name = "pictureBox11";
             this.pictureBox11.Size = new System.Drawing.Size(24, 24);
             this.pictureBox11.TabIndex = 581;
@@ -1185,7 +1198,7 @@
             // pictureBox35
             // 
             this.pictureBox35.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox35.Image")));
-            this.pictureBox35.Location = new System.Drawing.Point(1570, 94);
+            this.pictureBox35.Location = new System.Drawing.Point(1570, 93);
             this.pictureBox35.Name = "pictureBox35";
             this.pictureBox35.Size = new System.Drawing.Size(25, 23);
             this.pictureBox35.TabIndex = 565;
@@ -1296,7 +1309,7 @@
             this.A53._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A53._ReturnRequest = "0";
             this.A53.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A53.Location = new System.Drawing.Point(1199, 341);
+            this.A53.Location = new System.Drawing.Point(1199, 340);
             this.A53.MinimumSize = new System.Drawing.Size(51, 66);
             this.A53.Name = "A53";
             this.A53.Padding = new System.Windows.Forms.Padding(3);
@@ -1314,7 +1327,7 @@
             this.A52._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A52._ReturnRequest = "0";
             this.A52.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A52.Location = new System.Drawing.Point(1199, 274);
+            this.A52.Location = new System.Drawing.Point(1199, 206);
             this.A52.MinimumSize = new System.Drawing.Size(51, 66);
             this.A52.Name = "A52";
             this.A52.Padding = new System.Windows.Forms.Padding(3);
@@ -1350,7 +1363,7 @@
             this.A47._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A47._ReturnRequest = "0";
             this.A47.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A47.Location = new System.Drawing.Point(1095, 273);
+            this.A47.Location = new System.Drawing.Point(1095, 206);
             this.A47.MinimumSize = new System.Drawing.Size(51, 66);
             this.A47.Name = "A47";
             this.A47.Padding = new System.Windows.Forms.Padding(3);
@@ -1368,7 +1381,7 @@
             this.A87._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A87._ReturnRequest = "0";
             this.A87.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A87.Location = new System.Drawing.Point(1095, 139);
+            this.A87.Location = new System.Drawing.Point(1095, 72);
             this.A87.MinimumSize = new System.Drawing.Size(51, 66);
             this.A87.Name = "A87";
             this.A87.Padding = new System.Windows.Forms.Padding(3);
@@ -1386,7 +1399,7 @@
             this.A43._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A43._ReturnRequest = "0";
             this.A43.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A43.Location = new System.Drawing.Point(990, 273);
+            this.A43.Location = new System.Drawing.Point(991, 206);
             this.A43.MinimumSize = new System.Drawing.Size(51, 66);
             this.A43.Name = "A43";
             this.A43.Padding = new System.Windows.Forms.Padding(3);
@@ -1422,7 +1435,7 @@
             this.A35._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A35._ReturnRequest = "0";
             this.A35.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A35.Location = new System.Drawing.Point(730, 206);
+            this.A35.Location = new System.Drawing.Point(730, 273);
             this.A35.MinimumSize = new System.Drawing.Size(51, 66);
             this.A35.Name = "A35";
             this.A35.Padding = new System.Windows.Forms.Padding(3);
@@ -1458,7 +1471,7 @@
             this.A27._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A27._ReturnRequest = "0";
             this.A27.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A27.Location = new System.Drawing.Point(575, 206);
+            this.A27.Location = new System.Drawing.Point(575, 273);
             this.A27.MinimumSize = new System.Drawing.Size(51, 66);
             this.A27.Name = "A27";
             this.A27.Padding = new System.Windows.Forms.Padding(3);
@@ -1476,7 +1489,7 @@
             this.A19._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A19._ReturnRequest = "0";
             this.A19.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A19.Location = new System.Drawing.Point(419, 206);
+            this.A19.Location = new System.Drawing.Point(419, 273);
             this.A19.MinimumSize = new System.Drawing.Size(51, 66);
             this.A19.Name = "A19";
             this.A19.Padding = new System.Windows.Forms.Padding(3);
@@ -1494,7 +1507,7 @@
             this.A11._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A11._ReturnRequest = "0";
             this.A11.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A11.Location = new System.Drawing.Point(263, 206);
+            this.A11.Location = new System.Drawing.Point(264, 273);
             this.A11.MinimumSize = new System.Drawing.Size(51, 66);
             this.A11.Name = "A11";
             this.A11.Padding = new System.Windows.Forms.Padding(3);
@@ -1773,7 +1786,7 @@
             this.A51._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A51._ReturnRequest = "0";
             this.A51.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A51.Location = new System.Drawing.Point(1199, 207);
+            this.A51.Location = new System.Drawing.Point(1199, 273);
             this.A51.MinimumSize = new System.Drawing.Size(51, 66);
             this.A51.Name = "A51";
             this.A51.Padding = new System.Windows.Forms.Padding(3);
@@ -1809,7 +1822,7 @@
             this.A46._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A46._ReturnRequest = "0";
             this.A46.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A46.Location = new System.Drawing.Point(1095, 206);
+            this.A46.Location = new System.Drawing.Point(1095, 273);
             this.A46.MinimumSize = new System.Drawing.Size(51, 66);
             this.A46.Name = "A46";
             this.A46.Padding = new System.Windows.Forms.Padding(3);
@@ -1845,7 +1858,7 @@
             this.A42._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A42._ReturnRequest = "0";
             this.A42.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A42.Location = new System.Drawing.Point(990, 206);
+            this.A42.Location = new System.Drawing.Point(991, 273);
             this.A42.MinimumSize = new System.Drawing.Size(51, 66);
             this.A42.Name = "A42";
             this.A42.Padding = new System.Windows.Forms.Padding(3);
@@ -1881,7 +1894,7 @@
             this.A16._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A16._ReturnRequest = "0";
             this.A16.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A16.Location = new System.Drawing.Point(1409, 73);
+            this.A16.Location = new System.Drawing.Point(1409, 72);
             this.A16.MinimumSize = new System.Drawing.Size(51, 66);
             this.A16.Name = "A16";
             this.A16.Padding = new System.Windows.Forms.Padding(3);
@@ -1899,7 +1912,7 @@
             this.A81._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A81._ReturnRequest = "0";
             this.A81.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A81.Location = new System.Drawing.Point(1461, 31);
+            this.A81.Location = new System.Drawing.Point(1461, 30);
             this.A81.MinimumSize = new System.Drawing.Size(51, 66);
             this.A81.Name = "A81";
             this.A81.Padding = new System.Windows.Forms.Padding(3);
@@ -1918,7 +1931,7 @@
             this.A77._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A77._ReturnRequest = "0";
             this.A77.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A77.Location = new System.Drawing.Point(1513, 74);
+            this.A77.Location = new System.Drawing.Point(1513, 73);
             this.A77.MinimumSize = new System.Drawing.Size(51, 66);
             this.A77.Name = "A77";
             this.A77.Padding = new System.Windows.Forms.Padding(3);
@@ -1937,7 +1950,7 @@
             this.A82._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A82._ReturnRequest = "0";
             this.A82.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A82.Location = new System.Drawing.Point(1461, 98);
+            this.A82.Location = new System.Drawing.Point(1461, 97);
             this.A82.MinimumSize = new System.Drawing.Size(51, 66);
             this.A82.Name = "A82";
             this.A82.Padding = new System.Windows.Forms.Padding(3);
@@ -1956,7 +1969,7 @@
             this.A83._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A83._ReturnRequest = "0";
             this.A83.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A83.Location = new System.Drawing.Point(1357, 73);
+            this.A83.Location = new System.Drawing.Point(1357, 72);
             this.A83.MinimumSize = new System.Drawing.Size(51, 66);
             this.A83.Name = "A83";
             this.A83.Padding = new System.Windows.Forms.Padding(3);
@@ -1992,7 +2005,7 @@
             this.A84._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A84._ReturnRequest = "0";
             this.A84.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A84.Location = new System.Drawing.Point(1199, 73);
+            this.A84.Location = new System.Drawing.Point(1199, 72);
             this.A84.MinimumSize = new System.Drawing.Size(51, 66);
             this.A84.Name = "A84";
             this.A84.Padding = new System.Windows.Forms.Padding(3);
@@ -2028,7 +2041,7 @@
             this.A86._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A86._ReturnRequest = "0";
             this.A86.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A86.Location = new System.Drawing.Point(1095, 72);
+            this.A86.Location = new System.Drawing.Point(1095, 139);
             this.A86.MinimumSize = new System.Drawing.Size(51, 66);
             this.A86.Name = "A86";
             this.A86.Padding = new System.Windows.Forms.Padding(3);
@@ -2136,7 +2149,7 @@
             this.A39._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A39._ReturnRequest = "0";
             this.A39.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A39.Location = new System.Drawing.Point(834, 273);
+            this.A39.Location = new System.Drawing.Point(834, 206);
             this.A39.MinimumSize = new System.Drawing.Size(51, 66);
             this.A39.Name = "A39";
             this.A39.Padding = new System.Windows.Forms.Padding(3);
@@ -2172,7 +2185,7 @@
             this.A38._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A38._ReturnRequest = "0";
             this.A38.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A38.Location = new System.Drawing.Point(834, 206);
+            this.A38.Location = new System.Drawing.Point(834, 273);
             this.A38.MinimumSize = new System.Drawing.Size(51, 66);
             this.A38.Name = "A38";
             this.A38.Padding = new System.Windows.Forms.Padding(3);
@@ -2329,7 +2342,7 @@
             this.A31._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A31._ReturnRequest = "0";
             this.A31.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A31.Location = new System.Drawing.Point(678, 273);
+            this.A31.Location = new System.Drawing.Point(678, 206);
             this.A31.MinimumSize = new System.Drawing.Size(51, 66);
             this.A31.Name = "A31";
             this.A31.Padding = new System.Windows.Forms.Padding(3);
@@ -2347,7 +2360,7 @@
             this.A36._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A36._ReturnRequest = "0";
             this.A36.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A36.Location = new System.Drawing.Point(730, 273);
+            this.A36.Location = new System.Drawing.Point(730, 206);
             this.A36.MinimumSize = new System.Drawing.Size(51, 66);
             this.A36.Name = "A36";
             this.A36.Padding = new System.Windows.Forms.Padding(3);
@@ -2365,7 +2378,7 @@
             this.A30._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A30._ReturnRequest = "0";
             this.A30.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A30.Location = new System.Drawing.Point(678, 206);
+            this.A30.Location = new System.Drawing.Point(678, 273);
             this.A30.MinimumSize = new System.Drawing.Size(51, 66);
             this.A30.Name = "A30";
             this.A30.Padding = new System.Windows.Forms.Padding(3);
@@ -2396,7 +2409,7 @@
             this.A25._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A25._ReturnRequest = "0";
             this.A25.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A25.Location = new System.Drawing.Point(575, 407);
+            this.A25.Location = new System.Drawing.Point(575, 340);
             this.A25.MinimumSize = new System.Drawing.Size(51, 66);
             this.A25.Name = "A25";
             this.A25.Padding = new System.Windows.Forms.Padding(3);
@@ -2414,7 +2427,7 @@
             this.A26._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A26._ReturnRequest = "0";
             this.A26.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A26.Location = new System.Drawing.Point(575, 340);
+            this.A26.Location = new System.Drawing.Point(575, 407);
             this.A26.MinimumSize = new System.Drawing.Size(51, 66);
             this.A26.Name = "A26";
             this.A26.Padding = new System.Windows.Forms.Padding(3);
@@ -2450,7 +2463,7 @@
             this.A23._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A23._ReturnRequest = "0";
             this.A23.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A23.Location = new System.Drawing.Point(523, 273);
+            this.A23.Location = new System.Drawing.Point(523, 206);
             this.A23.MinimumSize = new System.Drawing.Size(51, 66);
             this.A23.Name = "A23";
             this.A23.Padding = new System.Windows.Forms.Padding(3);
@@ -2468,7 +2481,7 @@
             this.A28._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A28._ReturnRequest = "0";
             this.A28.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A28.Location = new System.Drawing.Point(575, 273);
+            this.A28.Location = new System.Drawing.Point(575, 206);
             this.A28.MinimumSize = new System.Drawing.Size(51, 66);
             this.A28.Name = "A28";
             this.A28.Padding = new System.Windows.Forms.Padding(3);
@@ -2486,7 +2499,7 @@
             this.A22._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A22._ReturnRequest = "0";
             this.A22.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A22.Location = new System.Drawing.Point(523, 206);
+            this.A22.Location = new System.Drawing.Point(523, 273);
             this.A22.MinimumSize = new System.Drawing.Size(51, 66);
             this.A22.Name = "A22";
             this.A22.Padding = new System.Windows.Forms.Padding(3);
@@ -2571,7 +2584,7 @@
             this.A09._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A09._ReturnRequest = "0";
             this.A09.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A09.Location = new System.Drawing.Point(263, 340);
+            this.A09.Location = new System.Drawing.Point(264, 341);
             this.A09.MinimumSize = new System.Drawing.Size(51, 66);
             this.A09.Name = "A09";
             this.A09.Padding = new System.Windows.Forms.Padding(3);
@@ -2589,7 +2602,7 @@
             this.A15._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A15._ReturnRequest = "0";
             this.A15.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A15.Location = new System.Drawing.Point(367, 273);
+            this.A15.Location = new System.Drawing.Point(367, 206);
             this.A15.MinimumSize = new System.Drawing.Size(51, 66);
             this.A15.Name = "A15";
             this.A15.Padding = new System.Windows.Forms.Padding(3);
@@ -2625,7 +2638,7 @@
             this.A07._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A07._ReturnRequest = "0";
             this.A07.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A07.Location = new System.Drawing.Point(212, 273);
+            this.A07.Location = new System.Drawing.Point(212, 206);
             this.A07.MinimumSize = new System.Drawing.Size(51, 66);
             this.A07.Name = "A07";
             this.A07.Padding = new System.Windows.Forms.Padding(3);
@@ -2643,7 +2656,7 @@
             this.A20._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A20._ReturnRequest = "0";
             this.A20.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A20.Location = new System.Drawing.Point(419, 273);
+            this.A20.Location = new System.Drawing.Point(419, 206);
             this.A20.MinimumSize = new System.Drawing.Size(51, 66);
             this.A20.Name = "A20";
             this.A20.Padding = new System.Windows.Forms.Padding(3);
@@ -2661,7 +2674,7 @@
             this.A14._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A14._ReturnRequest = "0";
             this.A14.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A14.Location = new System.Drawing.Point(367, 206);
+            this.A14.Location = new System.Drawing.Point(367, 273);
             this.A14.MinimumSize = new System.Drawing.Size(51, 66);
             this.A14.Name = "A14";
             this.A14.Padding = new System.Windows.Forms.Padding(3);
@@ -2746,7 +2759,7 @@
             this.A12._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A12._ReturnRequest = "0";
             this.A12.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A12.Location = new System.Drawing.Point(263, 273);
+            this.A12.Location = new System.Drawing.Point(264, 206);
             this.A12.MinimumSize = new System.Drawing.Size(51, 66);
             this.A12.Name = "A12";
             this.A12.Padding = new System.Windows.Forms.Padding(3);
@@ -2764,7 +2777,7 @@
             this.A06._Mode = Mirle.ASRS.Buffer.StnMode.None;
             this.A06._ReturnRequest = "0";
             this.A06.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.A06.Location = new System.Drawing.Point(212, 206);
+            this.A06.Location = new System.Drawing.Point(212, 273);
             this.A06.MinimumSize = new System.Drawing.Size(51, 66);
             this.A06.Name = "A06";
             this.A06.Padding = new System.Windows.Forms.Padding(3);
@@ -3096,22 +3109,30 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1838, 867);
+            this.tabPage1.Size = new System.Drawing.Size(1734, 676);
             this.tabPage1.TabIndex = 3;
             this.tabPage1.Text = "Maintain";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.comboBox1);
             this.groupBox2.Controls.Add(this.dgvCmdMst);
-            this.groupBox2.Controls.Add(this.btn_Delete);
             this.groupBox2.Controls.Add(this.btn_Query);
             this.groupBox2.Location = new System.Drawing.Point(79, 30);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(692, 222);
+            this.groupBox2.Size = new System.Drawing.Size(692, 225);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "命令查询";
+            this.groupBox2.Text = "主机状态";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(6, 188);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(121, 20);
+            this.comboBox1.TabIndex = 4;
             // 
             // dgvCmdMst
             // 
@@ -3128,19 +3149,9 @@
             this.dgvCmdMst.Size = new System.Drawing.Size(683, 154);
             this.dgvCmdMst.TabIndex = 3;
             // 
-            // btn_Delete
-            // 
-            this.btn_Delete.Location = new System.Drawing.Point(559, 179);
-            this.btn_Delete.Name = "btn_Delete";
-            this.btn_Delete.Size = new System.Drawing.Size(129, 37);
-            this.btn_Delete.TabIndex = 2;
-            this.btn_Delete.Text = "清理主机命令";
-            this.btn_Delete.UseVisualStyleBackColor = true;
-            this.btn_Delete.Click += new System.EventHandler(this.btn_Delete_Click);
-            // 
             // btn_Query
             // 
-            this.btn_Query.Location = new System.Drawing.Point(6, 179);
+            this.btn_Query.Location = new System.Drawing.Point(557, 179);
             this.btn_Query.Name = "btn_Query";
             this.btn_Query.Size = new System.Drawing.Size(129, 37);
             this.btn_Query.TabIndex = 0;
@@ -3154,11 +3165,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ClientSize = new System.Drawing.Size(1370, 749);
+            this.ClientSize = new System.Drawing.Size(1227, 749);
             this.ControlBox = false;
             this.Controls.Add(this.sctMain1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "WCS";
             this.Text = "WCS";
@@ -3258,7 +3268,6 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.DataGridView dgvCmdMst;
-        private System.Windows.Forms.Button btn_Delete;
         private System.Windows.Forms.Button btn_Query;
         private System.Windows.Forms.TabPage tbpSingelMonitor;
         private System.Windows.Forms.Panel panel1;
@@ -3406,6 +3415,8 @@
         internal System.Windows.Forms.PictureBox pictureBox38;
         internal System.Windows.Forms.PictureBox pictureBox42;
         internal System.Windows.Forms.PictureBox pictureBox26;
+        private System.Windows.Forms.CheckBox chkAutoWeight;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

@@ -21,7 +21,8 @@ namespace Mirle.ASRS
         private bool bolBCR = false;
         private bool bolAuto = true;
         private bool bolClose = false;
-        private bool bolChkStn = false;
+        private bool bolChkCShow = false;
+
         private int[] intarResultData = new int[0];
         private BufferData bufferData = new BufferData();
         private BCRData bCRData = new BCRData();
@@ -39,8 +40,10 @@ namespace Mirle.ASRS
         private SMPLCData_2 sMPLCData_2 = new SMPLCData_2();
         private List<StationInfo> lstClearKanbanInfo = new List<StationInfo>();
         private List<StationInfo> lstAllotCrane = new List<StationInfo>();
-        private string[] sStoreInStnNo = new string[] { STN_NO.StoreOutA01, STN_NO.StoreOutA10, STN_NO.StoreOutA18, STN_NO.StoreOutA26, STN_NO.StoreOutA34 };
-        private int inStoreInStnNoIndex = 4;
+        int inWeightERRORValue = 0;
+        int inThresholdWegiht = 0;
+        //private string[] sStoreInStnNo = new string[] { STN_NO.StoreOutA01, STN_NO.StoreOutA10, STN_NO.StoreOutA18, STN_NO.StoreOutA26, STN_NO.StoreOutA34 };
+        private int inStoreInStnNoIndex = 5;
 
 
         private delegate void ShowMessage_EventHandler(string Message);
@@ -62,7 +65,6 @@ namespace Mirle.ASRS
                 this.Text = InitSys._APName + " (V." + Application.ProductVersion + ")";
 
             funWriteSysTraceLog(this.Text + " Program Start!");
-           
             funInital();
             if (!funLoda())
             {
@@ -226,8 +228,10 @@ namespace Mirle.ASRS
                 {
                     if (InitSys._MPLC._IsConnection)
                     {
+                        InitSys.funWriteLog("PLC读取", "开始" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ms"));
                         if (InitSys._MPLC.funReadMPLC(InitSys._StartAddress, InitSys._TotalAddress, ref intarResultData))
                         {
+                            InitSys.funWriteLog("PLC读取", "结束" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ms") + "End");
                             for (int intIndex = 0; intIndex < bufferData._BufferCount; intIndex++)
                             {
                                 bufferData[intIndex]._CommandID = intarResultData[(intIndex * 10)].ToString() == "0" ?
@@ -296,7 +300,8 @@ namespace Mirle.ASRS
                                 #endregion EQUAlarmStatus
 
                                 bufferData[intIndex]._ReturnRequest = intarResultData[(intIndex * 10) + 6].ToString();
-                                bufferData[intIndex]._PalletNo = intarResultData[(intIndex * 10) + 7].ToString();
+                                bufferData[intIndex]._PalletNo = intarResultData[(intIndex * 10) + 7].ToString() == "0" ?
+                                    string.Empty : intarResultData[(intIndex * 10) + 7].ToString();
 
                                 bufferData[intIndex]._LoactionSize = intarResultData[(intIndex * 10) + 8] == 1;
 
@@ -307,11 +312,13 @@ namespace Mirle.ASRS
 
                         if (bolAuto)
                         {
+                            InitSys.funWriteLog("程序流程耗时", "开始" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ms"));
                             funUpdatePosted();
-                            //funKanbanInfo();
+                            funKanbanInfo();
                             funStoreOut();
                             funStroreIn();
                             funLocationToLocation();
+                            InitSys.funWriteLog("程序流程耗时", "结束" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss:ms") + "End");
                         }
                     }
                     #region 烟台鲁达西门子PLC部分 //注释
@@ -375,6 +382,7 @@ namespace Mirle.ASRS
             funInitalBuffer();
             funInitalStoreIn();
             funInitalStoreOut();
+            funInitalStoreOutIn();
             funinitalKanbanInfo();
             funinitalAllotCrane();
             funinitalCrane();
@@ -943,13 +951,15 @@ namespace Mirle.ASRS
             DataTable dtCraneMode = new DataTable();
             DataTable dtCraneState = new DataTable();
             DataTable dtCmdSno = new DataTable();
-
+            int inNError = 0;
+            string CraneError = string.Empty;
             try
             {
                 strSQL = "SELECT * FROM EQUMODELOG";
                 strSQL += " WHERE ENDDT IN ('', ' ')";
                 if (InitSys._DB.GetDataTable(strSQL, ref dtCraneMode, ref strEM))
                 {
+
                     for (int intCount = 0; intCount < dtCraneMode.Rows.Count; intCount++)
                     {
                         int intCraneNo = int.Parse(dtCraneMode.Rows[intCount]["EQUNO"].ToString());
@@ -958,9 +968,10 @@ namespace Mirle.ASRS
                             string strCurrentCraneMode = dtCraneMode.Rows[intCount]["EQUMODE"].ToString();
                             string strLastCraneMode = dicCraneMap[intCraneNo]._CraneMode;
                             dicCraneMap[intCraneNo]._CraneMode = strCurrentCraneMode;
+                            InitSys._MPLC.funWriteCrnModeToMPLC(intCraneNo.ToString(), strCurrentCraneMode);
                             strMsg = "Crane" + intCraneNo + "|";
                             strMsg += strLastCraneMode + ">" + strCurrentCraneMode + "|";
-                            strMsg += "Crane Mode Change!";
+                            strMsg += "Crane Mode Change!";    
                         }
                     }
                 }
@@ -976,11 +987,15 @@ namespace Mirle.ASRS
                             string strCurrentCraneState = dtCraneState.Rows[intCount]["EQUSTS"].ToString();
                             string strLastCraneState = dicCraneMap[intCraneNo]._CraneState;
                             dicCraneMap[intCraneNo]._CraneState = strCurrentCraneState;
+                            InitSys._MPLC.funWriteCrnModeToMPLC(intCraneNo.ToString(), strCurrentCraneState);
                             strMsg = "Crane" + intCraneNo + "|";
                             strMsg += strLastCraneState + ">" + strCurrentCraneState + "|";
                             strMsg += "Crane State Change!";
+                            if (strCurrentCraneState == "N" || strLastCraneState == "X" || strLastCraneState == "E") bolChkCShow = true;
+                            if (strCurrentCraneState == "I" || strLastCraneState == "A" || strLastCraneState == "W") inNError += 1;
                         }
                     }
+
                 }
                 foreach (int intCraneNo in dicCraneMap.Keys)
                 {
@@ -991,6 +1006,12 @@ namespace Mirle.ASRS
                         dicCraneMap[intCraneNo]._CommandID = dtCmdSno.Rows[0]["CmdSno"].ToString();
                     else
                         dicCraneMap[intCraneNo]._CommandID = string.Empty;
+                }
+                if (bolChkCShow) funSetKanbanInfoERROR2(KanbanModel.ERROR, "A57", "堆垛机异常！" + (5 - inNError).ToString());
+                if (inNError == 5 && bolChkCShow)
+                {
+                    funClearKanbanInfo("A57");
+                    bolChkCShow = false;
                 }
             }
             catch (Exception ex)

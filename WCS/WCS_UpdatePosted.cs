@@ -11,9 +11,42 @@ namespace Mirle.ASRS
     {
         private void funUpdatePosted()
         {
+            funUpdateWeight();
             funCommandFinish();
             funCommandCancel();
-            //funDeleteCommandToHistory();
+            funDeleteCommandToHistory();
+        }
+
+        private void funUpdateWeight()
+        {
+            string strSQL = string.Empty;
+            string strEM = string.Empty;
+            string strMsg = string.Empty;
+            string strCmdSno = string.Empty;
+            DataTable dtCmdSno = new DataTable();
+            try
+            {
+                strSQL = "select * from code where code_type='WeightERRORValue' or code_type='ThresholdWegiht' order by CODE_NAME desc";
+                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                {
+                    inWeightERRORValue = int.Parse(dtCmdSno.Rows[0]["CODE_NAME"].ToString());
+                    inThresholdWegiht = int.Parse(dtCmdSno.Rows[1]["CODE_NAME"].ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+            }
+            finally
+            {
+                if (dtCmdSno != null)
+                {
+                    dtCmdSno.Clear();
+                    dtCmdSno.Dispose();
+                    dtCmdSno = null;
+                }
+            }
         }
 
         private void funCommandFinish()
@@ -26,7 +59,7 @@ namespace Mirle.ASRS
             try
             {
                 strSQL = "SELECT * FROM CMD_MST";
-                strSQL += " WHERE Cmd_Sts in('3','5')";
+                strSQL += " WHERE Cmd_Sts in('3','4','5')";
                 strSQL += " AND CMD_MODE='5' ";
                 strSQL += " ORDER BY Cmd_Sno";
                 if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
@@ -52,39 +85,55 @@ namespace Mirle.ASRS
                         cmd_Mst.User_Id = dtCmdSno.Rows[intRow]["User_Id"].ToString();
                         cmd_Mst.Remark = dtCmdSno.Rows[intRow]["Remark"].ToString();
 
-                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
-                        try
+
+                        if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin))
                         {
-                            if (!funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No)) throw new Exception("命令完成失败！");
-                            if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                            try
                             {
-                                strSQL = " SELECT * FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO";
-                                strSQL = " WHERE P.PLT_NO='" + cmd_Mst.Plt_No + "'";
-                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                if (!funUpdateCommand(cmd_Mst.Cmd_Sno, "8", cmd_Mst.Trace, cmd_Mst.Plt_No)) throw new Exception("命令完成失败！");
+                                strMsg = cmd_Mst.Cmd_Sno + "|";
+                                strMsg += cmd_Mst.Cyc_No + "|";
+                                strMsg += cmd_Mst.Cmd_Mode + "|";
+                                strMsg += cmd_Mst.Loc + "|";
+                                strMsg += cmd_Mst.New_Loc + "|";
+                                strMsg += cmd_Mst.Plt_No + "|";
+                                strMsg += "8：命令更新成功";
+                                funWriteSysTraceLog(strMsg);
+                                if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
                                 {
-                                    strSubNo = dtCmdSno.Rows[intRow]["SUB_NO"].ToString();
+                                    strSQL = " SELECT * FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO";
+                                    strSQL += " WHERE P.PLT_NO='" + cmd_Mst.Plt_No + "'";
+                                    if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                    {
+                                        strSubNo = dtCmdSno.Rows[intRow]["SUB_NO"].ToString();
+                                    }
+                                    if (!funUpdateLocationMaster(cmd_Mst.New_Loc, "S", cmd_Mst.Plt_No)) throw new Exception("新储位跟新失败！");
+
                                 }
+                                else
+                                {
+                                    if (!funUpdateLocationMaster(cmd_Mst.New_Loc, "E", cmd_Mst.Plt_No)) throw new Exception("新储位跟新失败！");
+                                }
+                                if (!funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty)) throw new Exception("原储位跟新失败！");
+                                if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                                {
+                                    if (!funLockStoreInBox(strSubNo, LoactionState.S, cmd_Mst.New_Loc)) throw new Exception("子托盘跟新失败！");
+                                    if (!funUpdateLocationDtl(cmd_Mst.Loc, cmd_Mst.New_Loc)) throw new Exception("储位明细跟新失败！");
+                                }
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                             }
-                            if (!funUpdateLocationMaster(cmd_Mst.Loc, "N", string.Empty)) throw new Exception("原储位跟新失败！");
-                            if (!funUpdateLocationMaster(cmd_Mst.New_Loc, "S", cmd_Mst.Plt_No)) throw new Exception("新储位跟新失败！");
-                            if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                            catch (Exception ex)
                             {
-                                if (!funLockStoreInBox(strSubNo, LoactionState.S, cmd_Mst.New_Loc)) throw new Exception("子托盘跟新失败！");
-                                if (!funUpdateLocationDtl(cmd_Mst.Loc,cmd_Mst.New_Loc)) throw new Exception("储位明细跟新失败！");
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                strMsg = cmd_Mst.Cmd_Sno + "|";
+                                strMsg += cmd_Mst.Cyc_No + "|";
+                                strMsg += cmd_Mst.Cmd_Mode + "|";
+                                strMsg += cmd_Mst.Loc + "|";
+                                strMsg += cmd_Mst.New_Loc + "|";
+                                strMsg += cmd_Mst.Plt_No + "|";
+                                strMsg += ex.ToString();
+                                funWriteSysTraceLog(strMsg);
                             }
-                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
-                        }
-                        catch (Exception ex)
-                        {
-                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                            strMsg = cmd_Mst.Cmd_Sno + "|";
-                            strMsg += cmd_Mst.Cyc_No + "|";
-                            strMsg += cmd_Mst.Cmd_Mode + "|";
-                            strMsg += cmd_Mst.Loc + "|";
-                            strMsg += cmd_Mst.New_Loc + "|";
-                            strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += ex.ToString();
-                            funWriteSysTraceLog(strMsg);
                         }
                     }
                 }
@@ -115,7 +164,7 @@ namespace Mirle.ASRS
             try
             {
                 strSQL = "SELECT * FROM CMD_MST";
-                strSQL += " WHERE Cmd_Sts in ('4','6')";
+                strSQL += " WHERE Cmd_Sts in ('6','7')";
                 strSQL += " AND CMD_MODE='5'";
                 strSQL += " ORDER BY Cmd_Sno";
                 if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
@@ -140,38 +189,47 @@ namespace Mirle.ASRS
                         cmd_Mst.Trace = dtCmdSno.Rows[intRow]["Trace"].ToString();
                         cmd_Mst.User_Id = dtCmdSno.Rows[intRow]["User_Id"].ToString();
                         cmd_Mst.Remark = dtCmdSno.Rows[intRow]["Remark"].ToString();
-                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
-                        try
+
+                        if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin))
                         {
-                            if (!funUpdateCommand(cmd_Mst.Cmd_Sno, "9", cmd_Mst.Trace, cmd_Mst.Plt_No)) throw new Exception("命令取消失败！");
-                            if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+
+                            try
                             {
-                                strSQL = " SELECT * FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO";
-                                strSQL = " WHERE P.PLT_NO='" + cmd_Mst.Plt_No + "'";
-                                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                if (!funUpdateCommand(cmd_Mst.Cmd_Sno, "B", cmd_Mst.Trace, cmd_Mst.Plt_No)) throw new Exception("命令取消失败！");
+                                if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
                                 {
-                                    strSubNo = dtCmdSno.Rows[intRow]["SUB_NO"].ToString();
+                                    strSQL = " SELECT * FROM PLT_MST P JOIN BOX B ON P.SUB_NO=B.SUB_NO";
+                                    strSQL = " WHERE P.PLT_NO='" + cmd_Mst.Plt_No + "'";
+                                    if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                    {
+                                        strSubNo = dtCmdSno.Rows[intRow]["SUB_NO"].ToString();
+                                    }
+                                    if (!funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No)) throw new Exception("原储位还原失败！");
                                 }
+                                else
+                                {
+                                    if (!funUpdateLocationMaster(cmd_Mst.Loc, "E", cmd_Mst.Plt_No)) throw new Exception("原储位还原失败！");
+                                }
+
+                                if (!funUpdateLocationMaster(cmd_Mst.New_Loc, "N", string.Empty)) throw new Exception("新储位还原失败！");
+                                if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                                {
+                                    if (!funLockStoreInBox(strSubNo, LoactionState.S)) throw new Exception("子托盘还原失败！");
+                                }
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
                             }
-                            if (!funUpdateLocationMaster(cmd_Mst.Loc, "S", cmd_Mst.Plt_No)) throw new Exception("原储位还原失败！");
-                            if (!funUpdateLocationMaster(cmd_Mst.New_Loc, "N", string.Empty)) throw new Exception("新储位还原失败！");
-                            if (cmd_Mst.Io_Type == IO_TYPE.LoactionToLoaction)
+                            catch (Exception ex)
                             {
-                                if (!funLockStoreInBox(strSubNo, LoactionState.S)) throw new Exception("子托盘还原失败！");
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                strMsg = cmd_Mst.Cmd_Sno + "|";
+                                strMsg += cmd_Mst.Cyc_No + "|";
+                                strMsg += cmd_Mst.Cmd_Mode + "|";
+                                strMsg += cmd_Mst.Loc + "|";
+                                strMsg += cmd_Mst.New_Loc + "|";
+                                strMsg += cmd_Mst.Plt_No + "|";
+                                strMsg += ex.ToString();
+                                funWriteSysTraceLog(strMsg);
                             }
-                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
-                        }
-                        catch (Exception ex)
-                        {
-                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                            strMsg = cmd_Mst.Cmd_Sno + "|";
-                            strMsg += cmd_Mst.Cyc_No + "|";
-                            strMsg += cmd_Mst.Cmd_Mode + "|";
-                            strMsg += cmd_Mst.Loc + "|";
-                            strMsg += cmd_Mst.New_Loc + "|";
-                            strMsg += cmd_Mst.Plt_No + "|";
-                            strMsg += ex.ToString();
-                            funWriteSysTraceLog(strMsg);
                         }
                     }
                 }
@@ -796,42 +854,96 @@ namespace Mirle.ASRS
             string strSQL = string.Empty;
             string strEM = string.Empty;
             string strMsg = string.Empty;
+            string strCmdSno = string.Empty;
             DataTable dtCmdSno = new DataTable();
             try
             {
-                if (DateTime.Now.ToString("HH:mm") == "00:00")
+                strSQL = "SELECT * FROM CMD_MST WHERE (CMD_MODE in ('2','3') AND ((CMD_STS like 'P%') OR (CMD_STS in ('B','C','E')) ) OR (CMD_MODE in ('1','5') AND CMD_STS in ('8','9','A','B','C','E'))) OR (CMD_MODE in ('2','1','3') and CMD_STS in ('8','9','A','B','C','E') and LOC like '00%')";
+                if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
                 {
-                    strSQL = "INSERT INTO CMD_MST_HIS";
-                    strSQL += " SELECT * FROM CMD_MST";
-                    strSQL += " WHERE Cmd_Sts='9'";
-                    strSQL += " AND SUBSTRING(End_Dte,1,10)='" + DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd") + "'";
-                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin);
-                    if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
+                    for (int i = 0; i < dtCmdSno.Rows.Count; i++)
                     {
-                        strSQL = " DELETE CMD_MST";
-                        strSQL += " WHERE Cmd_Sts='9'";
-                        strSQL += " AND SUBSTRING(End_Dte,1,10)='" + DateTime.Now.AddDays(-5).ToString("yyyy-MM-dd") + "'";
-                        if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
+                        strCmdSno = dtCmdSno.Rows[i]["CMD_SNO"].ToString();
+                        if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Begin))
                         {
-                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit);
-                            strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
-                            strMsg += "Delete Command To History Success!";
-                            funWriteUpdateLog(strMsg);
+                            try
+                            {
+                                strSQL = "INSERT INTO CMD_MST_log";
+                                strSQL += " SELECT * FROM CMD_MST";
+                                strSQL += " WHERE CMD_SNO='" + strCmdSno + "'";
+                                if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
+                                {
+                                    strSQL = " DELETE CMD_MST";
+                                    strSQL += " WHERE CMD_SNO='" + strCmdSno + "'";
+                                    if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
+                                    {
+                                        strSQL = "SELECT * FROM CMD_DTL WHERE CMD_SNO='" + strCmdSno + "'";
+                                        if (InitSys._DB.GetDataTable(strSQL, ref dtCmdSno, ref strEM))
+                                        {
+                                            strSQL = "INSERT INTO CMD_DTL_log";
+                                            strSQL += " SELECT * FROM CMD_DTL";
+                                            strSQL += " WHERE CMD_SNO='" + strCmdSno + "'";
+                                            if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
+                                            {
+                                                strSQL = " DELETE CMD_DTL";
+                                                strSQL += " WHERE CMD_SNO='" + strCmdSno + "'";
+                                                if (InitSys._DB.ExecuteSQL(strSQL, ref strEM))
+                                                {
+                                                    if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit))
+                                                    {
+                                                        strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
+                                                        strMsg += "Delete Command To Log Success!";
+                                                        strMsg += "Delete CMD_DTL To Log Success!";
+                                                        funWriteUpdateLog(strMsg);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                                    strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
+                                                    strMsg += "Delete CMD_DTL To Log Fail!";
+                                                    funWriteUpdateLog(strMsg);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                                strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
+                                                strMsg += "Insert CMD_DTL To CMD_DTL_LOG Fail!";
+                                                funWriteUpdateLog(strMsg);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (InitSys._DB.CommitCtrl(DBOracle.TransactionType.Commit))
+                                            {
+                                                strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
+                                                strMsg += "Delete Command To History Success!";
+                                                funWriteUpdateLog(strMsg);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                        strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
+                                        strMsg += "DELETE CMD_MST Fail!";
+                                        funWriteUpdateLog(strMsg);
+                                    }
+                                }
+                                else
+                                {
+                                    InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                                    strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
+                                    strMsg += "Insert CMD_MST To CMD_MST_HIS Fail!";
+                                    funWriteUpdateLog(strMsg);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
+                            }
                         }
-                        else
-                        {
-                            InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                            strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
-                            strMsg += "DELETE CMD_MST Fail!";
-                            funWriteUpdateLog(strMsg);
-                        }
-                    }
-                    else
-                    {
-                        InitSys._DB.CommitCtrl(DBOracle.TransactionType.Rollback);
-                        strMsg = DateTime.Now.ToString("yyyy-MM-dd") + "|";
-                        strMsg += "Insert CMD_MST To CMD_MST_HIS Fail!";
-                        funWriteUpdateLog(strMsg);
                     }
                 }
             }

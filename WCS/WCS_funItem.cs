@@ -86,8 +86,7 @@ namespace Mirle.ASRS
             {
                 strSQL = "UPDATE BOX";
                 strSQL += " SET Status='" + strMode + "',";
-                strSQL += " SET LOC='" + strLoaction + "',";
-                strSQL += " Trn_Dte='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "'";
+                strSQL += " LOC='" + strLoaction + "'";
                 strSQL += " WHERE Sub_No='" + SubNO + "'";
                 return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
             }
@@ -99,6 +98,34 @@ namespace Mirle.ASRS
             }
         }
 
+
+        private bool funGetEquMst(string EquNo)
+        {
+            DataTable dtCode = new DataTable();
+            string strSQL = string.Empty;
+
+            string strEM = string.Empty;
+            try
+            {
+                strSQL = "SELECT * FROM EQUSTATUS WHERE EQU_NO='"+ EquNo + "' AND CAN_USE='Y' AND EQUMODE in ('0','1') ";
+                return InitSys._DB.GetDataTable(strSQL, ref dtCode, ref strEM);
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                return false;
+            }
+            finally
+            {
+                if (dtCode != null)
+                {
+                    dtCode.Clear();
+                    dtCode.Dispose();
+                    dtCode = null;
+                }
+            }
+        }
         private bool funGetCode(ref double Pack001, ref double Pack002)
         {
             DataTable dtCode = new DataTable();

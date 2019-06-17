@@ -62,13 +62,14 @@ namespace Mirle.ASRS
             string strMsg = string.Empty;
             try
             {
-                if (inStoreInStnNoIndex < 0) inStoreInStnNoIndex = 4;
+                if (inStoreInStnNoIndex <= 0) inStoreInStnNoIndex = 5;
                 foreach (StationInfo stnDef in lstAllotCrane)
                 {
                     
                     int intBufferIndex = stnDef.BufferIndex;
                     int intStnIndex = stnDef.StationIndex;
                     string strBufferName = stnDef.BufferName;
+                    string strStnName = stnDef.StationName;
 
                     if (string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._CommandID) &&
                    string.IsNullOrWhiteSpace(bufferData[intBufferIndex]._Destination) &&
@@ -76,17 +77,22 @@ namespace Mirle.ASRS
                    bufferData[intBufferIndex]._EQUStatus.AutoMode == Buffer.Signal.On &&
                    intStnIndex == inStoreInStnNoIndex)
                     {
-                        strCrnNo = (inStoreInStnNoIndex + 1).ToString();
-                        strStnNo = strBufferName;
-                        inStoreInStnNoIndex -= 1;
-                        if (strStnNo == "A07") strStnNo = STN_NO.StoreInA113;
-                        if (strStnNo == "A15") strStnNo = STN_NO.StoreInA108;
-                        if (strStnNo == "A23") strStnNo = STN_NO.StoreInA103;
-                        if (strStnNo == "A31") strStnNo = STN_NO.StoreInA98;
-                        if (strStnNo == "A39") strStnNo = STN_NO.StoreInA93;
-                        return true;
+                        if (funGetEquMst(intStnIndex.ToString()))
+                        {
+                            strCrnNo = intStnIndex.ToString();
+                            strStnNo = strStnName;
+                            //if (strStnNo == "A06") strStnNo = STN_NO.StoreInA113;
+                            //if (strStnNo == "A14") strStnNo = STN_NO.StoreInA108;
+                            //if (strStnNo == "A22") strStnNo = STN_NO.StoreInA103;
+                            //if (strStnNo == "A30") strStnNo = STN_NO.StoreInA98;
+                            //if (strStnNo == "A38") strStnNo = STN_NO.StoreInA93;
+                            inStoreInStnNoIndex -= 1;
+                            return true;
+                        }
                     }
                 }
+
+                inStoreInStnNoIndex -= 1;
                 return false;
             }
             catch (Exception ex)
@@ -112,7 +118,7 @@ namespace Mirle.ASRS
                 //}
                 strSQL = "select x.LOC,x.LOC_SIZE,case x.LOC_SIZE when 'L' then 1 when 'H' then 2  end as GAODU from LOC_MST x where x.LOC_STS='N' ";
                 strSQL += Loc_Size == "L" ? "and x.LOC_SIZE in('L','H') " : "and x.LOC_SIZE in('H') ";
-                strSQL += "and x.ROW_X >=('" + inCraneNo + "'-1)*4+1 and x.ROW_X <= '" + inCraneNo + "'*4 ";
+                strSQL += "and x.ROW_X >=('" + inCraneNo + "'-1)*4+1 and x.ROW_X <= '" + inCraneNo + "'*4  and x.WH='A'";
                 strSQL += "and exists (select y.LOC,y.LOC_SIZE from LOC_MST y where y.LOC_STS ='N' ";
                 strSQL += "and (x.ROW_X=y.ROW_X + 2  or x.ROW_X = ('" + inCraneNo + "'-1)*4+1 or x.ROW_X= ('" + inCraneNo + "'-1)*4 +2 )and x.BAY_Y =y.BAY_Y and x.LVL_Z=y.LVL_Z) ";
                 strSQL += "order by  ROW_X desc, GAODU asc, LVL_Z asc,BAY_Y asc  ";
@@ -189,17 +195,17 @@ namespace Mirle.ASRS
              
                 strSQL = "select x.LOC,x.LOC_SIZE,case x.LOC_SIZE when 'L' then 1 when 'H' then 2  end as GAODU from LOC_MST x where x.LOC_STS='N' ";
                 strSQL += Loc_Size == "L" ? "and x.LOC_SIZE in('L','H') " : "and x.LOC_SIZE in('H') ";
-                strSQL += "and x.ROW_X >=('" + inCraneNo + "'-1)*4+1 and x.ROW_X <= '" + inCraneNo + "'*4 ";
+                strSQL += "and x.ROW_X >=('" + inCraneNo + "'-1)*4+1 and x.ROW_X <= '" + inCraneNo + "'*4  and x.WH='A' ";
                 strSQL += "and exists (select y.LOC,y.LOC_SIZE from LOC_MST y where y.LOC_STS ='N' ";
                 strSQL += "and (x.ROW_X=y.ROW_X + 2  or x.ROW_X = ('" + inCraneNo + "'-1)*4+1 or x.ROW_X= ('" + inCraneNo + "'-1)*4 +2 )and x.BAY_Y =y.BAY_Y and x.LVL_Z=y.LVL_Z) ";
                 
                 if (inROW_X % 2 == 0)
                 {
-                    strSQL += "order by  case when ROW_X-(ROW_X/2)*2 then 0 else 1 end asc,ROW_X desc, GAODU asc, LVL_Z asc,BAY_Y asc  ";
+                    strSQL += "order by  case ROW_X when ROW_X-(ROW_X/2)*2 then 0 else 1 end DESC,ROW_X desc, GAODU asc, LVL_Z asc,BAY_Y asc  ";
                 }
                 else
                 {
-                    strSQL += "order by   case when ROW_X-(ROW_X/2)*2 then 0 else 1 end desc,ROW_X desc, GAODU asc, LVL_Z asc,BAY_Y asc  ";
+                    strSQL += "order by   case ROW_X when ROW_X-(ROW_X/2)*2 then 0 else 1 end ASC,ROW_X desc, GAODU asc, LVL_Z asc,BAY_Y asc  ";
                 }
                 if (InitSys._DB.GetDataTable(strSQL, ref dtLocation, ref strEM))
                 {
@@ -486,7 +492,7 @@ namespace Mirle.ASRS
         {
             int nRow = int.Parse(sLoc.Substring(0, 2));
             nRow = int.Parse(sLoc.Substring(0, 2)) + 2;
-            return nRow.ToString("00") + sLoc.Substring(2, 5);
+            return nRow.ToString("00") + sLoc.Substring(2, 4);
 
         }
         /// <summary>

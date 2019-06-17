@@ -20,6 +20,8 @@ namespace Mirle.ASRS
 
                 strSQL = "UPDATE CMD_MST SET";
                 strSQL += " Cmd_Sts='" + setCommandState + "',";
+                strSQL += " Exp_Dte='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "',";
+                strSQL += " End_Dte='" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "',";
                 strSQL += " TRACE='" + setTrace + "'";
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
                 strSQL += " AND CMD_STS<='1'";
@@ -42,9 +44,9 @@ namespace Mirle.ASRS
                 if (string.IsNullOrWhiteSpace(commandID) || string.IsNullOrWhiteSpace(setStn_No) || string.IsNullOrWhiteSpace(setLoc))
                     return false;
                 strSQL = "UPDATE CMD_MST SET";
-                strSQL += " STN_NO='" + setStn_No + "'";
-                strSQL += " LOC='" + setLoc + "'";
-                strSQL += " TRACE='" + Trace.StoreIn_GetStoreInCommandAndSetLoc + "'";
+                strSQL += " STN_NO='" + setStn_No + "',";
+                strSQL += " LOC='" + setLoc + "',";
+                strSQL += " TRACE='" + Trace.StoreIn_GetStoreInCommandAndWritePLC + "'";
                 strSQL += " WHERE Cmd_Sno='" + commandID + "'";
                 strSQL += " AND CMD_STS<'1'";
                 return InitSys._DB.ExecuteSQL(strSQL, ref strEM);
@@ -118,7 +120,7 @@ namespace Mirle.ASRS
       
 
 
-        private bool funCreateStoreInCommand(string commandID,string commandStatus,string commandIoType, string location, string palletNo,string Stn_No,string ActualWeight,string Loc_Size,string Newlocation)
+        private bool funCreateStoreInCommand(string commandID,string commandStatus,string commandIoType, string location, string palletNo,string Stn_No,string ActualWeight,string Loc_Size,string Newlocation,string Trace)
         {
             string strSQL = string.Empty;
             string strEM = string.Empty;
@@ -128,7 +130,7 @@ namespace Mirle.ASRS
 
                 strSQL = "INSERT INTO CMD_MST(CMD_DTE,Cmd_Sno, Cmd_Mode, Cmd_Sts, Io_Type, Plt_No,";
                 strSQL += " Stn_No, Loc, Prty, Prog_Id, User_Id, TRACE, Crt_Dte,Actual_Weight,LOC_SIZE,New_LOC) Values (";
-                strSQL += "'" + DateTime.Now.ToString("yyyyMMdd") + "',";
+                strSQL += "'" + DateTime.Now.ToString("yyMMddHH") + "',";
                 strSQL += "'" + commandID + "', ";
                 strSQL += "'"+ commandStatus + "', ";
                 strSQL += "'"+ CommandState.Inital+ "', ";
@@ -139,7 +141,7 @@ namespace Mirle.ASRS
                 strSQL += "'5', ";
                 strSQL += "'WCS', ";
                 strSQL += "'WCS', ";
-                strSQL += "'0', ";
+                strSQL += "'"+ Trace + "', ";
                 strSQL += "'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "',";
                 strSQL += "'"+ ActualWeight + "', ";
                 strSQL += "'" + Loc_Size + "', ";

@@ -253,5 +253,27 @@ namespace Mirle.ASRS
                 return false;
             }
         }
+        public bool funTriggerBCROn2(ref string errMsg)
+        {
+            try
+            {
+                serialPort.DiscardInBuffer();
+                serialPort.DiscardOutBuffer();
+
+
+                strResultID = string.Empty;
+                enuBCRSts = BCRSts.Reading;
+
+                dtBCRReadTime = DateTime.Now;
+                timBCRReadTimeOut.Start();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MethodBase methodBase = MethodBase.GetCurrentMethod();
+                InitSys.funWriteLog("Exception", methodBase.DeclaringType.FullName + "|" + methodBase.Name + "|" + ex.Message);
+                return false;
+            }
+        }
     }
 }
